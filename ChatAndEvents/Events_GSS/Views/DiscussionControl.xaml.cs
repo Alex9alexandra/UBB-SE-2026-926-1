@@ -296,9 +296,13 @@ public sealed partial class DiscussionControl : UserControl
         picker.FileTypeFilter.Add(".mp4");
         picker.FileTypeFilter.Add(".mov");
 
-        var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(
-            ((App)Application.Current).MainWindow);
-        WinRT.Interop.InitializeWithWindow.Initialize(picker, hwnd);
+        var hwnd = Events_GSS.App.MainWindowHandle;
+
+    if (hwnd == IntPtr.Zero)
+    {
+        // This failsafe ensures the picker doesn't crash if the handle is missing
+        return;
+    }
 
         var file = await picker.PickSingleFileAsync();
         if (file is not null)

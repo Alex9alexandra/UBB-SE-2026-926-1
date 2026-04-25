@@ -28,25 +28,26 @@ public sealed partial class SubmitProofDialog : ContentDialog
     }
 
     private async void OnPickPhotoClicked(object sender, RoutedEventArgs e)
+{
+    var picker = new FileOpenPicker();
+
+    // 1. Grab the Window Handle we stashed in our dummy App class
+    var hwnd = Events_GSS.App.MainWindowHandle;
+
+    if (hwnd == IntPtr.Zero)
     {
-        var picker = new FileOpenPicker();
-        var app = (App)Application.Current;
-        var window = app.MainWindow;
+        System.Diagnostics.Debug.WriteLine("MainWindowHandle is not set!");
+        return;
+    }
 
-        if (window == null)
-        {
-            Debug.WriteLine("MainWindow is not set, check there.");
-            return;
-        }
+    // 2. Hand it directly to the picker!
+    WinRT.Interop.InitializeWithWindow.Initialize(picker, hwnd);
 
-        var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
-        WinRT.Interop.InitializeWithWindow.Initialize(picker, hwnd);
-
-        picker.ViewMode = PickerViewMode.Thumbnail;
-        picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
-        picker.FileTypeFilter.Add(".jpg");
-        picker.FileTypeFilter.Add(".jpeg");
-        picker.FileTypeFilter.Add(".png");
+    picker.ViewMode = PickerViewMode.Thumbnail;
+    picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
+    picker.FileTypeFilter.Add(".jpg");
+    picker.FileTypeFilter.Add(".jpeg");
+    picker.FileTypeFilter.Add(".png");
 
         StorageFile file = await picker.PickSingleFileAsync();
         if (file != null)

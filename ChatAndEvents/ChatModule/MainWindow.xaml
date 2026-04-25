@@ -7,7 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Title="ChatModule">
+    Title="Unified App">
 
     <Window.SystemBackdrop>
         <MicaBackdrop />
@@ -23,9 +23,6 @@
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
@@ -33,7 +30,7 @@
                 <Border Grid.Row="0" Background="#433D8B" Padding="16,14" BorderBrush="#433D8B" BorderThickness="0,0,0,1">
                     <StackPanel>
                         <TextBlock
-                            Text="WhatsApp-style Shell"
+                            Text="Unified App"
                             Foreground="#C8ACD6"
                             FontFamily="ms-appx:///Assets/Fonts/SourceSans3-Regular.ttf#Source Sans 3"
                             FontSize="21"
@@ -47,65 +44,40 @@
                     </StackPanel>
                 </Border>
 
-                <Button
-                    Grid.Row="1"
-                    Content="Conversations"
-                    Command="{x:Bind ViewModel.GoToConversationsCommand}"
-                    Background="#2E236C"
-                    Foreground="#C8ACD6"
-                    BorderBrush="#433D8B"
-                    BorderThickness="0,0,0,1"
-                    CornerRadius="0"
-                    Padding="16,14"
-                    HorizontalAlignment="Stretch"
-                    FontFamily="ms-appx:///Assets/Fonts/SourceSans3-Regular.ttf#Source Sans 3"
-                    FontSize="14"
-                    HorizontalContentAlignment="Left" />
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
 
-                <Button
-                    Grid.Row="2"
-                    Content="Friends"
-                    Command="{x:Bind ViewModel.GoToFriendsCommand}"
-                    Background="#2E236C"
-                    Foreground="#C8ACD6"
-                    BorderBrush="#433D8B"
-                    BorderThickness="0,0,0,1"
-                    CornerRadius="0"
-                    Padding="16,14"
-                    HorizontalAlignment="Stretch"
-                    FontFamily="ms-appx:///Assets/Fonts/SourceSans3-Regular.ttf#Source Sans 3"
-                    FontSize="14"
-                    HorizontalContentAlignment="Left" />
+                        <TextBlock Text="SOCIAL" Foreground="#C8ACD6" Opacity="0.5" FontSize="11" Margin="16,16,16,8" FontWeight="SemiBold"/>
 
-                <Button
-                    Grid.Row="3"
-                    Content="Profile"
-                    Command="{x:Bind ViewModel.GoToProfileCommand}"
-                    Background="#2E236C"
-                    Foreground="#C8ACD6"
-                    BorderBrush="#433D8B"
-                    BorderThickness="0,0,0,1"
-                    CornerRadius="0"
-                    Padding="16,14"
-                    HorizontalAlignment="Stretch"
-                    FontFamily="ms-appx:///Assets/Fonts/SourceSans3-Regular.ttf#Source Sans 3"
-                    FontSize="14"
-                    HorizontalContentAlignment="Left" />
+                        <Button Content="Conversations" Command="{x:Bind ViewModel.GoToConversationsCommand}"
+                                Style="{StaticResource SidebarButtonStyle}" />
 
-                <Button
-                    Grid.Row="5"
-                    Content="Logout"
-                    Command="{x:Bind ViewModel.LogoutCommand}"
-                    Background="#17153B"
-                    Foreground="#C8ACD6"
-                    BorderBrush="#433D8B"
-                    BorderThickness="1"
-                    CornerRadius="8"
-                    Padding="12,11"
-                    HorizontalAlignment="Stretch"
-                    Margin="12"
-                    FontFamily="ms-appx:///Assets/Fonts/SourceSans3-Regular.ttf#Source Sans 3"
-                    FontSize="14" />
+                        <Button Content="Friends" Command="{x:Bind ViewModel.GoToFriendsCommand}"
+                                Style="{StaticResource SidebarButtonStyle}" />
+
+                        <Button Content="Profile" Command="{x:Bind ViewModel.GoToProfileCommand}"
+                                Style="{StaticResource SidebarButtonStyle}" />
+
+                        <TextBlock Text="ACTIVITIES" Foreground="#C8ACD6" Opacity="0.5" FontSize="11" Margin="16,16,16,8" FontWeight="SemiBold"/>
+
+                        <Button Content="Events" Command="{x:Bind ViewModel.GoToEventsCommand}"
+                                Style="{StaticResource SidebarButtonStyle}" />
+
+                        <Button Content="My Events" Command="{x:Bind ViewModel.GoToMyEventsCommand}"
+                                Style="{StaticResource SidebarButtonStyle}" />
+
+                        <Button Content="Reputation &amp; Quests" Command="{x:Bind ViewModel.GoToReputationCommand}"
+                                Style="{StaticResource SidebarButtonStyle}" />
+
+                        <Button Content="Notifications" Command="{x:Bind ViewModel.GoToNotificationsCommand}"
+                                Style="{StaticResource SidebarButtonStyle}" />
+                    </StackPanel>
+                </ScrollViewer>
+
+                <Button Grid.Row="2" Content="Logout" Command="{x:Bind ViewModel.LogoutCommand}"
+                        Background="#17153B" Foreground="#C8ACD6" BorderBrush="#433D8B" BorderThickness="1"
+                        CornerRadius="8" Padding="12,11" HorizontalAlignment="Stretch" Margin="12"
+                        FontFamily="ms-appx:///Assets/Fonts/SourceSans3-Regular.ttf#Source Sans 3" FontSize="14" />
             </Grid>
         </Border>
 

@@ -2,6 +2,13 @@ using System;
 using System.Threading.Tasks;
 using ChatModule.Services;
 using ChatModule.src.view_models;
+using Events_GSS.Data.Repositories.eventRepository;
+using Events_GSS.Data.Repositories.notificationRepository;
+using Events_GSS.Data.Repositories.reputationRepository;
+using Events_GSS.Services.Interfaces; // For IUserService
+using Events_GSS.ViewModels;
+using Events_GSS.Data.Services.notificationServices;
+using Events_GSS.Data.Services.reputationService;
 
 namespace ChatModule.ViewModels
 {
@@ -13,6 +20,11 @@ namespace ChatModule.ViewModels
         private readonly BlockService _blockService;
         private readonly IDirectMessageService _directMessageService;
         private readonly IProfileService _profileService;
+
+        private readonly IEventRepository _eventRepository;
+        private readonly INotificationService _notificationService;
+        private readonly IReputationService _reputationService;
+        private readonly IUserService _userService;
 
         private Guid _currentUserId;
         public Guid CurrentUserId
@@ -28,8 +40,8 @@ namespace ChatModule.ViewModels
             private set => Set(ref _currentUsername, value);
         }
 
-        private BaseViewModel? _currentPage;
-        public BaseViewModel? CurrentPage
+        private object? _currentPage;
+        public object? CurrentPage
         {
             get => _currentPage;
             private set => Set(ref _currentPage, value);
@@ -38,47 +50,83 @@ namespace ChatModule.ViewModels
         public event Action? NavigateToLoginRequested;
         public event Action<Guid>? NavigateToChatRequested;
 
+        // --- ORIGINAL COMMANDS ---
         public RelayCommand GoToConversationsCommand { get; }
         public RelayCommand GoToFriendsCommand { get; }
         public RelayCommand GoToProfileCommand { get; }
         public RelayCommand LogoutCommand { get; }
 
-        public MainViewModel(
-            ConversationListService conversationListService,
-            FriendRequestService friendRequestService,
-            BlockService blockService,
-            IProfileService profileService,
-            IDirectMessageService directMessageService)
-            : this(
-                conversationListService,
-                friendRequestService,
-                friendListService: null,
-                blockService,
-                profileService,
-                directMessageService)
-        {
-        }
+        // --- NEW MERGED COMMANDS ---
+        public RelayCommand GoToEventsCommand { get; }
+        public RelayCommand GoToMyEventsCommand { get; }
+        public RelayCommand GoToReputationCommand { get; }
+        public RelayCommand GoToNotificationsCommand { get; }
 
-        public MainViewModel(
-            ConversationListService conversationListService,
-            FriendRequestService friendRequestService,
-            FriendListService? friendListService,
-            BlockService blockService,
-            IProfileService profileService,
-            IDirectMessageService directMessageService)
-        {
-            _conversationListService = conversationListService ?? throw new ArgumentNullException(nameof(conversationListService));
-            _friendRequestService = friendRequestService ?? throw new ArgumentNullException(nameof(friendRequestService));
-            _friendListService = friendListService;
-            _blockService = blockService ?? throw new ArgumentNullException(nameof(blockService));
-            _profileService = profileService ?? throw new ArgumentNullException(nameof(profileService));
-            _directMessageService = directMessageService ?? throw new ArgumentNullException(nameof(directMessageService));
+        // Constructor 1 (Without FriendListService)
+public MainViewModel(
+    ConversationListService conversationListService,
+    FriendRequestService friendRequestService,
+    BlockService blockService,
+    IProfileService profileService,
+    IDirectMessageService directMessageService,
+    // --- UPDATED TO USE SERVICES ---
+    IEventRepository eventRepository,
+    INotificationService notificationService,
+    IReputationService reputationService,
+    IUserService userService)
+    : this(
+        conversationListService,
+        friendRequestService,
+        friendListService: null, // This is the only difference
+        blockService,
+        profileService,
+        directMessageService,
+        eventRepository,
+        notificationService,
+        reputationService,
+        userService)
+{
+}
 
-            GoToConversationsCommand = new RelayCommand(GoToConversationsAsync);
-            GoToFriendsCommand = new RelayCommand(GoToFriendsAsync);
-            GoToProfileCommand = new RelayCommand(GoToProfileAsync);
-            LogoutCommand = new RelayCommand(LogoutAsync);
-        }
+// Constructor 2 (The Main One)
+public MainViewModel(
+    ConversationListService conversationListService,
+    FriendRequestService friendRequestService,
+    FriendListService? friendListService,
+    BlockService blockService,
+    IProfileService profileService,
+    IDirectMessageService directMessageService,
+    // --- UPDATED TO USE SERVICES ---
+    IEventRepository eventRepository,
+    INotificationService notificationService,
+    IReputationService reputationService,
+    IUserService userService)
+{
+    _conversationListService = conversationListService ?? throw new ArgumentNullException(nameof(conversationListService));
+    _friendRequestService = friendRequestService ?? throw new ArgumentNullException(nameof(friendRequestService));
+    _friendListService = friendListService;
+    _blockService = blockService ?? throw new ArgumentNullException(nameof(blockService));
+    _profileService = profileService ?? throw new ArgumentNullException(nameof(profileService));
+    _directMessageService = directMessageService ?? throw new ArgumentNullException(nameof(directMessageService));
+
+    // Assign the new services
+    _eventRepository = eventRepository ?? throw new ArgumentNullException(nameof(eventRepository));
+    _notificationService = notificationService ?? throw new ArgumentNullException(nameof(notificationService));
+    _reputationService = reputationService ?? throw new ArgumentNullException(nameof(reputationService));
+    _userService = userService ?? throw new ArgumentNullException(nameof(userService));
+
+    // Initialize Original Commands
+    GoToConversationsCommand = new RelayCommand(GoToConversationsAsync);
+    GoToFriendsCommand = new RelayCommand(GoToFriendsAsync);
+    GoToProfileCommand = new RelayCommand(GoToProfileAsync);
+    LogoutCommand = new RelayCommand(LogoutAsync);
+
+    // Initialize New Merged Commands
+    GoToEventsCommand = new RelayCommand(GoToEventsAsync);
+    GoToMyEventsCommand = new RelayCommand(GoToMyEventsAsync);
+    GoToReputationCommand = new RelayCommand(GoToReputationAsync);
+    GoToNotificationsCommand = new RelayCommand(GoToNotificationsAsync);
+}
 
         public Task InitialiseAsync(Guid userId, string username)
         {
@@ -112,6 +160,52 @@ namespace ChatModule.ViewModels
 
         private Task GoToProfileAsync()
             => ShowProfileAsync(CurrentUserId);
+
+
+private async Task GoToEventsAsync()
+{
+    try 
+    {
+        // Use the repository that was passed into the constructor (this._eventRepository)
+        // because that's the one we injected with the correct connection string!
+        var vm = new EventListingViewModel(_eventRepository); 
+        
+        // Use the specific method name from their code
+        await vm.LoadEventsAsync(); 
+        
+        CurrentPage = vm;
+    }
+    catch (Exception ex)
+    {
+        System.Diagnostics.Debug.WriteLine($"NAVIGATION ERROR: {ex.Message}");
+        // If it fails, we must set CurrentPage to something or it hangs
+        CurrentPage = null; 
+    }
+}
+private async Task GoToMyEventsAsync()
+{
+    // If they don't have a specific "MyEvents" method yet, 
+    // this will at least show the public ones so the screen isn't blank.
+    var vm = new EventListingViewModel(_eventRepository);
+    await vm.LoadEventsAsync(); 
+    
+    CurrentPage = vm;
+}
+
+        private Task GoToReputationAsync()
+        {
+    // Matches: ReputationViewModel(IUserService, IReputationService)
+            CurrentPage = new ReputationViewModel(_userService, _reputationService); 
+            return Task.CompletedTask;
+        }
+
+        private Task GoToNotificationsAsync()
+        {
+            // Note: Check if NotificationsViewModel requires _notificationRepository
+            CurrentPage = new NotificationViewModel(_notificationService, _userService); 
+            return Task.CompletedTask;
+        }
+
 
         private void OnNavigateToProfileFromFriends(Guid userId)
         {
