@@ -71,7 +71,7 @@ namespace ChatModule
             _initialUserId = userId;
             _initialUsername = username;
 
-            string eventsConnectionString = "Data Source=localhost;Initial Catalog=ISSEvents;Integrated Security=True;Encrypt=False;TrustServerCertificate=True;"; 
+            string eventsConnectionString = "Data Source=localhost;Initial Catalog=ISSEvents;Integrated Security=True;Encrypt=False;TrustServerCertificate=True;";
             var db = (Application.Current as App)?.DatabaseManager
                      ?? new DatabaseManager("Data Source=localhost;Initial Catalog=ChatModule;Integrated Security=True;Encrypt=False;TrustServerCertificate=True;");
             var sqlConnectionFactory = new SqlConnectionFactory(eventsConnectionString);
@@ -112,7 +112,7 @@ namespace ChatModule
             _memberPanelService = new MemberPanelService(participantRepository, userRepository);
             _moderationService = new ModerationService(participantRepository, messageRepository, userRepository);
 
-           
+
             var eventServices = new ServiceCollection();
             eventServices.AddSingleton<SqlConnectionFactory>(sqlConnectionFactory);
 
@@ -154,7 +154,7 @@ namespace ChatModule
             Events_GSS.App.Services = eventServices.BuildServiceProvider();
             Events_GSS.App.MainWindowHandle = WinRT.Interop.WindowNative.GetWindowHandle(this);
 
-            
+
 
             // --- PASS THEM TO THE VIEWMODEL ---
             ViewModel = new MainViewModel(
@@ -165,9 +165,12 @@ namespace ChatModule
                 profileService,
                 directMessageService,
                 Events_GSS.App.Services.GetRequiredService<IEventRepository>(),
-    Events_GSS.App.Services.GetRequiredService<INotificationService>(),
-    Events_GSS.App.Services.GetRequiredService<IReputationService>(),
-    Events_GSS.App.Services.GetRequiredService<IUserService>()); // <-- NEW
+                Events_GSS.App.Services.GetRequiredService<INotificationService>(),
+                Events_GSS.App.Services.GetRequiredService<IReputationService>(),
+                Events_GSS.App.Services.GetRequiredService<IUserService>(),
+                Events_GSS.App.Services.GetRequiredService<IEventService>(),
+                Events_GSS.App.Services.GetRequiredService<IQuestService>(),
+                Events_GSS.App.Services.GetRequiredService<IAttendedEventService>()); // <-- NEW
 
             InitializeComponent();
 
@@ -229,9 +232,11 @@ namespace ChatModule
                 ChatViewModel vm => new ChatView(vm),
 
                 // The Merged Pages
-                EventListingViewModel vm => new EventListingPage(vm), 
+                EventListingViewModel vm => new EventListingPage(vm),
                 ReputationViewModel => new ReputationPage(),
                 NotificationViewModel => new NotificationView(),
+                CreateEventViewModel vm => new CreateEventPage(),
+                EventDetailViewModel vm => new EventDetailPage(vm),
 
                 _ => null
             };

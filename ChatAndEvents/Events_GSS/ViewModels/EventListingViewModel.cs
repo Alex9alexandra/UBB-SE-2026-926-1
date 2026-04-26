@@ -11,6 +11,8 @@ namespace Events_GSS.ViewModels
     public class EventListingViewModel : INotifyPropertyChanged
     {
         private readonly IEventRepository _eventRepository;
+        public event Action? CreateEventRequested;
+        public event Action<Event>? EventDetailsRequested;
 
         // The UI binds to this list
         public ObservableCollection<Event> Events { get; } = new ObservableCollection<Event>();
@@ -63,5 +65,7 @@ namespace Events_GSS.ViewModels
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+        public void RequestCreateEvent() => CreateEventRequested?.Invoke();
+        public void RequestEventDetails(Event selectedEvent) => EventDetailsRequested?.Invoke(selectedEvent);
     }
 }
