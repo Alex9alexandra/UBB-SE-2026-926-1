@@ -58,7 +58,7 @@ namespace ChatModule.src.view_models
 
         private bool _isLoading;
 
-        public object ErrorMessage { get; private set; }
+        //public object ErrorMessage { get; private set; }
         public bool IsLoading
         {
             get => _isLoading;
