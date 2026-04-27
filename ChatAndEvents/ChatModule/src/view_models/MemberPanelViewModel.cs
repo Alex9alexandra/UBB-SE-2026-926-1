@@ -57,6 +57,8 @@ namespace ChatModule.src.view_models
         public string TogglePanelIcon => IsPanelVisible ? "◀" : "▶";
 
         private bool _isLoading;
+
+        public object ErrorMessage { get; private set; }
         public bool IsLoading
         {
             get => _isLoading;
