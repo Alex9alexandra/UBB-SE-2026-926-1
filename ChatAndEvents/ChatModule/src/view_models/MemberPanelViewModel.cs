@@ -89,6 +89,13 @@ namespace ChatModule.src.view_models
             }
         }
 
+        private string? _errorMessage;
+        public string? ErrorMessage
+        {
+            get => _errorMessage;
+            set => Set(ref _errorMessage, value);
+        }
+
         public RelayCommand LoadCommand { get; }
         public RelayCommand TogglePanelCommand { get; }
         public RelayCommand AddMemberCommand { get; }

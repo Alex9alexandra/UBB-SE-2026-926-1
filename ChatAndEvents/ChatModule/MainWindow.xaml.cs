@@ -1,15 +1,41 @@
-using System;
-using System.Threading.Tasks;
 using ChatModule.Repositories;
 using ChatModule.Services;
-using ChatModule.ViewModels;
+using ChatModule.src.domain.Enums;
+using ChatModule.src.Interfaces.Services;
+using ChatModule.src.repositories;
 using ChatModule.src.view_models;
 using ChatModule.src.views;
-using ChatModule.src.domain.Enums;
+using ChatModule.ViewModels;
+// --- MERGED TEAM NAMESPACES ---
+using Events_GSS.Data.Database;
+using Events_GSS.Data.Models;
+using Events_GSS.Data.Repositories;
+using Events_GSS.Data.Repositories.achievementRepository;
+using Events_GSS.Data.Repositories.announcementRepository;
+using Events_GSS.Data.Repositories.categoriesRepository;
+using Events_GSS.Data.Repositories.eventRepository;
+using Events_GSS.Data.Repositories.eventStatisticsRepository;
+using Events_GSS.Data.Repositories.notificationRepository;
+using Events_GSS.Data.Repositories.reputationRepository;
+using Events_GSS.Data.Services;
+using Events_GSS.Data.Services.achievementServices;
+using Events_GSS.Data.Services.announcementServices;
+using Events_GSS.Data.Services.categoryServices;
+using Events_GSS.Data.Services.discussionService;
+using Events_GSS.Data.Services.eventServices;
+using Events_GSS.Data.Services.eventStatisticsServices;
+using Events_GSS.Data.Services.Interfaces;
+using Events_GSS.Data.Services.notificationServices;
+using Events_GSS.Data.Services.reputationService;
+using Events_GSS.Services; // For MockUserService
+using Events_GSS.Services.Interfaces;
+using Events_GSS.ViewModels;
+using Events_GSS.Views;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using ChatModule.src.repositories;
-using ChatModule.src.Interfaces.Services;
+using System;
+using System.Threading.Tasks;
 
 namespace ChatModule
 {
@@ -18,7 +44,7 @@ namespace ChatModule
         public MainViewModel ViewModel { get; }
         private readonly Guid _initialUserId;
         private readonly string _initialUsername;
-        private readonly UserRepository _userRepository;
+        private readonly IUserRepository _userRepository;
         private readonly ConversationRepository _conversationRepository;
         private readonly ParticipantRepository _participantRepository;
         private readonly MessageRepository _messageRepository;
@@ -45,8 +71,10 @@ namespace ChatModule
             _initialUserId = userId;
             _initialUsername = username;
 
+            string eventsConnectionString = "Data Source=localhost;Initial Catalog=ISSEvents;Integrated Security=True;Encrypt=False;TrustServerCertificate=True;";
             var db = (Application.Current as App)?.DatabaseManager
                      ?? new DatabaseManager("Data Source=localhost;Initial Catalog=ChatModule;Integrated Security=True;Encrypt=False;TrustServerCertificate=True;");
+            var sqlConnectionFactory = new SqlConnectionFactory(eventsConnectionString);
 
             var userRepository = new UserRepository(db);
             var friendRepository = new FriendRepository(db);
@@ -84,13 +112,65 @@ namespace ChatModule
             _memberPanelService = new MemberPanelService(participantRepository, userRepository);
             _moderationService = new ModerationService(participantRepository, messageRepository, userRepository);
 
+
+            var eventServices = new ServiceCollection();
+            eventServices.AddSingleton<SqlConnectionFactory>(sqlConnectionFactory);
+
+            // Register all Repositories
+            eventServices.AddTransient<IEventRepository, EventRepository>();
+            eventServices.AddTransient<ICategoryRepository, CategoryRepository>();
+            eventServices.AddTransient<IQuestRepository, QuestRepository>();
+            eventServices.AddTransient<IQuestMemoryRepository, QuestMemoryRepository>();
+            eventServices.AddTransient<IAnnouncementRepository, AnnouncementRepository>();
+            eventServices.AddTransient<IDiscussionRepository, DiscussionRepository>();
+            eventServices.AddTransient<IMemoryRepository, MemoryRepository>();
+            eventServices.AddTransient<IAttendedEventRepository, AttendedEventRepository>();
+            eventServices.AddTransient<INotificationRepository, NotificationRepository>();
+            eventServices.AddTransient<IReputationRepository, ReputationRepository>();
+            eventServices.AddTransient<IAchievementRepository, AchievementRepository>();
+            eventServices.AddTransient<IEventStatisticsRepository, EventStatisticsRepository>();
+
+            // Register all Services
+            eventServices.AddTransient<IEventService, EventService>();
+            eventServices.AddTransient<ICategoryServices, CategoryServices>();
+            eventServices.AddTransient<IQuestService, QuestService>();
+            eventServices.AddTransient<IQuestApprovalService, QuestApprovalService>();
+            eventServices.AddTransient<IAnnouncementService, AnnouncementService>();
+            eventServices.AddTransient<IDiscussionService, DiscussionService>();
+            eventServices.AddTransient<IMemoryService, MemoryService>();
+            eventServices.AddTransient<IAttendedEventService, AttendedEventService>();
+            eventServices.AddTransient<IUserService, MockUserService>(); // This is the ID 3 source
+            eventServices.AddTransient<INotificationService, NotificationService>();
+            eventServices.AddSingleton<IReputationService, ReputationService>();
+            eventServices.AddTransient<IAchievementService, AchievementService>();
+            eventServices.AddTransient<IEventStatisticsService, EventStatisticsService>();
+
+            // Register ViewModels (Required so GetRequiredService works for Navigation)
+            eventServices.AddTransient<EventListingViewModel>();
+            eventServices.AddTransient<ReputationViewModel>();
+            eventServices.AddTransient<NotificationViewModel>();
+
+            // BRING IT TO LIFE
+            Events_GSS.App.Services = eventServices.BuildServiceProvider();
+            Events_GSS.App.MainWindowHandle = WinRT.Interop.WindowNative.GetWindowHandle(this);
+
+
+
+            // --- PASS THEM TO THE VIEWMODEL ---
             ViewModel = new MainViewModel(
                 conversationListService,
                 friendRequestService,
                 friendListService,
                 blockService,
                 profileService,
-                directMessageService);
+                directMessageService,
+                Events_GSS.App.Services.GetRequiredService<IEventRepository>(),
+                Events_GSS.App.Services.GetRequiredService<INotificationService>(),
+                Events_GSS.App.Services.GetRequiredService<IReputationService>(),
+                Events_GSS.App.Services.GetRequiredService<IUserService>(),
+                Events_GSS.App.Services.GetRequiredService<IEventService>(),
+                Events_GSS.App.Services.GetRequiredService<IQuestService>(),
+                Events_GSS.App.Services.GetRequiredService<IAttendedEventService>()); // <-- NEW
 
             InitializeComponent();
 
@@ -105,12 +185,12 @@ namespace ChatModule
 
             ViewModel.NavigateToLoginRequested += () =>
             {
-                var db = (Application.Current as App)?.DatabaseManager
+                var dbContext = (Application.Current as App)?.DatabaseManager
                          ?? new DatabaseManager("Data Source=localhost;Initial Catalog=ChatModule;Integrated Security=True;Encrypt=False;TrustServerCertificate=True;");
-                var loginWindow = new LoginWindow(new AuthenticationService(new UserRepository(db)));
-                loginWindow.LoginSucceeded += (userId, username) =>
+                var loginWindow = new LoginWindow(new AuthenticationService(new UserRepository(dbContext)));
+                loginWindow.LoginSucceeded += (newUserId, newUsername) =>
                 {
-                    var nextMain = new MainWindow(userId, username);
+                    var nextMain = new MainWindow(newUserId, newUsername);
                     App.SetMainWindow(nextMain);
                     nextMain.Activate();
                     loginWindow.Close();
@@ -141,13 +221,23 @@ namespace ChatModule
 
         private void RenderCurrentPage()
         {
-            UserControl? view = ViewModel.CurrentPage switch
+            // Changed from UserControl to object to allow their Pages to render
+            object? view = ViewModel.CurrentPage switch
             {
+                // Your original pages
                 ConversationListViewModel vm => BuildConversationListView(vm),
                 FriendListViewModel vm => new FriendListView(vm),
                 FriendRequestsViewModel vm => new FriendRequestsView(vm),
                 ProfileViewModel vm => BuildProfileView(vm),
                 ChatViewModel vm => new ChatView(vm),
+
+                // The Merged Pages
+                EventListingViewModel vm => new EventListingPage(vm),
+                ReputationViewModel => new ReputationPage(),
+                NotificationViewModel => new NotificationView(),
+                CreateEventViewModel vm => new CreateEventPage(),
+                EventDetailViewModel vm => new EventDetailPage(vm),
+
                 _ => null
             };
 

@@ -90,7 +90,7 @@ public partial class App : Application
         navService.RegisterPage(PageKeys.EventStatistics, typeof(EventStatisticsPage));
         services.AddSingleton<INavigationService>(navService);
 
-        Services = services.BuildServiceProvider();
+        Services = services.BuildServiceProvider(); 
 
         Services.GetRequiredService<IReputationService>();
     }
