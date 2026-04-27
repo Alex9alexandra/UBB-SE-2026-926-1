@@ -189,6 +189,17 @@ namespace ChatModule.ViewModels
         {
             var vm = new EventListingViewModel(_eventRepository);
 
+            // --- THIS IS YOUR MISSING CODE ---
+            // Listen for the "Create" shout, and execute the existing command if allowed
+            vm.CreateEventRequested += () =>
+            {
+                if (GoToCreateEventCommand.CanExecute(null))
+                {
+                    GoToCreateEventCommand.Execute(null);
+                }
+            };
+            // ---------------------------------
+
             // This is the "Listener" that connects the two.
             // Visual Studio's static analysis sometimes misses this as a 'reference'.
             vm.EventDetailsRequested += (selectedEvent) =>
