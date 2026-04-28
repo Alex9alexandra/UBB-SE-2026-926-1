@@ -229,10 +229,12 @@ namespace ChatModule.ViewModels
             CurrentPage = vm;
         }
 
-        private Task GoToNotificationsAsync()
+        private async Task GoToNotificationsAsync()
         {
-            CurrentPage = new NotificationViewModel(_notificationService, _userService);
-            return Task.CompletedTask;
+            var vm = new NotificationViewModel(_notificationService, _userService);
+            await vm.LoadAsync();
+
+            CurrentPage = vm;
         }
 
         private async Task GoToCreateEventAsync()
