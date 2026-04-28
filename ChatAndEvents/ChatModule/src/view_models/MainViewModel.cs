@@ -231,10 +231,11 @@ namespace ChatModule.ViewModels
 
         private Task GoToMyEventDetailsAsync(Event selectedEvent)
         {
-            var vm = new EventDetailViewModel(selectedEvent, _attendedEventService);
+            var vm = new EventDetailViewModel(selectedEvent, this._attendedEventService);
+
             // Back from detail goes back to My Events, not the public list
-            vm.BackRequested += () => _ = GoToMyEventsAsync();
-            CurrentPage = vm;
+            vm.BackRequested += () => _ = this.GoToMyEventsAsync();
+            this.CurrentPage = vm;
             return Task.CompletedTask;
         }
 

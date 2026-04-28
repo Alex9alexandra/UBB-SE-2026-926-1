@@ -1,11 +1,11 @@
-﻿using System;
+﻿namespace Events_GSS.Data.Services.eventServices;
+
+using System;
 using CommunityToolkit.Mvvm.Messaging;
 using Events_GSS.Data.Messaging;
 using Events_GSS.Data.Models;
 using Events_GSS.Data.Repositories.eventRepository;
 using Events_GSS.Data.Services.reputationService;
-
-namespace Events_GSS.Data.Services.eventServices;
 
 /// <summary>
 /// Provides event management services including CRUD operations and filtering.
