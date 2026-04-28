@@ -1,3 +1,4 @@
+using BCrypt.Net;
 using ChatModule.Repositories;
 using ChatModule.Services;
 using ChatModule.src.domain.Enums;
@@ -36,6 +37,9 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using Events_GSS.ViewModels;
+using Events_GSS.Views;
 
 namespace ChatModule
 {
@@ -70,10 +74,9 @@ namespace ChatModule
         {
             _initialUserId = userId;
             _initialUsername = username;
-
-            string eventsConnectionString = "Data Source=localhost;Initial Catalog=ISSEvents;Integrated Security=True;Encrypt=False;TrustServerCertificate=True;";
+            string eventsConnectionString = "Data Source=(localdb)\\MSSQLLocalDB;\r\nInitial Catalog=ISSEvents;\r\nIntegrated Security=True;\r\nEncrypt=True;\r\nTrustServerCertificate=True;";
             var db = (Application.Current as App)?.DatabaseManager
-                     ?? new DatabaseManager("Data Source=localhost;Initial Catalog=ChatModule;Integrated Security=True;Encrypt=False;TrustServerCertificate=True;");
+                     ?? new DatabaseManager("Data Source=(localdb)\\MSSQLLocalDB;\r\nInitial Catalog=ChatModule;\r\nIntegrated Security=True;\r\nEncrypt=True;\r\nTrustServerCertificate=True;");
             var sqlConnectionFactory = new SqlConnectionFactory(eventsConnectionString);
 
             var userRepository = new UserRepository(db);
@@ -237,6 +240,7 @@ namespace ChatModule
                 NotificationViewModel => new NotificationView(),
                 CreateEventViewModel vm => new CreateEventPage(),
                 EventDetailViewModel vm => new EventDetailPage(vm),
+                MyEventsViewModel vm => new MyEventsPage(vm),
 
                 _ => null
             };

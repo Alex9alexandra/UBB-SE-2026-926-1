@@ -176,6 +176,39 @@ public class EventRepository : IEventRepository
         await command.ExecuteNonQueryAsync();
     }
 
+    /// <summary>
+    /// Deletes an event by its identifier.
+    /// </summary>
+    /// <param name="adminId">The event identifier.</param>
+    /// <returns>Events owned by the admin with the given id.</returns>
+    public async Task<List<Event>> GetByAdminIdAsync(int adminId)
+    {
+        var events = new List<Event>();
+        using var connection = this.connectionFactory.CreateConnection();
+        await connection.OpenAsync();
+
+        var command = new SqlCommand(
+            @"
+        SELECT E.*, C.CategoryId as CatId, C.Title as CategoryTitle,
+            u.Id as UserId, u.Name as UserName,
+            (SELECT COUNT(*) FROM AttendedEvents AE WHERE AE.EventId = E.EventId) AS EnrolledCount
+        FROM Events E
+        LEFT JOIN Categories C ON E.CategoryId = C.CategoryId
+        LEFT JOIN Users u ON E.AdminId = u.Id
+        WHERE E.AdminId = @AdminId
+        ORDER BY E.StartDateTime ASC", connection);
+
+        command.Parameters.AddWithValue("@AdminId", adminId);
+
+        using var dataReader = await command.ExecuteReaderAsync();
+        while (await dataReader.ReadAsync())
+        {
+            events.Add(MapEvent(dataReader));
+        }
+
+        return events;
+    }
+
     private static Event MapEvent(SqlDataReader reader)
     {
         return new ()

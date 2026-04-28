@@ -142,4 +142,12 @@ public class EventService : IEventService
         var events = await this.eventRepository.GetAllPublicActiveAsync();
         return events.Where(@event => @event.Name.Contains(title, StringComparison.OrdinalIgnoreCase)).ToList();
     }
+
+    /// <summary>
+    /// Gets all events created by a specific user.
+    /// </summary>
+    /// <param name="adminId">The admin user identifier.</param>
+    /// <returns>A list of events administered by the user.</returns>
+    public async Task<List<Event>> GetMyEventsAsync(int adminId)
+        => await this.eventRepository.GetByAdminIdAsync(adminId);
 }

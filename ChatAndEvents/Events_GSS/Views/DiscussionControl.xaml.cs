@@ -298,11 +298,13 @@ public sealed partial class DiscussionControl : UserControl
 
         var hwnd = Events_GSS.App.MainWindowHandle;
 
+
     if (hwnd == IntPtr.Zero)
     {
         // This failsafe ensures the picker doesn't crash if the handle is missing
         return;
     }
+        WinRT.Interop.InitializeWithWindow.Initialize(picker, hwnd);
 
         var file = await picker.PickSingleFileAsync();
         if (file is not null)

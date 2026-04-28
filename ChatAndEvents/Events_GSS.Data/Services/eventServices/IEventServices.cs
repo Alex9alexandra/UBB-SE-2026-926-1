@@ -43,6 +43,13 @@ public interface IEventService
     Task DeleteEventAsync(int eventId);
 
     /// <summary>
+    /// Gets all events created by a specific user.
+    /// </summary>
+    /// <param name="adminId">The admin user identifier.</param>
+    /// <returns>A list of events administered by the user.</returns>
+    Task<List<Event>> GetMyEventsAsync(int adminId);
+
+    /// <summary>
     /// Searches for events by title.
     /// </summary>
     /// <param name="title">The title to search for.</param>
