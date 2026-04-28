@@ -12,6 +12,8 @@ namespace Events_GSS.ViewModels
     {
         private readonly IEventService _eventService;
         private readonly IUserService _userService;
+        private readonly IAttendedEventService _attendedEventService;
+
 
         public event Action<Event>? EventDetailsRequested;
 
@@ -45,10 +47,11 @@ namespace Events_GSS.ViewModels
             }
         }
 
-        public MyEventsViewModel(IEventService eventService, IUserService userService)
+        public MyEventsViewModel(IEventService eventService, IUserService userService, IAttendedEventService attendedEventService)
         {
             _eventService = eventService;
             _userService = userService;
+            _attendedEventService = attendedEventService;
         }
 
         public async Task LoadMyEventsAsync()
@@ -57,15 +60,27 @@ namespace Events_GSS.ViewModels
             try
             {
                 var currentUser = _userService.GetCurrentUser();
-                var events = await _eventService.GetMyEventsAsync(currentUser.UserId);
+
+                // Events where user is admin
+                var adminEvents = await _eventService.GetMyEventsAsync(currentUser.UserId);
+
+                // Events where user has joined
+                var attendedEvents = await _attendedEventService.GetAttendedEventsAsync(currentUser.UserId);
+                var joinedEvents = attendedEvents.Select(ae => ae.Event).ToList();
+
+                // Merge, deduplicate by EventId
+                var allEvents = adminEvents
+                    .Union(joinedEvents, EventIdComparer.Instance)
+                    .OrderBy(e => e.StartDateTime)
+                    .ToList();
+
                 Events.Clear();
-                foreach (var ev in events)
-                {
+                foreach (var ev in allEvents)
                     Events.Add(ev);
-                }
+
                 IsEmpty = Events.Count == 0;
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Failed to load my events: {ex}");
                 IsEmpty = true;
@@ -83,6 +98,12 @@ namespace Events_GSS.ViewModels
         protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+        public class EventIdComparer : IEqualityComparer<Event>
+        {
+            public static readonly EventIdComparer Instance = new();
+            public bool Equals(Event? x, Event? y) => x?.EventId == y?.EventId;
+            public int GetHashCode(Event obj) => obj.EventId.GetHashCode();
         }
     }
 }

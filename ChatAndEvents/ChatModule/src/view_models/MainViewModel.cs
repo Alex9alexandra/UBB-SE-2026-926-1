@@ -218,7 +218,7 @@ namespace ChatModule.ViewModels
         /// <returns></returns>
         private async Task GoToMyEventsAsync()
         {
-            var vm = new MyEventsViewModel(_eventService, _userService);
+            var vm = new MyEventsViewModel(_eventService, _userService, _attendedEventService);
 
             vm.EventDetailsRequested += (selectedEvent) =>
             {
