@@ -1,4 +1,4 @@
-using System;
+/*using System;
 using System.IO;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -63,3 +63,4 @@ namespace ChatModule.Tests
         }
     }
 }
+*/

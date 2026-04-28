@@ -71,9 +71,9 @@ namespace ChatModule
             _initialUserId = userId;
             _initialUsername = username;
 
-            string eventsConnectionString = "Data Source=localhost;Initial Catalog=ISSEvents;Integrated Security=True;Encrypt=False;TrustServerCertificate=True;";
+            string eventsConnectionString = "Data Source=DESKTOP-94B9BRH\\SQLEXPRESS;Initial Catalog=ISSEvents;Integrated Security=True;Encrypt=False;TrustServerCertificate=True;";
             var db = (Application.Current as App)?.DatabaseManager
-                     ?? new DatabaseManager("Data Source=localhost;Initial Catalog=ChatModule;Integrated Security=True;Encrypt=False;TrustServerCertificate=True;");
+                     ?? new DatabaseManager("Data Source=DESKTOP-94B9BRH\\SQLEXPRESS;Initial Catalog=ChatModule;Integrated Security=True;Encrypt=False;TrustServerCertificate=True;");
             var sqlConnectionFactory = new SqlConnectionFactory(eventsConnectionString);
 
             var userRepository = new UserRepository(db);
