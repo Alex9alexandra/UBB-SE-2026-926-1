@@ -1,3 +1,4 @@
+using BCrypt.Net;
 using ChatModule.Repositories;
 using ChatModule.Services;
 using ChatModule.src.domain.Enums;
@@ -36,6 +37,9 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using Events_GSS.ViewModels;
+using Events_GSS.Views;
 
 namespace ChatModule
 {
@@ -237,6 +241,7 @@ namespace ChatModule
                 NotificationViewModel => new NotificationView(),
                 CreateEventViewModel vm => new CreateEventPage(),
                 EventDetailViewModel vm => new EventDetailPage(vm),
+                MyEventsViewModel vm => new MyEventsPage(vm),
 
                 _ => null
             };

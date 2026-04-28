@@ -1,11 +1,11 @@
-﻿using System;
+﻿namespace Events_GSS.Data.Services.eventServices;
+
+using System;
 using CommunityToolkit.Mvvm.Messaging;
 using Events_GSS.Data.Messaging;
 using Events_GSS.Data.Models;
 using Events_GSS.Data.Repositories.eventRepository;
 using Events_GSS.Data.Services.reputationService;
-
-namespace Events_GSS.Data.Services.eventServices;
 
 /// <summary>
 /// Provides event management services including CRUD operations and filtering.
@@ -142,4 +142,12 @@ public class EventService : IEventService
         var events = await this.eventRepository.GetAllPublicActiveAsync();
         return events.Where(@event => @event.Name.Contains(title, StringComparison.OrdinalIgnoreCase)).ToList();
     }
+
+    /// <summary>
+    /// Gets all events created by a specific user.
+    /// </summary>
+    /// <param name="adminId">The admin user identifier.</param>
+    /// <returns>A list of events administered by the user.</returns>
+    public async Task<List<Event>> GetMyEventsAsync(int adminId)
+        => await this.eventRepository.GetByAdminIdAsync(adminId);
 }

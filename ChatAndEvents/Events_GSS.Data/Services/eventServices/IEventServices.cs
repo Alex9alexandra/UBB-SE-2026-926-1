@@ -1,7 +1,7 @@
-﻿using System;
-using Events_GSS.Data.Models;
+﻿namespace Events_GSS.Data.Services.eventServices;
 
-namespace Events_GSS.Data.Services.eventServices;
+using System;
+using Events_GSS.Data.Models;
 
 /// <summary>
 /// Defines the contract for event-related operations.
@@ -41,6 +41,13 @@ public interface IEventService
     /// <param name="eventId">The event identifier.</param>
     /// <returns>A task representing the asynchronous operation.</returns>
     Task DeleteEventAsync(int eventId);
+
+    /// <summary>
+    /// Gets all events created by a specific user.
+    /// </summary>
+    /// <param name="adminId">The admin user identifier.</param>
+    /// <returns>A list of events administered by the user.</returns>
+    Task<List<Event>> GetMyEventsAsync(int adminId);
 
     /// <summary>
     /// Searches for events by title.
