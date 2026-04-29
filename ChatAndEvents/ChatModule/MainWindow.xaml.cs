@@ -170,7 +170,8 @@ namespace ChatModule
                 Events_GSS.App.Services.GetRequiredService<IUserService>(),
                 Events_GSS.App.Services.GetRequiredService<IEventService>(),
                 Events_GSS.App.Services.GetRequiredService<IQuestService>(),
-                Events_GSS.App.Services.GetRequiredService<IAttendedEventService>()); // <-- NEW
+                Events_GSS.App.Services.GetRequiredService<IAttendedEventService>(),
+                Events_GSS.App.Services.GetRequiredService<IAchievementService>()); // <-- NEW
 
             InitializeComponent();
 
@@ -233,7 +234,7 @@ namespace ChatModule
 
                 // The Merged Pages
                 EventListingViewModel vm => new EventListingPage(vm),
-                ReputationViewModel => new ReputationPage(),
+                ReputationViewModel vm => new ReputationPage(vm),
                 NotificationViewModel => new NotificationView(),
                 CreateEventViewModel vm => new CreateEventPage(),
                 EventDetailViewModel vm => new EventDetailPage(vm),

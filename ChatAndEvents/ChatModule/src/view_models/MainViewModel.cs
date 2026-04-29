@@ -4,6 +4,7 @@ using Events_GSS.Data.Models;
 using Events_GSS.Data.Repositories.eventRepository;
 using Events_GSS.Data.Repositories.notificationRepository;
 using Events_GSS.Data.Repositories.reputationRepository;
+using Events_GSS.Data.Services.achievementServices;
 using Events_GSS.Data.Services.eventServices;
 using Events_GSS.Data.Services.Interfaces; // For IEventService, IQuestService, IAttendedEventService
 using Events_GSS.Data.Services.notificationServices;
@@ -34,6 +35,7 @@ namespace ChatModule.ViewModels
         // Needed specifically for creating an event
         private readonly IEventService _eventService;
         private readonly IQuestService _questService;
+        private readonly IAchievementService _achievementService;
         private readonly IAttendedEventService _attendedEventService;
 
         private Guid _currentUserId;
@@ -87,7 +89,8 @@ namespace ChatModule.ViewModels
             IUserService userService,
             IEventService eventService,
             IQuestService questService,
-            IAttendedEventService attendedEventService)
+            IAttendedEventService attendedEventService,
+            IAchievementService achievementService)
             : this(
                 conversationListService,
                 friendRequestService,
@@ -101,7 +104,8 @@ namespace ChatModule.ViewModels
                 userService,
                 eventService,
                 questService,
-                attendedEventService)
+                attendedEventService,
+                achievementService)
         {
         }
 
@@ -120,7 +124,8 @@ namespace ChatModule.ViewModels
             IUserService userService,
             IEventService eventService,
             IQuestService questService,
-            IAttendedEventService attendedEventService)
+            IAttendedEventService attendedEventService,
+            IAchievementService achievementService)
         {
             _conversationListService = conversationListService ?? throw new ArgumentNullException(nameof(conversationListService));
             _friendRequestService = friendRequestService ?? throw new ArgumentNullException(nameof(friendRequestService));
@@ -137,6 +142,7 @@ namespace ChatModule.ViewModels
             _eventService = eventService ?? throw new ArgumentNullException(nameof(eventService));
             _questService = questService ?? throw new ArgumentNullException(nameof(questService));
             _attendedEventService = attendedEventService ?? throw new ArgumentNullException(nameof(attendedEventService));
+            _achievementService = achievementService ?? throw new ArgumentNullException(nameof(achievementService));
 
             // Initialize Original Commands
             GoToConversationsCommand = new RelayCommand(GoToConversationsAsync);
@@ -224,7 +230,7 @@ namespace ChatModule.ViewModels
 
         private async Task GoToReputationAsync()
         {
-            var vm = new ReputationViewModel(_userService, _reputationService);
+            var vm = new ReputationViewModel(_userService, _reputationService, _achievementService);
             await vm.LoadAsync();
             CurrentPage = vm;
         }

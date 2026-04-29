@@ -8,6 +8,7 @@
     <Page.Resources>
         <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
         <converters:BoolToInverseVisibilityConverter x:Key="BoolToInverseVisibilityConverter"/>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
         <converters:AchievementOpacityConverter x:Key="AchievementOpacityConverter"/>
         <converters:AchievementBadgeConverter x:Key="AchievementBadgeConverter"/>
         <converters:AchievementStatusConverter x:Key="AchievementStatusConverter"/>
@@ -18,7 +19,7 @@
         <TextBlock Grid.Row="0" Text="Reputation" Style="{StaticResource TitleTextBlockStyle}" />
 
         <Grid Grid.Row="1">
-            <ProgressRing IsActive="{Binding IsLoading}" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="{Binding IsLoading}" />
+            <ProgressRing IsActive="{Binding IsLoading}" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibilityConverter}}" />
 
             <TextBlock Text="{Binding ErrorMessage}" Foreground="Red" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="{Binding ErrorMessage, Converter={StaticResource NullToVisibilityConverter}}" />
 
@@ -50,7 +51,7 @@
                     </Border>
 
                     <TextBlock Text="Achievements" Style="{StaticResource SubtitleTextBlockStyle}" Margin="0,4,0,0"/>
-
+                
                     <ItemsRepeater ItemsSource="{Binding Achievements}">
                         <ItemsRepeater.Layout>
                             <StackLayout Spacing="8"/>
