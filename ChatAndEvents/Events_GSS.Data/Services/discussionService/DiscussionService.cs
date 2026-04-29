@@ -37,7 +37,7 @@ public class DiscussionService : IDiscussionService
     }
 
     // ── Messages ──────────────────────────────────────────────────────────────
-    public async Task<List<DiscussionMessage>> GetMessagesAsync(int eventId, int userId)
+    public async Task<List<DiscussionMessage>> GetMessagesAsync(int eventId, Guid userId)
     {
         var currentEvent = await GetEventOrThrowAsync(eventId);
 
@@ -56,7 +56,7 @@ public class DiscussionService : IDiscussionService
         string? text,
         string? mediaPath,
         int eventId,
-        int userId,
+        Guid userId,
         int? replyToId)
     {
         if (string.IsNullOrWhiteSpace(text) && string.IsNullOrWhiteSpace(mediaPath))
@@ -152,7 +152,7 @@ public class DiscussionService : IDiscussionService
         }
     }
 
-    public async Task DeleteMessageAsync(int messageId, int userId, int eventId)
+    public async Task DeleteMessageAsync(int messageId, Guid userId, int eventId)
     {
         var currentEvent = await GetEventOrThrowAsync(eventId);
         bool isAdmin = currentEvent.Admin?.UserId == userId;
@@ -180,7 +180,7 @@ public class DiscussionService : IDiscussionService
     }
 
     // ── Reactions ─────────────────────────────────────────────────────────────
-    public async Task ReactAsync(int messageId, int userId, string emoji)
+    public async Task ReactAsync(int messageId, Guid userId, string emoji)
     {
         var existing = await repo.GetReactionAsync(messageId, userId);
         if (existing is not null)
@@ -193,13 +193,13 @@ public class DiscussionService : IDiscussionService
         }
     }
 
-    public async Task RemoveReactionAsync(int messageId, int userId)
+    public async Task RemoveReactionAsync(int messageId, Guid userId)
     {
         await repo.RemoveReactionAsync(messageId, userId);
     }
 
     // ── Mutes ─────────────────────────────────────────────────────────────────
-    public async Task MuteUserAsync(int eventId, int targetUserId, DateTime? muteUntil, int adminUserId)
+    public async Task MuteUserAsync(int eventId, Guid targetUserId, DateTime? muteUntil, Guid adminUserId)
     {
         await EnsureAdminAsync(eventId, adminUserId);
 
@@ -218,14 +218,14 @@ public class DiscussionService : IDiscussionService
         await repo.InsertMuteAsync(mute);
     }
 
-    public async Task UnmuteUserAsync(int eventId, int targetUserId, int adminUserId)
+    public async Task UnmuteUserAsync(int eventId, Guid targetUserId, Guid adminUserId)
     {
         await EnsureAdminAsync(eventId, adminUserId);
         await repo.UnmuteAsync(eventId, targetUserId);
     }
 
     // ── Slow Mode ─────────────────────────────────────────────────────────────
-    public async Task SetSlowModeAsync(int eventId, int? seconds, int adminUserId)
+    public async Task SetSlowModeAsync(int eventId, int? seconds, Guid adminUserId)
     {
         await EnsureAdminAsync(eventId, adminUserId);
 
@@ -281,7 +281,7 @@ public class DiscussionService : IDiscussionService
         return currentEvent;
     }
 
-    private async Task EnsureAdminAsync(int eventId, int userId)
+    private async Task EnsureAdminAsync(int eventId, Guid userId)
     {
         var currentEvent = await GetEventOrThrowAsync(eventId);
         if (currentEvent.Admin?.UserId != userId)

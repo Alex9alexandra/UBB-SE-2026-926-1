@@ -30,12 +30,12 @@ public partial class AnnouncementViewModel : ObservableObject
 {
     private readonly IAnnouncementService _announcementService;
     private readonly Event _currentEvent;
-    private readonly int _currentUserId;
+    private readonly Guid _currentUserId;
 
     public AnnouncementViewModel(
         Event forEvent,
         IAnnouncementService announcementService,
-        int currentUserId,
+        Guid currentUserId,
         bool isAdmin)
     {
         this._currentEvent = forEvent;

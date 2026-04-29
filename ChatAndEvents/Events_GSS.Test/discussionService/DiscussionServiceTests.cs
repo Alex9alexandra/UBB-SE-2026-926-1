@@ -41,7 +41,7 @@ public class DiscussionServiceTests
             mockNotification.Object);
     }
 
-    private Event MakeEvent(int eventId, int? adminId = null, int? slowMode = null) =>
+    private Event MakeEvent(int eventId, Guid? adminId = null, int? slowMode = null) =>
        new Event
        {
            EventId = eventId,
@@ -54,19 +54,20 @@ public class DiscussionServiceTests
     {
         mockEventRepo.Setup(e => e.GetByIdAsync(99)).ReturnsAsync((Event?)null);
 
-        await Assert.ThrowsAsync<ArgumentException>(() => service.GetMessagesAsync(99, 1));
+        await Assert.ThrowsAsync<ArgumentException>(() => service.GetMessagesAsync(99, Guid.Parse("00000000-0000-0000-0000-000000000001")));
     }
 
     [Fact]
     public async Task GetMessagesAsync_AdminUser_CanDeleteAllMessages()
     {
-        int adminId = 5, eventId = 1;
+        Guid adminId = Guid.Parse("00000000-0000-0000-0000-000000000005");
+        int eventId = 1;
         var evt = MakeEvent(eventId, adminId);
         mockEventRepo.Setup(e => e.GetByIdAsync(eventId)).ReturnsAsync(evt);
 
         var messages = new List<DiscussionMessage>
         {
-            new DiscussionMessage(1, "hello", DateTime.UtcNow) { Author = new User { UserId = 6 } },
+            new DiscussionMessage(1, "hello", DateTime.UtcNow) { Author = new User { UserId = Guid.Parse("00000000-0000-0000-0000-000000000006") } },
         };
         mockRepo.Setup(r => r.GetByEventAsync(eventId, adminId)).ReturnsAsync(messages);
 
@@ -78,15 +79,16 @@ public class DiscussionServiceTests
     [Fact]
     public async Task GetMessagesAsync_RegularUser_CanOnlyDeleteOwnMessages()
     {
-        int userId = 3, eventId = 1;
-        int adminId = 2;
+        Guid userId = Guid.Parse("00000000-0000-0000-0000-000000000003");
+        int eventId = 1;
+        Guid adminId = Guid.Parse("00000000-0000-0000-0000-000000000002");
         var evt = MakeEvent(eventId, adminId);
         mockEventRepo.Setup(e => e.GetByIdAsync(eventId)).ReturnsAsync(evt);
 
         var messages = new List<DiscussionMessage>
         {
             new DiscussionMessage(1, "mine",     DateTime.UtcNow) { Author = new User { UserId = userId } },
-            new DiscussionMessage(2, "not mine", DateTime.UtcNow) { Author = new User { UserId = 77 } }
+            new DiscussionMessage(2, "not mine", DateTime.UtcNow) { Author = new User { UserId = Guid.Parse("00000000-0000-0000-0000-000000000077") } }
         };
         mockRepo.Setup(r => r.GetByEventAsync(eventId, userId)).ReturnsAsync(messages);
 
@@ -99,9 +101,9 @@ public class DiscussionServiceTests
     [Fact]
     public async Task GetMessagesAsync_RegularUser_CannotDeleteOthersMessages()
     {
-        int randomPersonId = 2;
-        int authorId = 3;
-        int adminId = 4;
+        Guid randomPersonId = Guid.Parse("00000000-0000-0000-0000-000000000002");
+        Guid authorId = Guid.Parse("00000000-0000-0000-0000-000000000003");
+        Guid adminId = Guid.Parse("00000000-0000-0000-0000-000000000004");
         int eventId = 1;
 
         var evt = MakeEvent(eventId, adminId);
@@ -124,8 +126,9 @@ public class DiscussionServiceTests
     [Fact]
     public async Task GetMessagesAsync_MessageWithNullAuthor_RegularUserCannotDelete()
     {
-        int userId = 3, eventId = 1;
-        var evt = MakeEvent(eventId, adminId: 99);
+        Guid userId = Guid.Parse("00000000-0000-0000-0000-000000000003");
+        int eventId = 1;
+        var evt = MakeEvent(eventId, adminId: Guid.Parse("00000000-0000-0000-0000-000000000099"));
         mockEventRepo.Setup(e => e.GetByIdAsync(eventId)).ReturnsAsync(evt);
 
 
@@ -143,13 +146,14 @@ public class DiscussionServiceTests
     [Fact]
     public async Task GetMessagesAsync_EventHasNoAdmin_RegularUserCannotDeleteOthersMessages()
     {
-        int userId = 3, eventId = 1;
+        Guid userId = Guid.Parse("00000000-0000-0000-0000-000000000003");
+        int eventId = 1;
         var evt = MakeEvent(eventId);
         mockEventRepo.Setup(e => e.GetByIdAsync(eventId)).ReturnsAsync(evt);
 
         var messages = new List<DiscussionMessage>
         {
-            new DiscussionMessage(1, "not mine", DateTime.UtcNow) { Author = new User { UserId = 99 } }
+            new DiscussionMessage(1, "not mine", DateTime.UtcNow) { Author = new User { UserId = Guid.Parse("00000000-0000-0000-0000-000000000099") } }
         };
         mockRepo.Setup(r => r.GetByEventAsync(eventId, userId)).ReturnsAsync(messages);
 
@@ -160,12 +164,12 @@ public class DiscussionServiceTests
 
     [Fact]
     public async Task CreateMessageAsync_EmptyTextAndMedia_ThrowsArgumentException() {
-        await Assert.ThrowsAsync<ArgumentException>(async () => await service.CreateMessageAsync("", "", 1, 1, null));
+        await Assert.ThrowsAsync<ArgumentException>(async () => await service.CreateMessageAsync("", "", 1, Guid.Parse("00000000-0000-0000-0000-000000000001"), null));
     }
 
     [Fact]
     public async Task CreateMessageAsync_LowReputation_ThrowsInvalidOperationException() {
-        int userId = 2;
+        Guid userId = Guid.Parse("00000000-0000-0000-0000-000000000002");
         mockReputation.Setup(r => r.CanPostMessagesAsync(userId)).ReturnsAsync(false);
 
         await Assert.ThrowsAsync<InvalidOperationException>(async () =>
@@ -175,7 +179,7 @@ public class DiscussionServiceTests
     [Fact]
     public async Task CreateMessageAsync_EventNotFound_ThrowsArgumentException()
     {
-        int userId = 1;
+        Guid userId = Guid.Parse("00000000-0000-0000-0000-000000000001");
         mockReputation.Setup(r => r.CanPostMessagesAsync(userId)).ReturnsAsync(true);
         mockEventRepo.Setup(e => e.GetByIdAsync(99)).ReturnsAsync((Event?)null);
 
@@ -186,7 +190,7 @@ public class DiscussionServiceTests
 
     [Fact]
     public async Task CreateMessageAsync_UserIsMutedPermanently_ThrowsInvalidOperationException() {
-        int userId = 1;
+        Guid userId = Guid.Parse("00000000-0000-0000-0000-000000000001");
         int eventId = 1;
         var evt = MakeEvent(eventId);
         mockReputation.Setup(r => r.CanPostMessagesAsync(userId)).ReturnsAsync(true);
@@ -201,7 +205,7 @@ public class DiscussionServiceTests
 
     [Fact]
     public async Task CreateMessageAsync_UserIsMutedTemporarily_ThrowsInvalidOperationException() {
-        int userId = 1;
+        Guid userId = Guid.Parse("00000000-0000-0000-0000-000000000001");
         int eventId = 1;
         var evt = MakeEvent(eventId);
         mockReputation.Setup(r => r.CanPostMessagesAsync(userId)).ReturnsAsync(true);
@@ -217,7 +221,8 @@ public class DiscussionServiceTests
     [Fact]
     public async Task CreateMessageAsync_SetsMediaPathOnPersistedMessage()
     {
-        int userId = 1, eventId = 10;
+        Guid userId = Guid.Parse("00000000-0000-0000-0000-000000000001");
+        int eventId = 10;
         mockReputation.Setup(r => r.CanPostMessagesAsync(userId)).ReturnsAsync(true);
         var evt = MakeEvent(eventId);
         mockEventRepo.Setup(e => e.GetByIdAsync(eventId)).ReturnsAsync(evt);
@@ -237,7 +242,8 @@ public class DiscussionServiceTests
     [Fact]
     public async Task CreateMessageAsync_MessageContainsTrailingWhitespaces_TrimsWhitespacesFromText()
     {
-        int userId = 1, eventId = 10;
+        Guid userId = Guid.Parse("00000000-0000-0000-0000-000000000001");
+        int eventId = 10;
         mockReputation.Setup(r => r.CanPostMessagesAsync(userId)).ReturnsAsync(true);
         var evt = MakeEvent(eventId);
         mockEventRepo.Setup(e => e.GetByIdAsync(eventId)).ReturnsAsync(evt);
@@ -257,7 +263,8 @@ public class DiscussionServiceTests
     [Fact]
     public async Task CreateMessageAsync_MuteHasNoMutedUntilAndIsNotPermanent_MessageIsSent()
     {
-        int userId = 1, eventId = 10;
+        Guid userId = Guid.Parse("00000000-0000-0000-0000-000000000001");
+        int eventId = 10;
         mockReputation.Setup(r => r.CanPostMessagesAsync(userId)).ReturnsAsync(true);
         var evt = MakeEvent(eventId);
         mockEventRepo.Setup(e => e.GetByIdAsync(eventId)).ReturnsAsync(evt);
@@ -273,7 +280,8 @@ public class DiscussionServiceTests
     [Fact]
     public async Task CreateMessageAsync_ExpiredMute_AutoUnmutesAndSucceeds()
     {
-        int userId = 1, eventId = 10;
+        Guid userId = Guid.Parse("00000000-0000-0000-0000-000000000001");
+        int eventId = 10;
         mockReputation.Setup(r => r.CanPostMessagesAsync(userId)).ReturnsAsync(true);
         var evt = MakeEvent(eventId);
         mockEventRepo.Setup(e => e.GetByIdAsync(eventId)).ReturnsAsync(evt);
@@ -299,7 +307,7 @@ public class DiscussionServiceTests
 
     [Fact]
     public async Task CreateMessageAsync_RegularUserSendsMessageDuringSlowmode_ThrowsException() {
-        int userId = 1;
+        Guid userId = Guid.Parse("00000000-0000-0000-0000-000000000001");
         int eventId = 10;
         mockReputation.Setup(r => r.CanPostMessagesAsync(userId)).ReturnsAsync(true);
         var evt = MakeEvent(eventId,null,60);
@@ -312,7 +320,8 @@ public class DiscussionServiceTests
     [Fact]
     public async Task CreateMessageAsync_UserSendsMessageAfterSlowModeExpired_MessageIsSent()
     {
-        int userId = 1, eventId = 10;
+        Guid userId = Guid.Parse("00000000-0000-0000-0000-000000000001");
+        int eventId = 10;
         mockReputation.Setup(r => r.CanPostMessagesAsync(userId)).ReturnsAsync(true);
 
         var evt = MakeEvent(eventId, null, 30);
@@ -335,7 +344,8 @@ public class DiscussionServiceTests
     [Fact]
     public async Task CreateMessageAsync_UserSendsMessageDuringSlowModeNoLastMessage_Succeeds()
     {
-        int userId = 1, eventId = 10;
+        Guid userId = Guid.Parse("00000000-0000-0000-0000-000000000001");
+        int eventId = 10;
         mockReputation.Setup(r => r.CanPostMessagesAsync(userId)).ReturnsAsync(true);
 
         var evt = MakeEvent(eventId, null, 60);
@@ -358,7 +368,8 @@ public class DiscussionServiceTests
     [Fact]
     public async Task CreateMessageAsync_AdminSendsMessageDuringSlowmode_AdminBypassesSlowmode()
     {
-        int adminId = 2, eventId = 10;
+        Guid adminId = Guid.Parse("00000000-0000-0000-0000-000000000002");
+        int eventId = 10;
         mockReputation.Setup(r => r.CanPostMessagesAsync(adminId)).ReturnsAsync(true);
 
         var evt = MakeEvent(eventId, adminId, 60);
@@ -376,7 +387,8 @@ public class DiscussionServiceTests
     [Fact]
     public async Task CreateMessageAsync_UserRepliesToMessage_SetsReplyOnMessage()
     {
-        int userId = 1, eventId = 10, replyToId = 55;
+        Guid userId = Guid.Parse("00000000-0000-0000-0000-000000000001");
+        int eventId = 10, replyToId = 55;
         mockReputation.Setup(r => r.CanPostMessagesAsync(userId)).ReturnsAsync(true);
 
         var evt = MakeEvent(eventId);
@@ -403,7 +415,9 @@ public class DiscussionServiceTests
     [Fact]
     public async Task CreateMessageAsync_MessageMentionsUser_SendsNotification()
     {
-        int userId = 1, eventId = 10, mentionedId = 42;
+        Guid userId = Guid.Parse("00000000-0000-0000-0000-000000000001");
+        int eventId = 10;
+        Guid mentionedId = Guid.Parse("00000000-0000-0000-0000-000000000042");
         mockReputation.Setup(r => r.CanPostMessagesAsync(userId)).ReturnsAsync(true);
 
         var evt = MakeEvent(eventId);
@@ -437,15 +451,15 @@ public class DiscussionServiceTests
         mockEventRepo.Setup(e => e.GetByIdAsync(99)).ReturnsAsync((Event?)null);
 
         await Assert.ThrowsAsync<ArgumentException>(() =>
-            service.DeleteMessageAsync(1, 1, 99));
+            service.DeleteMessageAsync(1, Guid.Parse("00000000-0000-0000-0000-000000000001"), 99));
     }
 
     [Fact]
     public async Task DeleteMessageAsync_AdminDeletesOthersMessage_MessageIsDeleted() {
-        int authorId = 1;
+        Guid authorId = Guid.Parse("00000000-0000-0000-0000-000000000001");
         int eventId = 10;
         int messageId = 2;
-        int adminId = 3;
+        Guid adminId = Guid.Parse("00000000-0000-0000-0000-000000000003");
         var evt = MakeEvent(eventId, adminId);
         var mockMessage = new DiscussionMessage(messageId, "i am so oo done", DateTime.UtcNow) { Author = new User { UserId = authorId } };
         mockEventRepo.Setup(e => e.GetByIdAsync(eventId)).ReturnsAsync(evt);
@@ -459,7 +473,7 @@ public class DiscussionServiceTests
     [Fact]
     public async Task DeleteMessageAsync_AdminDeletesNonexistentMessage_ThrowsException()
     {
-        int adminId = 99;
+        Guid adminId = Guid.Parse("00000000-0000-0000-0000-000000000099");
         int eventId = 10;
         int messageId = 1011;
         var evt = MakeEvent(eventId, adminId);
@@ -472,10 +486,10 @@ public class DiscussionServiceTests
 
     [Fact]
     public async Task DeleteMessageAsync_NonAdminDeletesOthersMessage_ThrowsException() {
-        int userId = 1;
+        Guid userId = Guid.Parse("00000000-0000-0000-0000-000000000001");
         int eventId = 10;
         int messageId = 101;
-        int otherId = 2;
+        Guid otherId = Guid.Parse("00000000-0000-0000-0000-000000000002");
         var evt = MakeEvent(eventId);
         var mockMessage = new DiscussionMessage(messageId, "sexyy_red_for_president", DateTime.UtcNow) { Author = new User { UserId = otherId } };
         mockEventRepo.Setup(e => e.GetByIdAsync(eventId)).ReturnsAsync(evt);
@@ -489,7 +503,8 @@ public class DiscussionServiceTests
     [Fact]
     public async Task DeleteMessageAsync_AuthorDeletesOwnMessage_Succeeds()
     {
-        int userId = 1, eventId = 10, messageId = 50;
+        Guid userId = Guid.Parse("00000000-0000-0000-0000-000000000001");
+        int eventId = 10, messageId = 50;
         var evt = MakeEvent(eventId);
         mockEventRepo.Setup(e => e.GetByIdAsync(eventId)).ReturnsAsync(evt);
         var msg = new DiscussionMessage(messageId, "my msg", DateTime.UtcNow)
@@ -504,7 +519,8 @@ public class DiscussionServiceTests
     [Fact]
     public async Task DeleteMessageAsync_AdminDeletesOwnMessage_NoReputationPenalty()
     {
-        int adminId = 99, eventId = 10, messageId = 50;
+        Guid adminId = Guid.Parse("00000000-0000-0000-0000-000000000099");
+        int eventId = 10, messageId = 50;
         var evt = MakeEvent(eventId);
         mockEventRepo.Setup(e => e.GetByIdAsync(eventId)).ReturnsAsync(evt);
         var msg = new DiscussionMessage(messageId, "admin's own", DateTime.UtcNow)
@@ -519,7 +535,8 @@ public class DiscussionServiceTests
     [Fact]
     public async Task DeleteMessageAsync_UserDeletesMessageWithNullAuthor_ThrowsUnauthorized()
     {
-        int userId = 1, eventId = 10, messageId = 77;
+        Guid userId = Guid.Parse("00000000-0000-0000-0000-000000000001");
+        int eventId = 10, messageId = 77;
         var evt = MakeEvent(eventId);
         mockEventRepo.Setup(e => e.GetByIdAsync(eventId)).ReturnsAsync(evt);
         var msg = new DiscussionMessage(messageId, "ghost msg", DateTime.UtcNow) { Author = null };
@@ -532,7 +549,8 @@ public class DiscussionServiceTests
     [Fact]
     public async Task DeleteMessageAsync_AdminDeletesMessageWithNullAuthor_DeletesWithoutReputationPenalty()
     {
-        int adminId = 99, eventId = 10, messageId = 42;
+        Guid adminId = Guid.Parse("00000000-0000-0000-0000-000000000099");
+        int eventId = 10, messageId = 42;
         var evt = MakeEvent(eventId, adminId);
         mockEventRepo.Setup(e => e.GetByIdAsync(eventId)).ReturnsAsync(evt);
 
@@ -547,8 +565,8 @@ public class DiscussionServiceTests
     [Fact]
     public async Task DeleteMessageAsync_AdminDeletesOthersMessage_SendsReputationMessage()
     {
-        int adminId = 99;
-        int authorId = 1;
+        Guid adminId = Guid.Parse("00000000-0000-0000-0000-000000000099");
+        Guid authorId = Guid.Parse("00000000-0000-0000-0000-000000000001");
         int eventId = 10;
         int messageId = 50;
 
@@ -571,11 +589,11 @@ public class DiscussionServiceTests
     [Fact]
     public async Task RemoveReactionAsync_RemoveReactionFromAMessage_ReactionIsRemoved()
     {
-        mockRepo.Setup(r => r.RemoveReactionAsync(1, 2)).Returns(Task.CompletedTask);
+        mockRepo.Setup(r => r.RemoveReactionAsync(1, Guid.Parse("00000000-0000-0000-0000-000000000002"))).Returns(Task.CompletedTask);
 
-        await service.RemoveReactionAsync(1, 2);
+        await service.RemoveReactionAsync(1, Guid.Parse("00000000-0000-0000-0000-000000000002"));
 
-        mockRepo.Verify(r => r.RemoveReactionAsync(1, 2), Times.Once);
+        mockRepo.Verify(r => r.RemoveReactionAsync(1, Guid.Parse("00000000-0000-0000-0000-000000000002")), Times.Once);
     }
 
     [Fact]
@@ -592,7 +610,8 @@ public class DiscussionServiceTests
     [Fact]
     public async Task MuteUserAsync_AdminMutesUserPermanently_MuteIsAppliedForGood()
     {
-        int adminId = 99, eventId = 10, targetId = 5;
+        Guid adminId = Guid.Parse("00000000-0000-0000-0000-000000000099");
+        int eventId = 10, targetId = 5;
         var evt = MakeEvent(eventId, adminId);
         mockEventRepo.Setup(e => e.GetByIdAsync(eventId)).ReturnsAsync(evt);
 
@@ -609,7 +628,8 @@ public class DiscussionServiceTests
     [Fact]
     public async Task MuteUserAsync_AdminMutesUserTemporarily_MuteIsAppliedForAWhile()
     {
-        int adminId = 99, eventId = 10, targetId = 5;
+        Guid adminId = Guid.Parse("00000000-0000-0000-0000-000000000099");
+        int eventId = 10, targetId = 5;
         var until = DateTime.UtcNow.AddHours(2);
         var evt = MakeEvent(eventId, adminId);
         mockEventRepo.Setup(e => e.GetByIdAsync(eventId)).ReturnsAsync(evt);
@@ -627,18 +647,21 @@ public class DiscussionServiceTests
     [Fact]
     public async Task UnmuteUserAsync_NonAdminAttemptsUnmute_ThrowsUnauthorizedException()
     {
-        int userId = 1, eventId = 10;
+        Guid userId = Guid.Parse("00000000-0000-0000-0000-000000000001");
+        int eventId = 10;
         var evt = MakeEvent(eventId);
         mockEventRepo.Setup(e => e.GetByIdAsync(eventId)).ReturnsAsync(evt);
 
         await Assert.ThrowsAsync<UnauthorizedAccessException>(() =>
-            service.UnmuteUserAsync(eventId, 2, userId));
+            service.UnmuteUserAsync(eventId, Guid.Parse("00000000-0000-0000-0000-000000000002"), userId));
     }
 
     [Fact]
     public async Task UnmuteUserAsync_AdminUnmutesUser_UserIsUnmuted()
     {
-        int adminId = 99, eventId = 10, targetId = 5;
+        Guid adminId = Guid.Parse("00000000-0000-0000-0000-000000000099");
+        int eventId = 10;
+        Guid targetId = Guid.Parse("00000000-0000-0000-0000-000000000005");
         var evt = MakeEvent(eventId, adminId);
         mockEventRepo.Setup(e => e.GetByIdAsync(eventId)).ReturnsAsync(evt);
         mockRepo.Setup(r => r.UnmuteAsync(eventId, targetId)).Returns(Task.CompletedTask);
@@ -652,7 +675,7 @@ public class DiscussionServiceTests
     public async Task GetEventParticipantsAsync_ReturnsList()
     {
         int eventId = 10;
-        var participants = new List<User> { new User { UserId = 1, Name = "davidpopescu" } };
+        var participants = new List<User> { new User { UserId = Guid.Parse("00000000-0000-0000-0000-000000000001"), Name = "davidpopescu" } };
         mockRepo.Setup(r => r.GetEventParticipantsAsync(eventId)).ReturnsAsync(participants);
 
         var result = await service.GetEventParticipantsAsync(eventId);
@@ -663,17 +686,17 @@ public class DiscussionServiceTests
     [Fact]
     public void FindMentionedUsers_FullNameMatch_ReturnsUser()
     {
-        var users = new List<User> { new User { UserId = 1, Name = "david popescu" } };
+        var users = new List<User> { new User { UserId = Guid.Parse("00000000-0000-0000-0000-000000000001"), Name = "david popescu" } };
 
         var result = DiscussionService.FindMentionedUsers("Hey @david popescu!", users);
 
-        Assert.Equal(1, result[0].UserId);
+        Assert.Equal(Guid.Parse("00000000-0000-0000-0000-000000000001"), result[0].UserId);
     }
 
     [Fact]
     public void FindMentionedUsers_FirstNameMatch_ReturnsUser()
     {
-        var users = new List<User> { new User { UserId = 1, Name = "david popescu" } };
+        var users = new List<User> { new User { UserId = Guid.Parse("00000000-0000-0000-0000-000000000001"), Name = "david popescu" } };
 
         var result = DiscussionService.FindMentionedUsers("Hey @david check this", users);
 
@@ -683,7 +706,7 @@ public class DiscussionServiceTests
     [Fact]
     public void FindMentionedUsers_NoMatchFound_ReturnsEmpty()
     {
-        var users = new List<User> { new User { UserId = 1, Name = "david" } };
+        var users = new List<User> { new User { UserId = Guid.Parse("00000000-0000-0000-0000-000000000001"), Name = "david" } };
 
         var result = DiscussionService.FindMentionedUsers("Hello @nobody", users);
 
@@ -693,7 +716,7 @@ public class DiscussionServiceTests
     [Fact]
     public void FindMentionedUsers_MentionIsNotExactMatch_FindsUserRegardless()
     {
-        var users = new List<User> { new User { UserId = 1, Name = "david" } };
+        var users = new List<User> { new User { UserId = Guid.Parse("00000000-0000-0000-0000-000000000001"), Name = "david" } };
 
         var result = DiscussionService.FindMentionedUsers("hi @DAVID", users);
 
@@ -705,8 +728,8 @@ public class DiscussionServiceTests
     {
         var users = new List<User>
         {
-            new User { UserId = 1, Name = "anisia" },
-            new User { UserId = 2, Name = "david" }
+            new User { UserId = Guid.Parse("00000000-0000-0000-0000-000000000001"), Name = "anisia" },
+            new User { UserId = Guid.Parse("00000000-0000-0000-0000-000000000002"), Name = "david" }
         };
 
         var result = DiscussionService.FindMentionedUsers("@anisia and @david!", users);
@@ -718,8 +741,8 @@ public class DiscussionServiceTests
     public async Task SetSlowModeAsync_NonAdmin_ThrowsUnauthorizedAccessException()
     {
         int eventId = 10;
-        int adminId = 99;
-        int maliciousUserId = 666;
+        Guid adminId = Guid.Parse("00000000-0000-0000-0000-000000000099");
+        Guid maliciousUserId = Guid.Parse("00000000-0000-0000-0000-000000000666");
 
         var evt = MakeEvent(eventId, adminId);
         mockEventRepo.Setup(e => e.GetByIdAsync(eventId)).ReturnsAsync(evt);
@@ -731,7 +754,8 @@ public class DiscussionServiceTests
     [Fact]
     public async Task SetSlowModeAsync_NegativeSeconds_ThrowsArgumentException()
     {
-        int adminId = 99, eventId = 10;
+        Guid adminId = Guid.Parse("00000000-0000-0000-0000-000000000099");
+        int eventId = 10;
         var evt = MakeEvent(eventId, adminId);
         mockEventRepo.Setup(e => e.GetByIdAsync(eventId)).ReturnsAsync(evt);
 
@@ -742,7 +766,8 @@ public class DiscussionServiceTests
     [Fact]
     public async Task SetSlowModeAsync_SlowmodeHasValidDuration_SlowmodeIsApplied()
     {
-        int adminId = 99, eventId = 10;
+        Guid adminId = Guid.Parse("00000000-0000-0000-0000-000000000099");
+        int eventId = 10;
         var evt = MakeEvent(eventId, adminId);
         mockEventRepo.Setup(e => e.GetByIdAsync(eventId)).ReturnsAsync(evt);
         mockRepo.Setup(r => r.SetSlowModeAsync(eventId, 30)).Returns(Task.CompletedTask);
@@ -755,7 +780,8 @@ public class DiscussionServiceTests
     [Fact]
     public async Task SetSlowModeAsync_SlowmodeHasNullSeconds_DisablesSlowmode()
     {
-        int adminId = 99, eventId = 10;
+        Guid adminId = Guid.Parse("00000000-0000-0000-0000-000000000099");
+        int eventId = 10;
         var evt = MakeEvent(eventId, adminId);
         mockEventRepo.Setup(e => e.GetByIdAsync(eventId)).ReturnsAsync(evt);
         mockRepo.Setup(r => r.SetSlowModeAsync(eventId, null)).Returns(Task.CompletedTask);
@@ -790,7 +816,8 @@ public class DiscussionServiceTests
     [Fact]
     public async Task CreateMessageAsync_MutedLessThanOneHour_ErrorDoesNotShowHoursOnlyMinutesAndSeconds()
     {
-        int userId = 1, eventId = 10;
+        Guid userId = Guid.Parse("00000000-0000-0000-0000-000000000001");
+        int eventId = 10;
         mockReputation.Setup(r => r.CanPostMessagesAsync(userId)).ReturnsAsync(true);
 
         var evt = MakeEvent(eventId);
@@ -811,9 +838,9 @@ public class DiscussionServiceTests
     [Fact]
 public async Task CreateMessageAsync_MentionerNotInParticipants_UsesSomeoneFallback()
 {
-    int userId = 1;
+    Guid userId = Guid.Parse("00000000-0000-0000-0000-000000000001");
     int eventId = 10;
-    int mentionedId = 2;
+    Guid mentionedId = Guid.Parse("00000000-0000-0000-0000-000000000002");
     mockReputation.Setup(r => r.CanPostMessagesAsync(userId)).ReturnsAsync(true);
     var evt = MakeEvent(eventId);
     mockEventRepo.Setup(e => e.GetByIdAsync(eventId)).ReturnsAsync(evt);
@@ -839,7 +866,8 @@ public async Task CreateMessageAsync_MentionerNotInParticipants_UsesSomeoneFallb
     [Fact]
     public async Task CreateMessageAsync_MutedMoreThanOneHour_ErrorShowsHoursAndMinutes()
     {
-        int userId = 1, eventId = 10;
+        Guid userId = Guid.Parse("00000000-0000-0000-0000-000000000001");
+        int eventId = 10;
         mockReputation.Setup(r => r.CanPostMessagesAsync(userId)).ReturnsAsync(true);
         var evt = MakeEvent(eventId);
         mockEventRepo.Setup(e => e.GetByIdAsync(eventId)).ReturnsAsync(evt);
@@ -859,7 +887,8 @@ public async Task CreateMessageAsync_MentionerNotInParticipants_UsesSomeoneFallb
     [Fact]
     public async Task ReactAsync_UserReactsToMessageWithUniqueReaction_ReactionIsAddedToMessage()
     {
-        int messageId = 1, userId = 2;
+        Guid userId = Guid.Parse("00000000-0000-0000-0000-000000000002");
+        int messageId = 1;
         string emoji = "👍";
 
         mockRepo.Setup(r => r.GetReactionAsync(messageId, userId))
@@ -870,13 +899,14 @@ public async Task CreateMessageAsync_MentionerNotInParticipants_UsesSomeoneFallb
         await service.ReactAsync(messageId, userId, emoji);
 
         mockRepo.Verify(r => r.AddReactionAsync(messageId, userId, emoji), Times.Once);
-        mockRepo.Verify(r => r.UpdateReactionAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>()), Times.Never);
+        mockRepo.Verify(r => r.UpdateReactionAsync(It.IsAny<int>(), It.IsAny<Guid>(), It.IsAny<string>()), Times.Never);
     }
 
     [Fact]
     public async Task ReactAsync_UserReactsToMessageWithExistingReaction_ReactionIsUpdated()
     {
-        int messageId = 1, userId = 2;
+        int messageId = 1;
+        Guid userId = Guid.Parse("00000000-0000-0000-0000-000000000002");
         string emoji = "👍";
 
         mockRepo.Setup(r => r.GetReactionAsync(messageId, userId))
@@ -912,7 +942,7 @@ public async Task CreateMessageAsync_MentionerNotInParticipants_UsesSomeoneFallb
         mockEventRepo.Setup(e => e.GetByIdAsync(99)).ReturnsAsync((Event?)null);
 
         await Assert.ThrowsAsync<ArgumentException>(() =>
-            service.UnmuteUserAsync(99, 5, 1));
+            service.UnmuteUserAsync(99, Guid.Parse("00000000-0000-0000-0000-000000000005"), Guid.Parse("00000000-0000-0000-0000-000000000001")));
     }
 
     [Fact]
@@ -921,7 +951,7 @@ public async Task CreateMessageAsync_MentionerNotInParticipants_UsesSomeoneFallb
         mockEventRepo.Setup(e => e.GetByIdAsync(99)).ReturnsAsync((Event?)null);
 
         await Assert.ThrowsAsync<ArgumentException>(() =>
-            service.SetSlowModeAsync(99, 30, 1));
+            service.SetSlowModeAsync(99, 30, Guid.Parse("00000000-0000-0000-0000-000000000001")));
     }
 
 
@@ -946,7 +976,7 @@ public async Task CreateMessageAsync_MentionerNotInParticipants_UsesSomeoneFallb
 
 
         await Assert.ThrowsAsync<UnauthorizedAccessException>(() =>
-            service.UnmuteUserAsync(eventId, 5, 1));
+            service.UnmuteUserAsync(eventId, Guid.Parse("00000000-0000-0000-0000-000000000005"), Guid.Parse("00000000-0000-0000-0000-000000000001")));
     }
 
     [Fact]
@@ -958,7 +988,7 @@ public async Task CreateMessageAsync_MentionerNotInParticipants_UsesSomeoneFallb
 
 
         await Assert.ThrowsAsync<UnauthorizedAccessException>(() =>
-            service.SetSlowModeAsync(eventId, 30, 1));
+            service.SetSlowModeAsync(eventId, 30, Guid.Parse("00000000-0000-0000-0000-000000000001")));
     }
     
 

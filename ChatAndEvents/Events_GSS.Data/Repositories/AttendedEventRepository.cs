@@ -40,7 +40,7 @@ namespace Events_GSS.Data.Repositories
 
             var admin = new User
             {
-                UserId = (int)reader["AdminId"],
+                UserId = (Guid)reader["AdminId"],
                 Name = (string)reader["AdminName"],
                 ReputationPoints = reader["AdminRP"] == DBNull.Value ? 0 : (int)reader["AdminRP"],
             };
@@ -63,7 +63,7 @@ namespace Events_GSS.Data.Repositories
 
             var user = new User
             {
-                UserId = (int)reader["UserId"],
+                UserId = (Guid)reader["UserId"],
                 Name = (string)reader["UserName"],
                 ReputationPoints = reader["ReputationPoints"] == DBNull.Value ? 0 : (int)reader["ReputationPoints"],
             };
@@ -129,7 +129,7 @@ namespace Events_GSS.Data.Repositories
         /// <param name="eventId">The event ID.</param>
         /// <param name="userId">The user ID.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
-        public async Task DeleteAsync(int eventId, int userId)
+        public async Task DeleteAsync(int eventId, Guid userId)
         {
             const string query = @"
                 DELETE FROM AttendedEvents
@@ -152,7 +152,7 @@ namespace Events_GSS.Data.Repositories
         /// <param name="userId">The user ID.</param>
         /// <param name="isArchived">The new archived status.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
-        public async Task UpdateIsArchivedAsync(int eventId, int userId, bool isArchived)
+        public async Task UpdateIsArchivedAsync(int eventId, Guid userId, bool isArchived)
         {
             const string query = @"
                 UPDATE AttendedEvents
@@ -177,7 +177,7 @@ namespace Events_GSS.Data.Repositories
         /// <param name="userId">The user ID.</param>
         /// <param name="isFavourite">The new favorite status.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
-        public async Task UpdateIsFavouriteAsync(int eventId, int userId, bool isFavourite)
+        public async Task UpdateIsFavouriteAsync(int eventId, Guid userId, bool isFavourite)
         {
             const string query = @"
                 UPDATE AttendedEvents
@@ -201,7 +201,7 @@ namespace Events_GSS.Data.Repositories
         /// <param name="eventId">The event ID.</param>
         /// <param name="userId">The user ID.</param>
         /// <returns>The attended event if found; otherwise, null.</returns>
-        public async Task<AttendedEvent?> GetAsync(int eventId, int userId)
+        public async Task<AttendedEvent?> GetAsync(int eventId, Guid userId)
         {
             string query = SelectBase + @"
                 WHERE ae.EventId = @EventId AND ae.UserId = @UserId";
@@ -228,7 +228,7 @@ namespace Events_GSS.Data.Repositories
         /// </summary>
         /// <param name="userId">The user ID.</param>
         /// <returns>A list of attended events for the user.</returns>
-        public async Task<List<AttendedEvent>> GetByUserIdAsync(int userId)
+        public async Task<List<AttendedEvent>> GetByUserIdAsync(Guid userId)
         {
             string query = SelectBase + @"
                 WHERE ae.UserId = @UserId";
@@ -257,7 +257,7 @@ namespace Events_GSS.Data.Repositories
         /// <param name="userId">The current user's ID.</param>
         /// <param name="friendId">The friend's user ID.</param>
         /// <returns>A list of attended events that both users have in common.</returns>
-        public async Task<List<AttendedEvent>> GetCommonEventsAsync(int userId, int friendId)
+        public async Task<List<AttendedEvent>> GetCommonEventsAsync(Guid userId, Guid friendId)
         {
             // We join AttendedEvents twice — once for the current user, once for the friend —
             // and return the current user's AttendedEvent rows for the matching events.

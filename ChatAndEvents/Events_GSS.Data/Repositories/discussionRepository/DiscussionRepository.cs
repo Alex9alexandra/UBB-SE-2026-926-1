@@ -20,7 +20,7 @@ public class DiscussionRepository : IDiscussionRepository
     }
 
     // ── Messages ──────────────────────────────────────────────────────────────
-    public async Task<List<DiscussionMessage>> GetByEventAsync(int eventId, int currentUserId)
+    public async Task<List<DiscussionMessage>> GetByEventAsync(int eventId, Guid currentUserId)
     {
         var messages = new List<DiscussionMessage>();
 
@@ -64,7 +64,7 @@ public class DiscussionRepository : IDiscussionRepository
                     IsEdited = reader.GetBoolean(reader.GetOrdinal("IsEdited")),
                     Author = new User
                     {
-                        UserId = reader.GetInt32(reader.GetOrdinal("AuthorId")),
+                        UserId = reader.GetGuid(reader.GetOrdinal("AuthorId")),
                         Name = reader.GetString(reader.GetOrdinal("AuthorName"))
                     }
                 };
@@ -80,7 +80,7 @@ public class DiscussionRepository : IDiscussionRepository
                     {
                         Author = new User
                         {
-                            UserId = reader.GetInt32(reader.GetOrdinal("ReplyAuthorId")),
+                            UserId = reader.GetGuid(reader.GetOrdinal("ReplyAuthorId")),
                             Name = reader.GetString(reader.GetOrdinal("ReplyAuthorName"))
                         }
                     };
@@ -123,7 +123,7 @@ public class DiscussionRepository : IDiscussionRepository
                     Message = new DiscussionMessage(messageId, null, DateTime.MinValue),
                     Author = new User
                     {
-                        UserId = reader.GetInt32(reader.GetOrdinal("UserId")),
+                        UserId = reader.GetGuid(reader.GetOrdinal("UserId")),
                         Name = reader.GetString(reader.GetOrdinal("UserName"))
                     }
                 };
@@ -176,7 +176,7 @@ public class DiscussionRepository : IDiscussionRepository
         {
             Author = new User
             {
-                UserId = reader.GetInt32(reader.GetOrdinal("UserId")),
+                UserId = reader.GetGuid(reader.GetOrdinal("UserId")),
                 Name = reader.GetString(reader.GetOrdinal("AuthorName"))
             }
         };
@@ -219,7 +219,7 @@ public class DiscussionRepository : IDiscussionRepository
         await cmd.ExecuteNonQueryAsync();
     }
 
-    public async Task<DateTime?> GetLastUserMessageDateAsync(int eventId, int userId)
+    public async Task<DateTime?> GetLastUserMessageDateAsync(int eventId, Guid userId)
     {
         using var conn = connectionFactory.CreateConnection();
         await conn.OpenAsync();
@@ -252,7 +252,7 @@ public class DiscussionRepository : IDiscussionRepository
     }
 
     // ── Reactions ─────────────────────────────────────────────────────────────
-    public async Task AddReactionAsync(int messageId, int userId, string emoji)
+    public async Task AddReactionAsync(int messageId, Guid userId, string emoji)
     {
         using var conn = connectionFactory.CreateConnection();
         await conn.OpenAsync();
@@ -268,7 +268,7 @@ public class DiscussionRepository : IDiscussionRepository
         await cmd.ExecuteNonQueryAsync();
     }
 
-    public async Task RemoveReactionAsync(int messageId, int userId)
+    public async Task RemoveReactionAsync(int messageId, Guid userId)
     {
         using var conn = connectionFactory.CreateConnection();
         await conn.OpenAsync();
@@ -283,7 +283,7 @@ public class DiscussionRepository : IDiscussionRepository
         await cmd.ExecuteNonQueryAsync();
     }
 
-    public async Task<DiscussionReaction?> GetReactionAsync(int messageId, int userId)
+    public async Task<DiscussionReaction?> GetReactionAsync(int messageId, Guid userId)
     {
         using var conn = connectionFactory.CreateConnection();
         await conn.OpenAsync();
@@ -338,7 +338,7 @@ public class DiscussionRepository : IDiscussionRepository
                 Message = new DiscussionMessage(messageId, null, DateTime.MinValue),
                 Author = new User
                 {
-                    UserId = reader.GetInt32(reader.GetOrdinal("UserId")),
+                    UserId = reader.GetGuid(reader.GetOrdinal("UserId")),
                     Name = reader.GetString(reader.GetOrdinal("UserName"))
                 }
             });
@@ -346,7 +346,7 @@ public class DiscussionRepository : IDiscussionRepository
 
         return reactions;
     }
-    public async Task UpdateReactionAsync(int messageId, int userId, string emoji)
+    public async Task UpdateReactionAsync(int messageId, Guid userId, string emoji)
     {
         using var conn = connectionFactory.CreateConnection();
         await conn.OpenAsync();
@@ -364,7 +364,7 @@ public class DiscussionRepository : IDiscussionRepository
     }
 
     // ── Mutes ─────────────────────────────────────────────────────────────────
-    public async Task<DiscussionMute?> GetMuteAsync(int eventId, int userId)
+    public async Task<DiscussionMute?> GetMuteAsync(int eventId, Guid userId)
     {
         using var conn = connectionFactory.CreateConnection();
         await conn.OpenAsync();
@@ -393,7 +393,7 @@ public class DiscussionRepository : IDiscussionRepository
             MutedUser = new User { UserId = userId },
             MutedBy = new User
             {
-                UserId = reader.GetInt32(reader.GetOrdinal("MutedByUserId")),
+                UserId = reader.GetGuid(reader.GetOrdinal("MutedByUserId")),
                 Name = reader.GetString(reader.GetOrdinal("MutedByName"))
             },
             MutedUntil = reader.IsDBNull(reader.GetOrdinal("MutedUntil"))
@@ -404,7 +404,7 @@ public class DiscussionRepository : IDiscussionRepository
         };
     }
 
-    public async Task DeleteExistingMuteAsync(int eventId, int userId)
+    public async Task DeleteExistingMuteAsync(int eventId, Guid userId)
     {
         using var conn = connectionFactory.CreateConnection();
         await conn.OpenAsync();
@@ -440,7 +440,7 @@ public class DiscussionRepository : IDiscussionRepository
         await cmd.ExecuteNonQueryAsync();
     }
 
-    public async Task UnmuteAsync(int eventId, int userId)
+    public async Task UnmuteAsync(int eventId, Guid userId)
     {
         using var conn = connectionFactory.CreateConnection();
         await conn.OpenAsync();
@@ -493,7 +493,7 @@ public class DiscussionRepository : IDiscussionRepository
         {
             users.Add(new User
             {
-                UserId = reader.GetInt32(reader.GetOrdinal("Id")),
+                UserId = reader.GetGuid(reader.GetOrdinal("Id")),
                 Name = reader.GetString(reader.GetOrdinal("Name"))
             });
         }

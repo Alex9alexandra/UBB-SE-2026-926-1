@@ -47,7 +47,7 @@ public interface IEventService
     /// </summary>
     /// <param name="adminId">The admin user identifier.</param>
     /// <returns>A list of events administered by the user.</returns>
-    Task<List<Event>> GetMyEventsAsync(int adminId);
+    Task<List<Event>> GetMyEventsAsync(Guid adminId);
 
     /// <summary>
     /// Searches for events by title.

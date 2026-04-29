@@ -37,7 +37,7 @@ public class AchievementRepository : IAchievementRepository
     /// <param name="userId">The unique identifier of the user whose attended events count is to be retrieved.</param>
     /// <returns>A task that represents the asynchronous operation. The task result contains the number of events attended by the
     /// user.</returns>
-    public async Task<int> GetAttendedEventsCountAsync(int userId)
+    public async Task<int> GetAttendedEventsCountAsync(Guid userId)
     {
         using var connection = this.connectionFactory.CreateConnection();
         await connection.OpenAsync();
@@ -56,7 +56,7 @@ public class AchievementRepository : IAchievementRepository
     /// <param name="userId">The unique identifier of the user whose created events are to be counted.</param>
     /// <returns>A task that represents the asynchronous operation. The task result contains the number of events created by the
     /// specified user.</returns>
-    public async Task<int> GetCreatedEventsCountAsync(int userId)
+    public async Task<int> GetCreatedEventsCountAsync(Guid userId)
     {
         using var connection = this.connectionFactory.CreateConnection();
         await connection.OpenAsync();
@@ -75,7 +75,7 @@ public class AchievementRepository : IAchievementRepository
     /// <param name="userId">The unique identifier of the user whose approved quests are to be counted.</param>
     /// <returns>A task that represents the asynchronous operation. The task result contains the number of approved quests for
     /// the specified user.</returns>
-    public async Task<int> GetApprovedQuestsCountAsync(int userId)
+    public async Task<int> GetApprovedQuestsCountAsync(Guid userId)
     {
         using var connection = this.connectionFactory.CreateConnection();
         await connection.OpenAsync();
@@ -99,7 +99,7 @@ public class AchievementRepository : IAchievementRepository
     /// <param name="userId">The unique identifier of the user whose memories with photos are to be counted.</param>
     /// <returns>A task that represents the asynchronous operation. The task result contains the number of memories with photos
     /// for the specified user.</returns>
-    public async Task<int> GetMemoriesWithPhotosCountAsync(int userId)
+    public async Task<int> GetMemoriesWithPhotosCountAsync(Guid userId)
     {
         using var connection = this.connectionFactory.CreateConnection();
         await connection.OpenAsync();
@@ -118,7 +118,7 @@ public class AchievementRepository : IAchievementRepository
     /// <param name="userId">The unique identifier of the user whose discussion message count is to be retrieved.</param>
     /// <returns>A task that represents the asynchronous operation. The task result contains the number of discussion messages
     /// for the specified user.</returns>
-    public async Task<int> GetMessagesCountAsync(int userId)
+    public async Task<int> GetMessagesCountAsync(Guid userId)
     {
         using var connection = this.connectionFactory.CreateConnection();
         await connection.OpenAsync();
@@ -139,7 +139,7 @@ public class AchievementRepository : IAchievementRepository
     /// <param name="userId">The unique identifier of the user to check for perfect event attendance.</param>
     /// <returns>A task that represents the asynchronous operation. The task result contains <see langword="true"/> if the user
     /// has attended at least one event where every quest has an approved memory; otherwise, <see langword="false"/>.</returns>
-    public async Task<bool> HasPerfectEventAsync(int userId)
+    public async Task<bool> HasPerfectEventAsync(Guid userId)
     {
         using var connection = this.connectionFactory.CreateConnection();
         await connection.OpenAsync();
@@ -203,7 +203,7 @@ public class AchievementRepository : IAchievementRepository
     /// <param name="achievementId">The unique identifier of the achievement to check for unlock status.</param>
     /// <returns>A task that represents the asynchronous operation. The task result contains <see langword="true"/> if the
     /// achievement has already been unlocked by the user; otherwise, <see langword="false"/>.</returns>
-    public async Task<bool> IsAlreadyUnlockedAsync(int userId, int achievementId)
+    public async Task<bool> IsAlreadyUnlockedAsync(Guid userId, int achievementId)
     {
         using var connection = this.connectionFactory.CreateConnection();
         await connection.OpenAsync();
@@ -227,7 +227,7 @@ public class AchievementRepository : IAchievementRepository
     /// <param name="userId">The unique identifier of the user for whom the achievement will be unlocked.</param>
     /// <param name="achievementId">The unique identifier of the achievement to unlock for the user.</param>
     /// <returns>A task that represents the asynchronous operation.</returns>
-    public async Task UnlockAchievementAsync(int userId, int achievementId)
+    public async Task UnlockAchievementAsync(Guid userId, int achievementId)
     {
         using var connection = this.connectionFactory.CreateConnection();
         await connection.OpenAsync();

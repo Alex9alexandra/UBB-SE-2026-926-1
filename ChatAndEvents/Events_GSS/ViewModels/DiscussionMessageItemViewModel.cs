@@ -11,12 +11,12 @@ namespace Events_GSS.ViewModels;
 public partial class DiscussionMessageItemViewModel : ObservableObject
 {
     public DiscussionMessage Model { get; }
-    private readonly int _currentUserId;
+    private readonly Guid _currentUserId;
     private readonly bool _isCurrentUserAdmin;
 
     public DiscussionMessageItemViewModel(
         DiscussionMessage model,
-        int currentUserId,
+        Guid currentUserId,
         bool isCurrentUserAdmin)
     {
         Model = model;

@@ -5,9 +5,9 @@ namespace Events_GSS.Services.Interfaces
     public interface IUserService
     {
         User GetCurrentUser();
-        User? GetUserById(int userId);
-        List<User> GetFriends(int userId);
-        List<User> SearchFriends(int userId, string name);
+        User? GetUserById(Guid userId);
+        List<User> GetFriends(Guid userId);
+        List<User> SearchFriends(Guid userId, string name);
         public Task<bool> IsAttending(Event currentEvent);
         public bool IsAdmin(Event currentEvent);
     }

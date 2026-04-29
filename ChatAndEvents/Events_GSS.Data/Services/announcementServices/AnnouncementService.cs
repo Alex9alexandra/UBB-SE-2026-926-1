@@ -38,7 +38,7 @@ public class AnnouncementService : IAnnouncementService
     /// <param name="eventId">The ID of the event.</param>
     /// <param name="userId">The ID of the user.</param>
     /// <returns>A <see cref="Task"/> representing all announcements for the specified event and user.</returns>
-    public async Task<List<Announcement>> GetAnnouncementsAsync(int eventId, int userId)
+    public async Task<List<Announcement>> GetAnnouncementsAsync(int eventId, Guid userId)
     {
         var announcements = await this.announcementRepository.GetAnnouncementsByEventAsync(eventId, userId);
 
@@ -60,7 +60,7 @@ public class AnnouncementService : IAnnouncementService
     /// event.</param>
     /// <returns>A task that represents the asynchronous operation.</returns>
     /// <exception cref="ArgumentException">Thrown if <paramref name="announcementMessage"/> is null, empty, or consists only of white-space characters.</exception>
-    public async Task CreateAnnouncementAsync(string announcementMessage, int eventId, int userId)
+    public async Task CreateAnnouncementAsync(string announcementMessage, int eventId, Guid userId)
     {
         await this.EnsureAdminAsync(eventId, userId);
 
@@ -84,7 +84,7 @@ public class AnnouncementService : IAnnouncementService
     /// <returns>A task that represents the asynchronous update operation.</returns>
     /// <exception cref="ArgumentException">Thrown if <paramref name="newAnnouncementMessage"/> is null, empty, or consists only of white-space characters.</exception>
     /// <exception cref="KeyNotFoundException">Thrown if an announcement with the specified <paramref name="announcementId"/> does not exist.</exception>
-    public async Task UpdateAnnouncementAsync(int announcementId, string newAnnouncementMessage, int userId, int eventId)
+    public async Task UpdateAnnouncementAsync(int announcementId, string newAnnouncementMessage, Guid userId, int eventId)
     {
         await this.EnsureAdminAsync(eventId, userId);
 
@@ -112,7 +112,7 @@ public class AnnouncementService : IAnnouncementService
     /// <param name="eventId">The unique identifier of the event containing the announcement.</param>
     /// <returns>A task that represents the asynchronous delete operation.</returns>
     /// <exception cref="KeyNotFoundException">Thrown if an announcement with the specified announcementId does not exist.</exception>
-    public async Task DeleteAnnouncementAsync(int announcementId, int userId, int eventId)
+    public async Task DeleteAnnouncementAsync(int announcementId, Guid userId, int eventId)
     {
         await this.EnsureAdminAsync(eventId, userId);
 
@@ -135,7 +135,7 @@ public class AnnouncementService : IAnnouncementService
     /// <param name="userId">The unique identifier of the user performing the operation. The user must have administrative privileges for the
     /// event.</param>
     /// <returns>A task that represents the asynchronous pin operation.</returns>
-    public async Task PinAnnouncementAsync(int announcementId, int eventId, int userId)
+    public async Task PinAnnouncementAsync(int announcementId, int eventId, Guid userId)
     {
         await this.EnsureAdminAsync(eventId, userId);
 
@@ -154,7 +154,7 @@ public class AnnouncementService : IAnnouncementService
     /// <param name="userId">The unique identifier of the user for whom the announcement is being marked as read.</param>
     /// <returns>A task that represents the asynchronous operation. The task result is <see langword="true"/> if the announcement
     /// was newly marked as read for the user; otherwise, <see langword="false"/> if it was already marked as read.</returns>
-    public async Task<bool> MarkAsReadAsync(int announcementId, int userId)
+    public async Task<bool> MarkAsReadAsync(int announcementId, Guid userId)
     {
         var alreadyRead = await this.announcementRepository.HasUserReadAsync(announcementId, userId);
 
@@ -181,7 +181,7 @@ public class AnnouncementService : IAnnouncementService
     /// <returns>A tuple containing a list of read receipts for the announcement and the total number of participants in the
     /// event.</returns>
     public async Task<(List<AnnouncementReadReceipt> Readers, int TotalParticipants)> GetReadReceiptsAsync(
-        int announcementId, int eventId, int userId)
+        int announcementId, int eventId, Guid userId)
     {
         await this.EnsureAdminAsync(eventId, userId);
 
@@ -202,7 +202,7 @@ public class AnnouncementService : IAnnouncementService
     /// <param name="userId">The identifier of the user adding or updating the reaction.</param>
     /// <param name="emoji">The emoji representing the reaction to add or update. Cannot be null.</param>
     /// <returns>A task that represents the asynchronous operation.</returns>
-    public async Task AddOrUpdateReactAsync(int announcementId, int userId, string emoji)
+    public async Task AddOrUpdateReactAsync(int announcementId, Guid userId, string emoji)
     {
         var existingEmoji = await this.announcementRepository.GetUserReactionAsync(announcementId, userId);
 
@@ -227,7 +227,7 @@ public class AnnouncementService : IAnnouncementService
     /// <param name="announcementId">The unique identifier of the announcement from which the reaction will be removed.</param>
     /// <param name="userId">The unique identifier of the user whose reaction is to be removed.</param>
     /// <returns>A task that represents the asynchronous remove operation.</returns>
-    public async Task RemoveReactionAsync(int announcementId, int userId)
+    public async Task RemoveReactionAsync(int announcementId, Guid userId)
     {
         await this.announcementRepository.RemoveReactionAsync(announcementId, userId);
     }
@@ -239,7 +239,7 @@ public class AnnouncementService : IAnnouncementService
     /// <returns>A task that represents the asynchronous operation. The task result contains a dictionary mapping conversation
     /// IDs to the number of unread items for each conversation. If the user has no conversations, the dictionary will
     /// be empty.</returns>
-    public async Task<Dictionary<int, int>> GetUnreadCountsForUserAsync(int userId)
+    public async Task<Dictionary<int, int>> GetUnreadCountsForUserAsync(Guid userId)
     {
         return await this.announcementRepository.GetUnreadCountsForUserAsync(userId);
     }
@@ -266,7 +266,7 @@ public class AnnouncementService : IAnnouncementService
     /// <param name="userId">The unique identifier of the user toggling the reaction.</param>
     /// <param name="emoji">The emoji representing the reaction to toggle. Cannot be null.</param>
     /// <returns>A task that represents the asynchronous toggle operation.</returns>
-    public async Task ToggleReactionAsync(int announcementId, int userId, string emoji)
+    public async Task ToggleReactionAsync(int announcementId, Guid userId, string emoji)
     {
         var existingEmoji = await this.announcementRepository.GetUserReactionAsync(announcementId, userId);
 
@@ -289,7 +289,7 @@ public class AnnouncementService : IAnnouncementService
     /// langword="true"/>, the method does not perform any action.</param>
     /// <returns>A task that represents the asynchronous operation. The task result is <see langword="true"/> if the announcement
     /// was marked as read; otherwise, <see langword="false"/>.</returns>
-    public async Task<bool> MarkAsReadIfNeededAsync(int announcementId, int userId, bool isAlreadyRead)
+    public async Task<bool> MarkAsReadIfNeededAsync(int announcementId, Guid userId, bool isAlreadyRead)
     {
         if (isAlreadyRead)
         {
@@ -359,7 +359,7 @@ public class AnnouncementService : IAnnouncementService
     /// <returns>A task that represents the asynchronous validation operation.</returns>
     /// <exception cref="ArgumentException">Thrown if the event with the specified eventId does not exist.</exception>
     /// <exception cref="UnauthorizedAccessException">Thrown if the user is not the administrator of the specified event.</exception>
-    private async Task EnsureAdminAsync(int eventId, int userId)
+    private async Task EnsureAdminAsync(int eventId, Guid   userId)
     {
         var selectedEvent = await this.eventRepository.GetByIdAsync(eventId);
         if (selectedEvent is null)

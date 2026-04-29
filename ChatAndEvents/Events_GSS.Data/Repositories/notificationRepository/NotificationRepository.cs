@@ -38,7 +38,7 @@ public class NotificationRepository : INotificationRepository
     /// <param name="description">The description or content of the notification.</param>
     /// <param name="createdAt">The timestamp indicating when the notification was created.</param>
     /// <returns>A task that represents the asynchronous operation.</returns>
-    public async Task AddAsync(int userId, string title, string description, DateTime createdAt)
+    public async Task AddAsync(Guid userId, string title, string description, DateTime createdAt)
     {
         const string query = @"
                 INSERT INTO Notifications (UserId, Title, Description, CreatedAt)
@@ -48,7 +48,7 @@ public class NotificationRepository : INotificationRepository
         await connection.OpenAsync();
 
         using var command = new SqlCommand(query, connection);
-        command.Parameters.Add("@UserId", SqlDbType.Int).Value = userId;
+        command.Parameters.Add("@UserId", SqlDbType.UniqueIdentifier).Value = userId;
         command.Parameters.Add("@Title", SqlDbType.NVarChar).Value = title;
         command.Parameters.Add("@Description", SqlDbType.NVarChar).Value = description;
         command.Parameters.Add("@CreatedAt", SqlDbType.DateTime).Value = createdAt;
@@ -61,7 +61,7 @@ public class NotificationRepository : INotificationRepository
     /// </summary>
     /// <param name="userId">The ID of the user for whom to retrieve notifications.</param>
     /// <returns>A task that represents the asynchronous operation, containing a list of notifications for the specified user.</returns>
-    public async Task<List<Notification>> GetByUserIdAsync(int userId)
+    public async Task<List<Notification>> GetByUserIdAsync(Guid userId)
     {
         const string query = @"
                 SELECT n.Id,
@@ -81,7 +81,7 @@ public class NotificationRepository : INotificationRepository
         await connection.OpenAsync();
 
         using var command = new SqlCommand(query, connection);
-        command.Parameters.Add("@UserId", SqlDbType.Int).Value = userId;
+        command.Parameters.Add("@UserId", SqlDbType.UniqueIdentifier).Value = userId;
 
         var notifications = new List<Notification>();
 
@@ -97,7 +97,7 @@ public class NotificationRepository : INotificationRepository
                 CreatedAt = (DateTime)reader["CreatedAt"],
                 User = new User
                 {
-                    UserId = (int)reader["UserId"],
+                    UserId = (Guid)reader["UserId"],
                     Name = (string)reader["UserName"],
                     ReputationPoints = (int)reader["ReputationPoints"],
                 },

@@ -181,7 +181,7 @@ public class EventRepository : IEventRepository
     /// </summary>
     /// <param name="adminId">The event identifier.</param>
     /// <returns>Events owned by the admin with the given id.</returns>
-    public async Task<List<Event>> GetByAdminIdAsync(int adminId)
+    public async Task<List<Event>> GetByAdminIdAsync(Guid adminId)
     {
         var events = new List<Event>();
         using var connection = this.connectionFactory.CreateConnection();
@@ -230,7 +230,7 @@ public class EventRepository : IEventRepository
             },
             Admin = reader.IsDBNull("UserId") ? null : new User
             {
-                UserId = reader.GetInt32("UserId"),
+                UserId = reader.GetGuid("UserId"),
                 Name = reader.GetString("UserName"),
             },
             SlowModeSeconds = reader.IsDBNull("SlowModeSeconds") ? null : reader.GetInt32("SlowModeSeconds"),
