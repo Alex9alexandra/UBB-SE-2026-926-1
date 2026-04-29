@@ -28,7 +28,7 @@ using Events_GSS.Data.Services.eventStatisticsServices;
 using Events_GSS.Data.Services.Interfaces;
 using Events_GSS.Data.Services.notificationServices;
 using Events_GSS.Data.Services.reputationService;
-using Events_GSS.Services; // For MockUserService
+using Events_GSS.Services;
 using Events_GSS.Services.Interfaces;
 using Events_GSS.ViewModels;
 using Events_GSS.Views;
@@ -74,9 +74,9 @@ namespace ChatModule
         {
             _initialUserId = userId;
             _initialUsername = username;
-            string eventsConnectionString = "Data Source=(localdb)\\MSSQLLocalDB;\r\nInitial Catalog=ISSEvents;\r\nIntegrated Security=True;\r\nEncrypt=True;\r\nTrustServerCertificate=True;";
+            string eventsConnectionString = "Data Source=.\\SQLEXPRESS;Initial Catalog=ISSEvents;Integrated Security=True;Encrypt=True;TrustServerCertificate=True;";
             var db = (Application.Current as App)?.DatabaseManager
-                     ?? new DatabaseManager("Data Source=(localdb)\\MSSQLLocalDB;\r\nInitial Catalog=ChatModule;\r\nIntegrated Security=True;\r\nEncrypt=True;\r\nTrustServerCertificate=True;");
+                     ?? new DatabaseManager("Data Source=.\\SQLEXPRESS;Initial Catalog=ChatModule;Integrated Security=True;Encrypt=True;TrustServerCertificate=True;");
             var sqlConnectionFactory = new SqlConnectionFactory(eventsConnectionString);
 
             var userRepository = new UserRepository(db);
@@ -142,7 +142,6 @@ namespace ChatModule
             eventServices.AddTransient<IDiscussionService, DiscussionService>();
             eventServices.AddTransient<IMemoryService, MemoryService>();
             eventServices.AddTransient<IAttendedEventService, AttendedEventService>();
-            eventServices.AddTransient<IUserService, MockUserService>(); // This is the ID 3 source
             eventServices.AddTransient<INotificationService, NotificationService>();
             eventServices.AddSingleton<IReputationService, ReputationService>();
             eventServices.AddTransient<IAchievementService, AchievementService>();
@@ -153,8 +152,19 @@ namespace ChatModule
             eventServices.AddTransient<ReputationViewModel>();
             eventServices.AddTransient<NotificationViewModel>();
 
+
             // BRING IT TO LIFE
             Events_GSS.App.Services = eventServices.BuildServiceProvider();
+
+            var chatUserService = new ChatUserService(
+                userRepository,                                                          // ChatModule's IUserRepository - already created above
+                Events_GSS.App.Services.GetRequiredService<IReputationRepository>(),
+                Events_GSS.App.Services.GetRequiredService<IAttendedEventService>());
+
+            chatUserService.SetCurrentUserId(userId);
+            eventServices.AddSingleton<IUserService>(chatUserService);
+Events_GSS.App.Services = eventServices.BuildServiceProvider();
+
             Events_GSS.App.MainWindowHandle = WinRT.Interop.WindowNative.GetWindowHandle(this);
 
 
@@ -173,7 +183,7 @@ namespace ChatModule
                 Events_GSS.App.Services.GetRequiredService<IUserService>(),
                 Events_GSS.App.Services.GetRequiredService<IEventService>(),
                 Events_GSS.App.Services.GetRequiredService<IQuestService>(),
-                Events_GSS.App.Services.GetRequiredService<IAttendedEventService>()); // <-- NEW
+                Events_GSS.App.Services.GetRequiredService<IAttendedEventService>());
 
             InitializeComponent();
 

@@ -12,10 +12,10 @@ namespace Events_GSS.Tests.ViewModels;
 public class DiscussionMessageItemViewModelCoreTests
 {
 
-    private static User MakeUser(int id, string name = "someoneimportant27") =>
+    private static User MakeUser(Guid id, string name = "someoneimportant27") =>
         new() { UserId = id, Name = name };
 
-    private static DiscussionReaction MakeReaction(string emoji, int authorId) =>
+    private static DiscussionReaction MakeReaction(string emoji, Guid authorId) =>
          new()
          {
              Emoji = emoji,
@@ -33,25 +33,25 @@ public class DiscussionMessageItemViewModelCoreTests
         [Fact]
         public void ShowMuteButton_AdminViewingOtherUsersMessage_MuteButtonIsVisible()
         {
-            Assert.True(DiscussionMessageItemViewModelCore.ShowMuteButton(isCurrentUserAdmin: true,messageAuthorId: 99, currentUserId: 1));
+            Assert.True(DiscussionMessageItemViewModelCore.ShowMuteButton(isCurrentUserAdmin: true,messageAuthorId: Guid.Parse("00000000-0000-0000-0000-000000000099"), currentUserId: Guid.Parse("00000000-0000-0000-0000-000000000001")));
         }
 
         [Fact]
         public void ShowMuteButton_AdminViewingOwnMessage_MuteIsNotVisible()
         {
-            Assert.False(DiscussionMessageItemViewModelCore.ShowMuteButton(isCurrentUserAdmin: true, messageAuthorId: 1,currentUserId: 1));
+            Assert.False(DiscussionMessageItemViewModelCore.ShowMuteButton(isCurrentUserAdmin: true, messageAuthorId: Guid.Parse("00000000-0000-0000-0000-000000000001"), currentUserId: Guid.Parse("00000000-0000-0000-0000-000000000001")));
         }
 
         [Fact]
         public void ShowMuteButton_NonAdminViewingOtherUsersMessage_MuteButtonIsNotVisible()
         {
-            Assert.False(DiscussionMessageItemViewModelCore.ShowMuteButton(isCurrentUserAdmin: false,messageAuthorId: 99,currentUserId: 1));
+            Assert.False(DiscussionMessageItemViewModelCore.ShowMuteButton(isCurrentUserAdmin: false,messageAuthorId: Guid.Parse("00000000-0000-0000-0000-000000000099"), currentUserId: Guid.Parse("00000000-0000-0000-0000-000000000001")));
         }
 
         [Fact]
         public void ShowMuteButton_NonAdminViewingOwnMessage_MuteButtonIsNotVisible()
         {
-            Assert.False(DiscussionMessageItemViewModelCore.ShowMuteButton(isCurrentUserAdmin: false,messageAuthorId: 1,currentUserId: 1));
+            Assert.False(DiscussionMessageItemViewModelCore.ShowMuteButton(isCurrentUserAdmin: false,messageAuthorId: Guid.Parse("00000000-0000-0000-0000-000000000001"), currentUserId: Guid.Parse("00000000-0000-0000-0000-000000000001")));
         }
 
     }
@@ -67,7 +67,7 @@ public class DiscussionMessageItemViewModelCoreTests
         [Fact]
         public void HasReactions_ReactionListHasASingleReaction_ReturnsTrue()
         {
-            Assert.True(DiscussionMessageItemViewModelCore.HasReactions(new List<DiscussionReaction> { MakeReaction("👍", 1) }));
+            Assert.True(DiscussionMessageItemViewModelCore.HasReactions(new List<DiscussionReaction> { MakeReaction("👍", Guid.Parse("00000000-0000-0000-0000-000000000001")) }));
         }
 
         [Fact]
@@ -76,8 +76,8 @@ public class DiscussionMessageItemViewModelCoreTests
             Assert.True(DiscussionMessageItemViewModelCore.HasReactions(
                 new List<DiscussionReaction>
                 {
-                    MakeReaction("👍", 1),
-                    MakeReaction("❤️", 2)
+                    MakeReaction("👍", Guid.Parse("00000000-0000-0000-0000-000000000001")),
+                    MakeReaction("❤️", Guid.Parse("00000000-0000-0000-0000-000000000002"))
                 }));
         }
     }
@@ -124,11 +124,11 @@ public class DiscussionMessageItemViewModelCoreTests
         {
             var reactions = new List<DiscussionReaction>
             {
-                MakeReaction("👍", 2),
-                MakeReaction("❤️", 1)
+                MakeReaction("👍", Guid.Parse("00000000-0000-0000-0000-000000000002")),
+                MakeReaction("❤️", Guid.Parse("00000000-0000-0000-0000-000000000001"))
             };
 
-            var result = DiscussionMessageItemViewModelCore.CurrentUserEmoji(reactions, currentUserId: 1);
+            var result = DiscussionMessageItemViewModelCore.CurrentUserEmoji(reactions, currentUserId: Guid.Parse("00000000-0000-0000-0000-000000000001"));
             Assert.Equal("❤️", result);
         }
 
@@ -137,10 +137,10 @@ public class DiscussionMessageItemViewModelCoreTests
         {
             var reactions = new List<DiscussionReaction>
             {
-                MakeReaction("👍", 2)
+                MakeReaction("👍", Guid.Parse("00000000-0000-0000-0000-000000000002"))
             };
 
-            var result = DiscussionMessageItemViewModelCore.CurrentUserEmoji(reactions, currentUserId: 1);
+            var result = DiscussionMessageItemViewModelCore.CurrentUserEmoji(reactions, currentUserId: Guid.Parse("00000000-0000-0000-0000-000000000001"));
             Assert.Null(result);
         }
 
@@ -148,7 +148,7 @@ public class DiscussionMessageItemViewModelCoreTests
         public void CurrentUserEmoji_ReactionListIsCompletelyEmpty_ReturnsNull()
         {
             var result = DiscussionMessageItemViewModelCore.CurrentUserEmoji(
-                new List<DiscussionReaction>(), currentUserId: 1);
+                new List<DiscussionReaction>(), currentUserId: Guid.Parse("00000000-0000-0000-0000-000000000001"));
             Assert.Null(result);
         }
 
@@ -157,11 +157,11 @@ public class DiscussionMessageItemViewModelCoreTests
         {
             var reactions = new List<DiscussionReaction>
             {
-                MakeReaction("👍", 1),
-                MakeReaction("❤️", 1)
+                MakeReaction("👍", Guid.Parse("00000000-0000-0000-0000-000000000001")),
+                MakeReaction("❤️", Guid.Parse("00000000-0000-0000-0000-000000000001"))
             };
 
-            var result = DiscussionMessageItemViewModelCore.CurrentUserEmoji(reactions, currentUserId: 1);
+            var result = DiscussionMessageItemViewModelCore.CurrentUserEmoji(reactions, currentUserId: Guid.Parse("00000000-0000-0000-0000-000000000001"));
             Assert.Equal("👍", result);
         }
     }
@@ -173,7 +173,7 @@ public class DiscussionMessageItemViewModelCoreTests
         public void BuildReactionGroups_ReactionListIsEmpty_ReturnsEmptyList()
         {
             var result = DiscussionMessageItemViewModelCore.BuildReactionGroups(
-                new List<DiscussionReaction>(), currentUserId: 1);
+                new List<DiscussionReaction>(), currentUserId: Guid.Parse("00000000-0000-0000-0000-000000000001"));
 
             Assert.Empty(result);
         }
@@ -183,11 +183,11 @@ public class DiscussionMessageItemViewModelCoreTests
         {
             var reactions = new List<DiscussionReaction>
             {
-                MakeReaction("👍", 1),
-                MakeReaction("👍", 2)
+                MakeReaction("👍", Guid.Parse("00000000-0000-0000-0000-000000000001")),
+                MakeReaction("👍", Guid.Parse("00000000-0000-0000-0000-000000000002"))
             };
 
-            var result = DiscussionMessageItemViewModelCore.BuildReactionGroups(reactions, currentUserId: 1);
+            var result = DiscussionMessageItemViewModelCore.BuildReactionGroups(reactions, currentUserId: Guid.Parse("00000000-0000-0000-0000-000000000001"));
             var group = result[0];
             Assert.Equal(2, group.Count);
         }
@@ -197,11 +197,11 @@ public class DiscussionMessageItemViewModelCoreTests
         {
             var reactions = new List<DiscussionReaction>
             {
-                MakeReaction("❤️", 1),
-                MakeReaction("❤️", 2)
+                MakeReaction("❤️", Guid.Parse("00000000-0000-0000-0000-000000000001")),
+                MakeReaction("❤️", Guid.Parse("00000000-0000-0000-0000-000000000002"))
             };
 
-            var result = DiscussionMessageItemViewModelCore.BuildReactionGroups(reactions, currentUserId: 1);
+            var result = DiscussionMessageItemViewModelCore.BuildReactionGroups(reactions, currentUserId: Guid.Parse("00000000-0000-0000-0000-000000000001"));
 
             Assert.True(result[0].CurrentUserReacted);
         }
@@ -211,11 +211,11 @@ public class DiscussionMessageItemViewModelCoreTests
         {
             var reactions = new List<DiscussionReaction>
             {
-                MakeReaction("❤️", 2),
-                MakeReaction("❤️", 3)
+                MakeReaction("❤️", Guid.Parse("00000000-0000-0000-0000-000000000002")),
+                MakeReaction("❤️", Guid.Parse("00000000-0000-0000-0000-000000000003"))
             };
 
-            var result = DiscussionMessageItemViewModelCore.BuildReactionGroups(reactions, currentUserId: 1);
+            var result = DiscussionMessageItemViewModelCore.BuildReactionGroups(reactions, currentUserId: Guid.Parse("00000000-0000-0000-0000-000000000001"));
 
             Assert.False(result[0].CurrentUserReacted);
         }

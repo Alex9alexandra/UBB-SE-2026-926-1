@@ -49,7 +49,7 @@ namespace Events_GSS.Test
         {
             // Arrange
             var currentEvent = new Event { EventId = 1 };
-            var author = new User { UserId = 1 };
+            var author = new User { UserId = Guid.Parse("00000000-0000-0000-0000-000000000001") };
 
             this.mockReputationService.Setup(r => r.CanPostMemoriesAsync(author.UserId)).ReturnsAsync(false);
 
@@ -63,7 +63,7 @@ namespace Events_GSS.Test
         {
             // Arrange
             var currentEvent = new Event { EventId = 1 };
-            var author = new User { UserId = 1 };
+            var author = new User { UserId = Guid.Parse("00000000-0000-0000-0000-000000000001") };
 
             this.mockReputationService.Setup(r => r.CanPostMemoriesAsync(author.UserId)).ReturnsAsync(true);
             this.mockAttendedEventRepository.Setup(r => r.GetAsync(currentEvent.EventId, author.UserId)).ReturnsAsync((AttendedEvent?)null);
@@ -77,14 +77,14 @@ namespace Events_GSS.Test
         public async Task DeleteAsync_NotOwnerOrAdmin_ThrowsUnauthorizedAccessException()
         {
             // Arrange
-            var requestingUser = new User { UserId = 1 };
+            var requestingUser = new User { UserId = Guid.Parse("00000000-0000-0000-0000-000000000001") };
             var memory = new Memory { MemoryId = 10 };
 
             var fullMemory = new Memory
             {
                 MemoryId = 10,
-                Event = new Event { Admin = new User { UserId = 2 } },
-                Author = new User { UserId = 3 }
+                Event = new Event { Admin = new User { UserId = Guid.Parse("00000000-0000-0000-0000-000000000002") } },
+                Author = new User { UserId = Guid.Parse("00000000-0000-0000-0000-000000000003") }
             };
 
             this.mockMemoryRepository.Setup(m => m.GetByIdAsync(memory.MemoryId)).ReturnsAsync(fullMemory);
@@ -98,10 +98,10 @@ namespace Events_GSS.Test
         public async Task ToggleLikeAsync_OwnMemory_ThrowsInvalidOperationException()
         {
             // Arrange
-            var currentUser = new User { UserId = 1 };
+            var currentUser = new User { UserId = Guid.Parse("00000000-0000-0000-0000-000000000001") };
             var memory = new Memory { MemoryId = 10 };
 
-            var fullMemory = new Memory { MemoryId = 10, Author = new User { UserId = 1 } };
+            var fullMemory = new Memory { MemoryId = 10, Author = new User { UserId = Guid.Parse("00000000-0000-0000-0000-000000000001") } };
 
             this.mockMemoryRepository.Setup(m => m.GetByIdAsync(memory.MemoryId)).ReturnsAsync(fullMemory);
 
@@ -114,13 +114,13 @@ namespace Events_GSS.Test
         public async Task ToggleLikeAsync_NotCurrentlyLiked_CallsAddLikeAsync()
         {
             // Arrange
-            var currentUser = new User { UserId = 1 };
+            var currentUser = new User { UserId = Guid.Parse("00000000-0000-0000-0000-000000000001") };
             var memory = new Memory { MemoryId = 10 };
 
-            var fullMemory = new Memory { MemoryId = 10, Author = new User { UserId = 2 } };
+            var fullMemory = new Memory { MemoryId = 10, Author = new User { UserId = Guid.Parse("00000000-0000-0000-0000-000000000002") } };
 
             this.mockMemoryRepository.Setup(m => m.GetByIdAsync(memory.MemoryId)).ReturnsAsync(fullMemory);
-            this.mockMemoryRepository.Setup(m => m.GetLikesAsync(memory.MemoryId)).ReturnsAsync(new List<int>());
+            this.mockMemoryRepository.Setup(m => m.GetLikesAsync(memory.MemoryId)).ReturnsAsync(new List<Guid>());
 
             // Act
             await this.service.ToggleLikeAsync(memory, currentUser);
@@ -133,13 +133,13 @@ namespace Events_GSS.Test
         public async Task ToggleLikeAsync_AlreadyLiked_CallsRemoveLikeAsync()
         {
             // Arrange
-            var currentUser = new User { UserId = 1 };
+            var currentUser = new User { UserId = Guid.Parse("00000000-0000-0000-0000-000000000001") };
             var memory = new Memory { MemoryId = 10 };
 
-            var fullMemory = new Memory { MemoryId = 10, Author = new User { UserId = 2 } };
+            var fullMemory = new Memory { MemoryId = 10, Author = new User { UserId = Guid.Parse("00000000-0000-0000-0000-000000000002") } };
 
             this.mockMemoryRepository.Setup(m => m.GetByIdAsync(memory.MemoryId)).ReturnsAsync(fullMemory);
-            this.mockMemoryRepository.Setup(m => m.GetLikesAsync(memory.MemoryId)).ReturnsAsync(new List<int> { 1 });
+            this.mockMemoryRepository.Setup(m => m.GetLikesAsync(memory.MemoryId)).ReturnsAsync(new List<Guid> { Guid.Parse("00000000-0000-0000-0000-000000000001") });
 
             // Act
             await this.service.ToggleLikeAsync(memory, currentUser);

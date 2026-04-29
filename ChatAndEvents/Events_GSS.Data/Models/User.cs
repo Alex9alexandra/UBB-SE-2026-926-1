@@ -14,7 +14,7 @@ namespace Events_GSS.Data.Models
         /// <summary>
         /// Gets or sets the unique identifier for the user.
         /// </summary>
-        public int UserId { get; set; }
+        public Guid UserId { get; set; }
 
         /// <summary>
         /// Gets or sets the name of the user.

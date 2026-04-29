@@ -39,7 +39,7 @@ public sealed partial class EventDetailPage : Page
 
         var userService = App.Services.GetRequiredService<IUserService>();
         var currentUser = userService.GetCurrentUser();
-        int userId = currentUser.UserId;
+        Guid userId = currentUser.UserId;
         bool isAdmin = currentEvent.Admin?.UserId == userId;
 
         if (isAdmin)
@@ -91,7 +91,7 @@ public sealed partial class EventDetailPage : Page
 
     // --- THEIR ORIGINAL UI LOGIC REMAINS INTACT BELOW ---
 
-    private async Task LoadEnrollmentStatusAsync(Event ev, int userId)
+    private async Task LoadEnrollmentStatusAsync(Event ev, Guid userId)
     {
         var attendedEvent = await this.attendedEventService!.GetAsync(ev.EventId, userId);
         this.isEnrolled = attendedEvent != null;

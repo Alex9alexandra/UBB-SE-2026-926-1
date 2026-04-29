@@ -15,7 +15,7 @@ public class MessageSegment
 
 public static class DiscussionMessageItemViewModelCore
 {
-    public static bool ShowMuteButton(bool isCurrentUserAdmin, int? messageAuthorId, int currentUserId) =>
+    public static bool ShowMuteButton(bool isCurrentUserAdmin, Guid? messageAuthorId, Guid currentUserId) =>
         isCurrentUserAdmin && messageAuthorId != currentUserId;
 
     public static bool HasReactions(ICollection<DiscussionReaction> reactions) =>
@@ -24,10 +24,10 @@ public static class DiscussionMessageItemViewModelCore
     public static bool HasMessageText(string? message) =>
         !string.IsNullOrWhiteSpace(message);
 
-    public static string? CurrentUserEmoji(IEnumerable<DiscussionReaction> reactions, int currentUserId) =>
+    public static string? CurrentUserEmoji(IEnumerable<DiscussionReaction> reactions, Guid currentUserId) =>
         reactions.FirstOrDefault(r => r.Author.UserId == currentUserId)?.Emoji;
 
-    public static List<ReactionGroup> BuildReactionGroups(IEnumerable<DiscussionReaction> reactions, int currentUserId) =>
+    public static List<ReactionGroup> BuildReactionGroups(IEnumerable<DiscussionReaction> reactions, Guid currentUserId) =>
         reactions.GroupBy(r => r.Emoji).Select(g => new ReactionGroup
             {
                 Emoji = g.Key,

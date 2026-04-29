@@ -62,7 +62,7 @@ GO
 -- 2b. USERS_RP_SCORES  (reputation kept separate from core Users)
 -- ============================================================
 CREATE TABLE users_RP_scores (
-    UserId            INT           NOT NULL,
+    UserId            UNIQUEIDENTIFIER           NOT NULL,
     ReputationPoints  INT           NOT NULL DEFAULT 0,
     Tier              NVARCHAR(50)  NOT NULL DEFAULT 'Newcomer',
 
@@ -118,7 +118,7 @@ CREATE TABLE Events (
 -- ============================================================
 CREATE TABLE AttendedEvents (
     EventId      INT       NOT NULL,
-    UserId       INT       NOT NULL,
+    UserId       UNIQUEIDENTIFIER       NOT NULL,
     EnrollmentDate     DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
     IsArchived   BIT       NOT NULL DEFAULT 0,
     IsFavourite  BIT       NOT NULL DEFAULT 0,
@@ -135,7 +135,7 @@ CREATE TABLE AttendedEvents (
 CREATE TABLE Announcements (
     AnnId    INT            NOT NULL IDENTITY(1,1),
     EventId  INT            NOT NULL,
-    UserId   INT            NOT NULL,   -- author (EventAdmin)
+    UserId   UNIQUEIDENTIFIER           NOT NULL,   -- author (EventAdmin)
     Message  NVARCHAR(MAX)  NOT NULL,
     Date     DATETIME2      NOT NULL DEFAULT GETUTCDATE(),
     IsPinned BIT            NOT NULL DEFAULT 0,
@@ -158,7 +158,7 @@ CREATE UNIQUE INDEX UX_Announcements_OnePinPerEvent
 CREATE TABLE AnnouncementReadReceipts (
     Id             INT       NOT NULL IDENTITY(1,1),
     AnnouncementId INT       NOT NULL,
-    UserId         INT       NOT NULL,
+    UserId         UNIQUEIDENTIFIER       NOT NULL,
     ReadAt         DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
 
     CONSTRAINT PK_AnnReadReceipts          PRIMARY KEY (Id),
@@ -174,7 +174,7 @@ CREATE TABLE AnnouncementReadReceipts (
 CREATE TABLE AnnouncementReactions (
     Id             INT           NOT NULL IDENTITY(1,1),
     AnnouncementId INT           NOT NULL,
-    UserId         INT           NOT NULL,
+    UserId         UNIQUEIDENTIFIER       NOT NULL,
     Emoji          NVARCHAR(10)  NOT NULL,
 
     CONSTRAINT PK_AnnReactions           PRIMARY KEY (Id),
@@ -191,7 +191,7 @@ CREATE TABLE AnnouncementReactions (
 CREATE TABLE Discussions (
     DiscussionId  INT            NOT NULL IDENTITY(1,1),
     EventId       INT            NOT NULL,
-    UserId        INT            NOT NULL,
+    UserId        UNIQUEIDENTIFIER           NOT NULL,
     Message       NVARCHAR(MAX)  NULL,       -- NULL allowed when MediaPath is provided
     MediaPath     NVARCHAR(500)  NULL,
     Date          DATETIME2      NOT NULL DEFAULT GETUTCDATE(),
@@ -216,7 +216,7 @@ CREATE TABLE Discussions (
 CREATE TABLE DiscussionReactions (
     Id           INT           NOT NULL IDENTITY(1,1),
     MessageId    INT           NOT NULL,
-    UserId       INT           NOT NULL,
+    UserId       UNIQUEIDENTIFIER       NOT NULL,
     Emoji        NVARCHAR(10)  NOT NULL,
 
     CONSTRAINT PK_DiscReactions          PRIMARY KEY (Id),
@@ -232,8 +232,8 @@ CREATE TABLE DiscussionReactions (
 CREATE TABLE DiscussionMutes (
     Id            INT       NOT NULL IDENTITY(1,1),
     EventId       INT       NOT NULL,
-    MutedUserId   INT       NOT NULL,
-    MutedByUserId INT       NOT NULL,
+    MutedUserId   UNIQUEIDENTIFIER       NOT NULL,
+    MutedByUserId UNIQUEIDENTIFIER       NOT NULL,
     MutedUntil    DATETIME2 NULL,    -- NULL when IsPermanent = 1
     IsPermanent   BIT       NOT NULL DEFAULT 0,
     CreatedAt     DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
@@ -277,7 +277,7 @@ CREATE TABLE Quests (
 CREATE TABLE Memories (
     MemoryId   INT            NOT NULL IDENTITY(1,1),
     EventId    INT            NOT NULL,
-    UserId     INT            NOT NULL,
+    UserId     UNIQUEIDENTIFIER           NOT NULL,
     PhotoPath  NVARCHAR(500)  NULL,
     Text       NVARCHAR(MAX)  NULL,
     CreatedAt  DATETIME2      NOT NULL DEFAULT GETUTCDATE(),
@@ -315,7 +315,7 @@ CREATE TABLE QuestMemories (
 -- ============================================================
 CREATE TABLE MemoryLikes (
     MemoryId  INT NOT NULL,
-    UserId    INT NOT NULL,
+    UserId    UNIQUEIDENTIFIER NOT NULL,
 
     CONSTRAINT PK_MemoryLikes          PRIMARY KEY (MemoryId, UserId),
     CONSTRAINT FK_MemoryLikes_Memory   FOREIGN KEY (MemoryId) REFERENCES Memories (MemoryId) ON DELETE CASCADE,
@@ -354,7 +354,7 @@ INSERT INTO Achievements (Title, Description) VALUES
 -- ============================================================
 CREATE TABLE UserAchievements (
     Id            INT       NOT NULL IDENTITY(1,1),
-    UserId        INT       NOT NULL,
+    UserId        UNIQUEIDENTIFIER       NOT NULL,
     AchievementId INT       NOT NULL,
     UnlockedAt    DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
 
@@ -371,7 +371,7 @@ CREATE TABLE UserAchievements (
 -- ============================================================
 CREATE TABLE Notifications (
     Id          INT            NOT NULL IDENTITY(1,1),
-    UserId      INT            NOT NULL,
+    UserId      UNIQUEIDENTIFIER           NOT NULL,
     Title       NVARCHAR(200)  NOT NULL,
     Description NVARCHAR(1000) NOT NULL,
     CreatedAt   DATETIME2      NOT NULL DEFAULT GETUTCDATE(),

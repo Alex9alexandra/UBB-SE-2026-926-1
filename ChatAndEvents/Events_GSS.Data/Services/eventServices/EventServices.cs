@@ -148,6 +148,6 @@ public class EventService : IEventService
     /// </summary>
     /// <param name="adminId">The admin user identifier.</param>
     /// <returns>A list of events administered by the user.</returns>
-    public async Task<List<Event>> GetMyEventsAsync(int adminId)
+    public async Task<List<Event>> GetMyEventsAsync(Guid adminId)
         => await this.eventRepository.GetByAdminIdAsync(adminId);
 }

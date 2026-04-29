@@ -30,7 +30,7 @@ public interface IEventRepository
     /// </summary>
     /// <param name="adminId">The admin user identifier.</param>
     /// <returns>A list of events where the user is the admin.</returns>
-    Task<List<Event>> GetByAdminIdAsync(int adminId);
+    Task<List<Event>> GetByAdminIdAsync(Guid adminId);
 
     /// <summary>
     /// Adds a new event to the repository.

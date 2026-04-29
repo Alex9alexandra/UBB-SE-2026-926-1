@@ -129,7 +129,7 @@ public class QuestMemoryRepository : IQuestMemoryRepository
                     Proof = new Memory
                     {
                         MemoryId = (int)reader["MemoryId"],
-                        Author = new User { UserId = (int)reader["UserId"] },
+                        Author = new User { UserId = (Guid)reader["UserId"] },
                         PhotoPath = reader["PhotoPath"] == DBNull.Value ? null : (string)reader["PhotoPath"],
                         Text = reader["Text"] == DBNull.Value ? null : (string)reader["Text"],
                         CreatedAt = (DateTime)reader["CreatedAt"],

@@ -21,14 +21,14 @@ public interface INotificationService
     /// <param name="title">The title of the notification.</param>
     /// <param name="description">The description or content of the notification.</param>
     /// <returns>A task that represents the asynchronous operation of sending the notification.</returns>
-    Task NotifyAsync(int userId, string title, string description);
+    Task NotifyAsync(Guid userId, string title, string description);
 
     /// <summary>
     /// Asynchronously retrieves a list of notifications for a specific user by their user ID. This method allows for non-blocking execution when fetching notifications, enabling the system to efficiently retrieve and display notifications to users without causing delays or performance issues. The implementation of this method would typically involve querying the data source for notifications associated with the specified user ID and returning them as a list, allowing users to view their notifications in a timely manner.
     /// </summary>
     /// <param name="userId">The ID of the user for whom to retrieve notifications.</param>
     /// <returns>A task that represents the asynchronous operation, containing a list of notifications for the specified user.</returns>
-    Task<List<Notification>> GetNotificationsAsync(int userId);
+    Task<List<Notification>> GetNotificationsAsync(Guid userId);
 
     /// <summary>
     /// Asynchronously deletes a notification by its unique identifier. This method allows for non-blocking execution when removing notifications from the system, enabling users to manage their notifications efficiently without causing delays or performance issues. The implementation of this method would typically involve deleting the specified notification from the data source based on its unique identifier, ensuring that users can effectively manage and organize their notifications as needed.

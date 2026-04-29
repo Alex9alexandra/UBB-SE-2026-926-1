@@ -19,7 +19,7 @@ public interface IAchievementRepository
     /// <param name="userId">The unique identifier of the user whose attended event count is to be retrieved. Must be a valid user ID.</param>
     /// <returns>A task that represents the asynchronous operation. The task result contains the number of events the user has
     /// attended.</returns>
-    Task<int> GetAttendedEventsCountAsync(int userId);
+    Task<int> GetAttendedEventsCountAsync(Guid userId);
 
     /// <summary>
     /// Asynchronously retrieves the number of events created by the specified user.
@@ -27,7 +27,7 @@ public interface IAchievementRepository
     /// <param name="userId">The unique identifier of the user whose created events are to be counted. Must be a valid user ID.</param>
     /// <returns>A task that represents the asynchronous operation. The task result contains the total number of events created
     /// by the user.</returns>
-    Task<int> GetCreatedEventsCountAsync(int userId);
+    Task<int> GetCreatedEventsCountAsync(Guid userId);
 
     /// <summary>
     /// Asynchronously retrieves the number of approved quests for the specified user.
@@ -35,7 +35,7 @@ public interface IAchievementRepository
     /// <param name="userId">The unique identifier of the user whose approved quests are to be counted.</param>
     /// <returns>A task that represents the asynchronous operation. The task result contains the number of approved quests for
     /// the user.</returns>
-    Task<int> GetApprovedQuestsCountAsync(int userId);
+    Task<int> GetApprovedQuestsCountAsync(Guid userId);
 
     /// <summary>
     /// Asynchronously retrieves the number of memories that contain photos for the specified user.
@@ -43,7 +43,7 @@ public interface IAchievementRepository
     /// <param name="userId">The unique identifier of the user whose memories with photos are to be counted. Must be a valid user ID.</param>
     /// <returns>A task that represents the asynchronous operation. The task result contains the number of memories with photos
     /// for the specified user.</returns>
-    Task<int> GetMemoriesWithPhotosCountAsync(int userId);
+    Task<int> GetMemoriesWithPhotosCountAsync(Guid userId);
 
     /// <summary>
     /// Asynchronously retrieves the total number of messages associated with the specified user.
@@ -51,7 +51,7 @@ public interface IAchievementRepository
     /// <param name="userId">The unique identifier of the user whose message count is to be retrieved. Must be a non-negative integer.</param>
     /// <returns>A task that represents the asynchronous operation. The task result contains the total number of messages for the
     /// specified user.</returns>
-    Task<int> GetMessagesCountAsync(int userId);
+    Task<int> GetMessagesCountAsync(Guid userId);
 
     /// <summary>
     /// Determines whether the specified user has at least one event with a perfect score.
@@ -59,7 +59,7 @@ public interface IAchievementRepository
     /// <param name="userId">The unique identifier of the user to check for perfect events.</param>
     /// <returns>A task that represents the asynchronous operation. The task result contains <see langword="true"/> if the user
     /// has a perfect event; otherwise, <see langword="false"/>.</returns>
-    Task<bool> HasPerfectEventAsync(int userId);
+    Task<bool> HasPerfectEventAsync(Guid userId);
 
     /// <summary>
     /// Asynchronously retrieves a list of all available achievements.
@@ -75,7 +75,7 @@ public interface IAchievementRepository
     /// <param name="achievementId">The unique identifier of the achievement to verify.</param>
     /// <returns>A task that represents the asynchronous operation. The task result contains <see langword="true"/> if the user
     /// has already unlocked the achievement; otherwise, <see langword="false"/>.</returns>
-    Task<bool> IsAlreadyUnlockedAsync(int userId, int achievementId);
+    Task<bool> IsAlreadyUnlockedAsync(Guid userId, int achievementId);
 
     /// <summary>
     /// Asynchronously unlocks the specified achievement for the given user.
@@ -83,5 +83,5 @@ public interface IAchievementRepository
     /// <param name="userId">The unique identifier of the user for whom the achievement will be unlocked. Must be a valid user ID.</param>
     /// <param name="achievementId">The unique identifier of the achievement to unlock. Must correspond to an existing achievement.</param>
     /// <returns>A task that represents the asynchronous unlock operation.</returns>
-    Task UnlockAchievementAsync(int userId, int achievementId);
+    Task UnlockAchievementAsync(Guid userId, int achievementId);
 }

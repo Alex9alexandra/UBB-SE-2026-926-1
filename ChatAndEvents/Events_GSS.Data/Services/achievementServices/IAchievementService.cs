@@ -20,12 +20,12 @@ public interface IAchievementService
     /// </summary>
     /// <param name="userId">The ID of the user for whom to retrieve achievements.</param>
     /// <returns>A task that represents the asynchronous operation, containing the list of achievements for the specified user.</returns>
-    Task<List<Achievement>> GetUserAchievementsAsync(int userId);
+    Task<List<Achievement>> GetUserAchievementsAsync(Guid userId);
 
     /// <summary>
     /// Checks and awards achievements for a specific user based on their activity and milestones. This method evaluates the user's actions and determines if they qualify for any new achievements, awarding them accordingly.
     /// </summary>
     /// <param name="userId">The ID of the user for whom to check and award achievements.</param>
     /// <returns>A task that represents the asynchronous operation.</returns>
-    Task CheckAndAwardAchievementsAsync(int userId);
+    Task CheckAndAwardAchievementsAsync(Guid userId);
 }

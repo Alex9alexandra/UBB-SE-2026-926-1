@@ -17,12 +17,12 @@ public interface IAnnouncementRepository
     /// <summary>
     /// Retrieves all announcements for a specific event, including user read state.
     /// </summary>
-    Task<List<Announcement>> GetAnnouncementsByEventAsync(int eventId, int userId);
+    Task<List<Announcement>> GetAnnouncementsByEventAsync(int eventId, Guid userId);
 
     /// <summary>
     /// Adds a new announcement to an event and returns its generated identifier.
     /// </summary>
-    Task<int> AddAnnouncementAsync(Announcement announcement, int eventId, int userId);
+    Task<int> AddAnnouncementAsync(Announcement announcement, int eventId, Guid userId);
 
     /// <summary>
     /// Updates the message content of an existing announcement.
@@ -56,9 +56,9 @@ public interface IAnnouncementRepository
     /// <summary>
     /// Marks an announcement as read by a specific user.
     /// </summary>
-    Task InsertReadReceiptAsync(int announcementId, int userId);
+    Task InsertReadReceiptAsync(int announcementId, Guid userId);
 
-    Task<bool> HasUserReadAsync(int announcementId, int userId);
+    Task<bool> HasUserReadAsync(int announcementId, Guid userId);
 
     /// <summary>
     /// Retrieves all read receipts for a given announcement.
@@ -73,7 +73,7 @@ public interface IAnnouncementRepository
     /// <summary>
     /// Retrieves unread announcement counts grouped by event for a user.
     /// </summary>
-    Task<Dictionary<int, int>> GetUnreadCountsForUserAsync(int userId);
+    Task<Dictionary<int, int>> GetUnreadCountsForUserAsync(Guid userId);
 
     /// <summary>
     /// Retrieves all users participating in an event.
@@ -85,19 +85,19 @@ public interface IAnnouncementRepository
     /// <summary>
     /// Adds a new reaction or updates an existing reaction for an announcement.
     /// </summary>
-    Task UpdateReactionAsync(int announcementId, int userId, string emoji);
+    Task UpdateReactionAsync(int announcementId, Guid userId, string emoji);
 
-    Task InsertReactionAsync(int announcementId, int userId, string emoji);
+    Task InsertReactionAsync(int announcementId, Guid userId, string emoji);
 
     /// <summary>
     /// Removes a user's reaction from an announcement.
     /// </summary>
-    Task RemoveReactionAsync(int announcementId, int userId);
+    Task RemoveReactionAsync(int announcementId, Guid userId);
 
     /// <summary>
     /// Gets the reaction emoji a user has given to an announcement, if any.
     /// </summary>
-    Task<string?> GetUserReactionAsync(int announcementId, int userId);
+    Task<string?> GetUserReactionAsync(int announcementId, Guid userId);
 
     Task<List<(int AnnouncementId, AnnouncementReaction Reaction)>> GetReactionsAsync(
     List<int> announcementIds);
