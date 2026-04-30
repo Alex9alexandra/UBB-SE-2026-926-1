@@ -1,3 +1,5 @@
+using Events_GSS.Data.Repositories.achievementRepository;
+using Events_GSS.Data.Services.achievementServices;
 using Events_GSS.Data.Services.reputationService;
 using Events_GSS.Services.Interfaces;
 using Events_GSS.ViewModels;
@@ -10,25 +12,25 @@ namespace Events_GSS.Views;
 
 public sealed partial class ReputationPage : Page
 {
-    public ReputationViewModel ViewModel { get; private set; } = null!;
+    public ReputationViewModel ViewModel { get; private set; }
 
-    public ReputationPage()
+    public ReputationPage(ReputationViewModel viewModel)
     {
+        ViewModel = viewModel;
+        DataContext = ViewModel;
         this.InitializeComponent();
+        _ = LoadSafeAsync();
     }
 
-    protected override async void OnNavigatedTo(NavigationEventArgs e)
+    private async Task LoadSafeAsync()
     {
-        base.OnNavigatedTo(e);
-
-        if (ViewModel is null)
+        try
         {
-            var userService = App.Services.GetRequiredService<IUserService>();
-            var reputationService = App.Services.GetRequiredService<IReputationService>();
-            ViewModel = new ReputationViewModel(userService, reputationService);
-            DataContext = ViewModel;
+            await ViewModel.LoadAsync();
         }
-
-        await ViewModel.LoadAsync();
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"LoadAsync failed: {ex}");
+        }
     }
 }

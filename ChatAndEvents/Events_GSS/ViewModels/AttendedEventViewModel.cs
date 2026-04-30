@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using System;
 using System.Threading.Tasks;
 using System.Linq;
+using Events_GSS.Data.Services.achievementServices;
 
 namespace Events_GSS.ViewModels
 {
@@ -27,6 +28,7 @@ namespace Events_GSS.ViewModels
         private readonly IAttendedEventService attendedEventService;
         private readonly IUserService userService;
         private readonly IReputationService reputationService;
+        private readonly IAchievementService achievementService;
         private readonly IAnnouncementService announcementService;
         private ObservableCollection<AttendedEvent> archivedEvents = new ();
         private ObservableCollection<AttendedEvent> favouriteEvents = new ();
@@ -320,7 +322,7 @@ namespace Events_GSS.ViewModels
             {
                 this.CurrentUser = this.userService.GetCurrentUser();
 
-                this.ReputationViewModel = new ReputationViewModel(this.userService, this.reputationService);
+                this.ReputationViewModel = new ReputationViewModel(this.userService, this.reputationService, this.achievementService);
                 await this.ReputationViewModel.LoadAsync();
 
                 var events = await this.attendedEventService.GetAttendedEventsAsync(this.CurrentUser.UserId);

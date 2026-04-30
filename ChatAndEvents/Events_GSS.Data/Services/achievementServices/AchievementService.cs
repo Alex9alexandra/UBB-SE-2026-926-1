@@ -33,7 +33,17 @@ public class AchievementService : IAchievementService
     /// <returns>A task that represents the asynchronous operation, containing the list of achievements for the specified user.</returns>
     public async Task<List<Achievement>> GetUserAchievementsAsync(Guid userId)
     {
-        return await this.repository.GetAllAchievementsAsync();
+        System.Diagnostics.Debug.WriteLine($"repository null? {this.repository == null}");
+
+        var achievements = await this.repository.GetAllAchievementsAsync();
+
+        foreach (var achievement in achievements)
+        {
+            achievement.IsUnlocked = await this.repository
+                .IsAlreadyUnlockedAsync(userId, achievement.AchievementId);
+        }
+
+        return achievements;
     }
 
     /// <summary>

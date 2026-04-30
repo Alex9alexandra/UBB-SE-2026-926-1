@@ -1,12 +1,12 @@
+using Events_GSS.Data.Models;
+using Events_GSS.Data.Services.achievementServices;
+using Events_GSS.Data.Services.reputationService;
+using Events_GSS.Services.Interfaces;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-
-using Events_GSS.Data.Models;
-using Events_GSS.Data.Services.reputationService;
-using Events_GSS.Services.Interfaces;
 
 namespace Events_GSS.ViewModels;
 
@@ -14,6 +14,7 @@ public class ReputationViewModel : INotifyPropertyChanged
 {
     private readonly IUserService _userService;
     private readonly IReputationService _reputationService;
+    private readonly IAchievementService _achievementService;
 
     private string _userName = string.Empty;
     public string UserName
@@ -57,10 +58,11 @@ public class ReputationViewModel : INotifyPropertyChanged
         private set { _errorMessage = value; OnPropertyChanged(); }
     }
 
-    public ReputationViewModel(IUserService userService, IReputationService reputationService)
+    public ReputationViewModel(IUserService userService, IReputationService reputationService, IAchievementService achievementService)
     {
         _userService = userService;
         _reputationService = reputationService;
+        _achievementService = achievementService;
     }
 
     public async Task LoadAsync()
@@ -74,8 +76,9 @@ public class ReputationViewModel : INotifyPropertyChanged
             UserName = user.Name;
             ReputationPoints = await _reputationService.GetReputationPointsAsync(user.UserId);
             CurrentTier = await _reputationService.GetTierAsync(user.UserId);
+
             Achievements = new ObservableCollection<Achievement>(
-                await _reputationService.GetAchievementsAsync(user.UserId));
+                await _achievementService.GetUserAchievementsAsync(user.UserId));
         }
         catch (Exception ex)
         {
