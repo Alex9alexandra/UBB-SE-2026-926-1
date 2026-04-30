@@ -1,0 +1,21 @@
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using ChatAndEvents.Data.EventsData.Models;
+
+namespace ChatAndEvents.Data.Database.Configurations;
+
+public class QuestMemoryConfiguration : IEntityTypeConfiguration<QuestMemory>
+{
+    public void Configure(EntityTypeBuilder<QuestMemory> e)
+    {
+        e.HasKey(qm => new { qm.QuestId, qm.MemoryId });
+
+        e.HasOne(qm => qm.Quest)
+            .WithMany(q => q.QuestMemories)
+            .HasForeignKey(qm => qm.QuestId);
+
+        e.HasOne(qm => qm.Memory)
+            .WithMany()
+            .HasForeignKey(qm => qm.MemoryId);
+    }
+}

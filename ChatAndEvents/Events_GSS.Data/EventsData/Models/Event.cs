@@ -13,9 +13,15 @@ public class Event
     public string? Description { get; set; }
     public int? MaximumPeople { get; set; }
     public string? EventBannerPath { get; set; }
+    public int? SlowModeSeconds { get; set; }
+    public int EnrolledCount { get; set; } = 0;
+    public Guid? AdminId { get; internal set; }
+    public int? CategoryId { get; internal set; }
+    // Navigation properties 
     public Category? Category { get; set; }
     public User? Admin { get; set; }
-    public int? SlowModeSeconds { get; set; }
-
-    public int EnrolledCount { get; set; } = 0;
+    public ICollection<AttendedEvent> Attendees { get; set; }
+    public ICollection<Memory> Memories { get; set; }
+    public ICollection<Announcement> Announcements { get; set; }
+    public ICollection<Quest> Quests { get; set; }
 }

@@ -33,5 +33,14 @@ namespace ChatAndEvents.Data.ChatData.domain
         public bool CanDelete { get; set; }
         public bool CanPin { get; set; }
         public DateTime? PinExpiresAt { get; set; }
+
+        //Navigation properties
+        public Conversation Conversation { get; set; }
+        public User? User { get; set; }
+        public Message? ReplyTo { get; set; }
+        public Message? ParentMessage { get; set; }
+        public string? AttachmentUrl { get; set; }
+        public string? LinkPreviewTitle { get; set; }
+        public string? LinkPreviewDesc { get; set; }
     }
 }

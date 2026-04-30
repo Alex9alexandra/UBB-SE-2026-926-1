@@ -62,5 +62,11 @@ namespace ChatAndEvents.Data.EventsData.Models
         /// Gets or sets the reactions associated with the announcement.
         /// </summary>
         public List<AnnouncementReaction> Reactions { get; set; } = new List<AnnouncementReaction>();
+        public int AnnouncementId { get; set; }
+        public int EventId { get; set; }
+        public User User { get; set; }
+        public Guid UserId { get; set; }
+        public ICollection<AnnouncementReadReceipt> ReadReceipts { get; set; }
+
     }
 }

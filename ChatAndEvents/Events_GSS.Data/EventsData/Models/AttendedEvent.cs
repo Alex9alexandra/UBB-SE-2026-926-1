@@ -24,5 +24,10 @@ namespace ChatAndEvents.Data.EventsData.Models
         }
 
         public AttendedEvent() { }
+
+        // Foreign keys
+        public int EventId { get; set; }
+
+        public Guid UserId { get; set; }
     }
 }

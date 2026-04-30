@@ -17,5 +17,8 @@ public class DiscussionMute
     public DateTime? MutedUntil { get; set; }
     public bool IsPermanent { get; set; }
     public DateTime CreatedAt { get; set; }
+    public User User { get; set; }
+    public int DiscussionId { get; set; }
+    public Guid UserId {  get; set; }
 }
 

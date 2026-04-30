@@ -23,5 +23,11 @@ namespace ChatAndEvents.Data.ChatData.domain
         public int UnreadCount { get; set; }
 
         public bool HasUnread => UnreadCount > 0;
+
+        // Navigation properties
+        public User Creator { get; set; }
+        public Message PinnedMessage { get; set; }
+        public ICollection<Message> Messages { get; set; }
+        public ICollection<Participant> Participants { get; set; }
     }
 }

@@ -24,6 +24,9 @@ namespace ChatAndEvents.Data.EventsData.Models
         }
         public Memory() { }
 
+        public int EventId { get; set; }
+        public Guid AuthorId { get; set; }
+
     }
 }
 

@@ -14,5 +14,10 @@ namespace ChatAndEvents.Data.ChatData.domain
         public bool IsFavourite { get; set; }
         public bool IsNew { get; set; }
         public string? Nickname { get; set; }
+
+        // Navigation properties
+        public Conversation Conversation { get; set; }
+        public User User { get; set; }
+        public Message? LastReadMessage { get; set; }
     }
 }

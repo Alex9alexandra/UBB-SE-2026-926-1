@@ -14,4 +14,6 @@ public class AnnouncementReadReceipt
     public User? User { get; set; }
 
     public DateTime ReadAt { get; set; }
+    public Guid UserId {  get; set; }
+    public Announcement Announcement { get; set; }
 }
