@@ -163,7 +163,7 @@ namespace ChatModule
 
             chatUserService.SetCurrentUserId(userId);
             eventServices.AddSingleton<IUserService>(chatUserService);
-Events_GSS.App.Services = eventServices.BuildServiceProvider();
+            Events_GSS.App.Services = eventServices.BuildServiceProvider();
 
             Events_GSS.App.MainWindowHandle = WinRT.Interop.WindowNative.GetWindowHandle(this);
 
