@@ -11,32 +11,32 @@ public interface IAnnouncementService
     /// <summary>
     /// Retrieves all announcements for a given event and user context.
     /// </summary>
-    Task<List<Announcement>> GetAnnouncementsAsync(int eventId, int userId);
+    Task<List<Announcement>> GetAnnouncementsAsync(int eventId, Guid userId);
 
     /// <summary>
     /// Creates a new announcement in the specified event.
     /// </summary>
-    Task CreateAnnouncementAsync(string announcementMessage, int eventId, int userId);
+    Task CreateAnnouncementAsync(string announcementMessage, int eventId, Guid userId);
 
     /// <summary>
     /// Updates an existing announcement's content.
     /// </summary>
-    Task UpdateAnnouncementAsync(int announcementId, string newAnnouncementMessage, int userId, int eventId);
+    Task UpdateAnnouncementAsync(int announcementId, string newAnnouncementMessage, Guid userId, int eventId);
 
     /// <summary>
     /// Deletes an announcement from an event.
     /// </summary>
-    Task DeleteAnnouncementAsync(int announcementId, int userId, int eventId);
+    Task DeleteAnnouncementAsync(int announcementId, Guid userId, int eventId);
 
     /// <summary>
     /// Pins an announcement within an event.
     /// </summary>
-    Task PinAnnouncementAsync(int announcementId, int eventId, int userId);
+    Task PinAnnouncementAsync(int announcementId, int eventId, Guid userId);
 
     /// <summary>
     /// Marks an announcement as read for a user.
     /// </summary>
-    Task<bool> MarkAsReadAsync(int announcementId, int userId);
+    Task<bool> MarkAsReadAsync(int announcementId, Guid userId);
 
     /// <summary>
     /// Retrieves read receipts and total participant count for an announcement.
@@ -44,22 +44,22 @@ public interface IAnnouncementService
     Task<(List<AnnouncementReadReceipt> Readers, int TotalParticipants)> GetReadReceiptsAsync(
         int announcementId,
         int eventId,
-        int userId);
+        Guid userId);
 
     /// <summary>
     /// Adds or updates a reaction for an announcement.
     /// </summary>
-    Task AddOrUpdateReactAsync(int announcementId, int userId, string emoji);
+    Task AddOrUpdateReactAsync(int announcementId, Guid userId, string emoji);
 
     /// <summary>
     /// Removes a user's reaction from an announcement.
     /// </summary>
-    Task RemoveReactionAsync(int announcementId, int userId);
+    Task RemoveReactionAsync(int announcementId, Guid userId);
 
     /// <summary>
     /// Gets unread announcement counts grouped by event for a user.
     /// </summary>
-    Task<Dictionary<int, int>> GetUnreadCountsForUserAsync(int userId);
+    Task<Dictionary<int, int>> GetUnreadCountsForUserAsync(Guid userId);
 
     /// <summary>
     /// Retrieves all users participating in an event.
@@ -69,12 +69,12 @@ public interface IAnnouncementService
     /// <summary>
     /// Toggles a reaction for an announcement (adds or removes based on current state).
     /// </summary>
-    Task ToggleReactionAsync(int announcementId, int userId, string emoji);
+    Task ToggleReactionAsync(int announcementId, Guid userId, string emoji);
 
     /// <summary>
     /// Marks an announcement as read only if it has not already been marked.
     /// </summary>
-    Task<bool> MarkAsReadIfNeededAsync(int announcementId, int userId, bool isAlreadyRead);
+    Task<bool> MarkAsReadIfNeededAsync(int announcementId, Guid userId, bool isAlreadyRead);
 
     /// <summary>
     /// Retrieves all users who have not read a specific announcement.

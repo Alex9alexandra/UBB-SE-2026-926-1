@@ -89,9 +89,9 @@ namespace Events_GSS.Data.Repositories
                     {
                         EventId = (int)reader["EventId"],
                         Name = (string)reader["Name"],
-                        Admin = new User { UserId = (int)reader["AdminId"] },
+                        Admin = new User { UserId = (Guid)reader["AdminId"] },
                     },
-                    Author = new User { UserId = (int)reader["UserId"] },
+                    Author = new User { UserId = (Guid)reader["UserId"] },
                 });
             }
 
@@ -139,7 +139,7 @@ namespace Events_GSS.Data.Repositories
         /// <param name="memoryId">The memory ID.</param>
         /// <param name="userId">The user ID.</param>
         /// <returns>A task representing the operation.</returns>
-        public async Task AddLikeAsync(int memoryId, int userId)
+        public async Task AddLikeAsync(int memoryId, Guid userId)
         {
             using var connection = this.connectionFactory.CreateConnection();
             await connection.OpenAsync();
@@ -155,13 +155,13 @@ namespace Events_GSS.Data.Repositories
         /// <param name="memoryId">The memory ID.</param>
         /// <param name="userId">The user ID.</param>
         /// <returns>A task representing the operation.</returns>
-        public async Task RemoveLikeAsync(int memoryId, int userId)
+        public async Task RemoveLikeAsync(int memoryId, Guid userId)
         {
             using var connection = this.connectionFactory.CreateConnection();
             await connection.OpenAsync();
             using var command = new SqlCommand(RemoveLikeQuery, connection);
             command.Parameters.Add("@MemoryId", SqlDbType.Int).Value = memoryId;
-            command.Parameters.Add("@UserId", SqlDbType.Int).Value = userId;
+            command.Parameters.Add("@UserId", SqlDbType.UniqueIdentifier).Value = userId;
             await command.ExecuteNonQueryAsync();
         }
 
@@ -170,7 +170,7 @@ namespace Events_GSS.Data.Repositories
         /// </summary>
         /// <param name="memoryId">The memory ID.</param>
         /// <returns>A list of user IDs.</returns>
-        public async Task<List<int>> GetLikesAsync(int memoryId)
+        public async Task<List<Guid>> GetLikesAsync(int memoryId)
         {
             using var connection = this.connectionFactory.CreateConnection();
             await connection.OpenAsync();
@@ -178,11 +178,11 @@ namespace Events_GSS.Data.Repositories
             command.Parameters.Add("@MemoryId", SqlDbType.Int).Value = memoryId;
 
             using var reader = await command.ExecuteReaderAsync();
-            var userIds = new List<int>();
+            var userIds = new List<Guid>();
 
             while (await reader.ReadAsync())
             {
-                userIds.Add((int)reader["UserId"]);
+                userIds.Add((Guid)reader["UserId"]);
             }
 
             return userIds;
@@ -216,11 +216,11 @@ namespace Events_GSS.Data.Repositories
                 {
                     EventId = (int)reader["EventId"],
                     Name = (string)reader["EventName"],
-                    Admin = new User { UserId = (int)reader["CreatedById"] },
+                    Admin = new User { UserId = (Guid)reader["CreatedById"] },
                 },
                 Author = new User
                 {
-                    UserId = (int)reader["AuthorId"],
+                    UserId = (Guid)reader["AuthorId"],
                     Name = (string)reader["AuthorName"],
                 },
             };

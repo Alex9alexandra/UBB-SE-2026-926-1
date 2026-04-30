@@ -31,7 +31,7 @@ public class AchievementService : IAchievementService
     /// </summary>
     /// <param name="userId">The ID of the user for whom to retrieve achievements.</param>
     /// <returns>A task that represents the asynchronous operation, containing the list of achievements for the specified user.</returns>
-    public async Task<List<Achievement>> GetUserAchievementsAsync(int userId)
+    public async Task<List<Achievement>> GetUserAchievementsAsync(Guid userId)
     {
         System.Diagnostics.Debug.WriteLine($"repository null? {this.repository == null}");
 
@@ -51,7 +51,7 @@ public class AchievementService : IAchievementService
     /// </summary>
     /// <param name="userId">The ID of the user for whom to check and award achievements.</param>
     /// <returns>A task that represents the asynchronous operation.</returns>
-    public async Task CheckAndAwardAchievementsAsync(int userId)
+    public async Task CheckAndAwardAchievementsAsync(Guid userId)
     {
         int attendedEvents = await this.repository.GetAttendedEventsCountAsync(userId);
         int createdEvents = await this.repository.GetCreatedEventsCountAsync(userId);

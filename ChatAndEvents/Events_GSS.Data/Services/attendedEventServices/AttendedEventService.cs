@@ -31,7 +31,7 @@ namespace Events_GSS.Services
         /// </summary>
         /// <param name="userId">The user ID.</param>
         /// <returns>A list of attended events.</returns>
-        public async Task<List<AttendedEvent>> GetAttendedEventsAsync(int userId)
+        public async Task<List<AttendedEvent>> GetAttendedEventsAsync(Guid userId)
         {
             return await this.attendedEventRepository.GetByUserIdAsync(userId);
         }
@@ -42,7 +42,7 @@ namespace Events_GSS.Services
         /// <param name="userId">The user ID.</param>
         /// <param name="isArchived">True to get archived events, false to get unarchived events.</param>
         /// <returns>A list of attended events matching the archive status.</returns>
-        public async Task<List<AttendedEvent>> GetEventsByArchiveStatusAsync(int userId, bool isArchived)
+        public async Task<List<AttendedEvent>> GetEventsByArchiveStatusAsync(Guid userId, bool isArchived)
         {
             var attendedEvents = await this.attendedEventRepository.GetByUserIdAsync(userId);
             return isArchived ? attendedEvents.Where(ae => ae.IsArchived).ToList() : attendedEvents.Where(ae => !ae.IsArchived).ToList();
@@ -55,7 +55,7 @@ namespace Events_GSS.Services
         /// <param name="userId">The user ID.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
         /// <exception cref="InvalidOperationException">Thrown when the user's reputation is too low to attend events.</exception>
-        public async Task AttendEventAsync(int eventId, int userId)
+        public async Task AttendEventAsync(int eventId, Guid userId)
         {
             if (!await this.reputationService.CanAttendEventsAsync(userId))
             {
@@ -92,7 +92,7 @@ namespace Events_GSS.Services
         /// <param name="eventId">The event ID.</param>
         /// <param name="userId">The user ID.</param>
         /// <returns>The attended event, or null if not found.</returns>
-        public async Task<AttendedEvent?> GetAsync(int eventId, int userId)
+        public async Task<AttendedEvent?> GetAsync(int eventId, Guid userId)
         {
             return await this.attendedEventRepository.GetAsync(eventId, userId);
         }
@@ -103,7 +103,7 @@ namespace Events_GSS.Services
         /// <param name="eventId">The event ID.</param>
         /// <param name="userId">The user ID.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
-        public async Task LeaveEventAsync(int eventId, int userId)
+        public async Task LeaveEventAsync(int eventId, Guid userId)
         {
             await this.attendedEventRepository.DeleteAsync(eventId, userId);
         }
@@ -115,7 +115,7 @@ namespace Events_GSS.Services
         /// <param name="userId">The user ID.</param>
         /// <param name="isArchived">True to archive the event, false to unarchive it.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
-        public async Task SetArchivedAsync(int eventId, int userId, bool isArchived)
+        public async Task SetArchivedAsync(int eventId, Guid userId, bool isArchived)
         {
             await this.attendedEventRepository.UpdateIsArchivedAsync(eventId, userId, isArchived);
         }
@@ -127,7 +127,7 @@ namespace Events_GSS.Services
         /// <param name="userId">The user ID.</param>
         /// <param name="isFavourite">True to mark as favourite, false to unmark it.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
-        public async Task SetFavouriteAsync(int eventId, int userId, bool isFavourite)
+        public async Task SetFavouriteAsync(int eventId, Guid userId, bool isFavourite)
         {
             await this.attendedEventRepository.UpdateIsFavouriteAsync(eventId, userId, isFavourite);
         }
@@ -138,7 +138,7 @@ namespace Events_GSS.Services
         /// <param name="userId">The user ID.</param>
         /// <param name="friendId">The friend's user ID.</param>
         /// <returns>A list of attended events common to both users.</returns>
-        public async Task<List<AttendedEvent>> GetCommonEventsAsync(int userId, int friendId)
+        public async Task<List<AttendedEvent>> GetCommonEventsAsync(Guid userId, Guid friendId)
         {
             return await this.attendedEventRepository.GetCommonEventsAsync(userId, friendId);
         }

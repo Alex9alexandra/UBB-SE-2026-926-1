@@ -11,26 +11,26 @@ namespace Events_GSS.Data.Repositories;
 public interface IDiscussionRepository
 {
     // ── Messages ──────────────────────────────────────────────
-    Task<List<DiscussionMessage>> GetByEventAsync(int eventId, int currentUserId);
+    Task<List<DiscussionMessage>> GetByEventAsync(int eventId, Guid currentUserId);
     Task<DiscussionMessage?> GetByIdAsync(int messageId);
     Task<int> AddAsync(DiscussionMessage message);
     Task DetachRepliesAsync(int messageId);
     Task DeleteAsync(int messageId);
-    Task<DateTime?> GetLastUserMessageDateAsync(int eventId, int userId);
+    Task<DateTime?> GetLastUserMessageDateAsync(int eventId, Guid userId);
 
     // ── Reactions ─────────────────────────────────────────────
-    Task AddReactionAsync(int messageId, int userId, string emoji);
-    Task RemoveReactionAsync(int messageId, int userId);
+    Task AddReactionAsync(int messageId, Guid userId, string emoji);
+    Task RemoveReactionAsync(int messageId, Guid userId);
 
-    Task UpdateReactionAsync(int messageId, int userId, string emoji);
-    Task<DiscussionReaction?> GetReactionAsync(int messageId, int userId);
+    Task UpdateReactionAsync(int messageId, Guid userId, string emoji);
+    Task<DiscussionReaction?> GetReactionAsync(int messageId, Guid userId);
     Task<List<DiscussionReaction>> GetReactionsAsync(int messageId);
 
     // ── Mutes ─────────────────────────────────────────────────
-    Task<DiscussionMute?> GetMuteAsync(int eventId, int userId);
-    Task UnmuteAsync(int eventId, int userId);
+    Task<DiscussionMute?> GetMuteAsync(int eventId, Guid userId);
+    Task UnmuteAsync(int eventId, Guid userId);
 
-    Task DeleteExistingMuteAsync(int eventId, int userId);
+    Task DeleteExistingMuteAsync(int eventId, Guid userId);
 
     Task InsertMuteAsync(DiscussionMute mute);
 

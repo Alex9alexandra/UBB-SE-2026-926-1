@@ -23,14 +23,14 @@ public interface INotificationRepository
     /// <param name="description">The description or content of the notification.</param>
     /// <param name="createdAt">The timestamp indicating when the notification was created.</param>
     /// <returns>A task that represents the asynchronous operation.</returns>
-    Task AddAsync(int userId, string title, string description, DateTime createdAt);
+    Task AddAsync(Guid userId, string title, string description, DateTime createdAt);
 
     /// <summary>
     /// Asynchronously retrieves notifications for a specific user by their ID. This method returns a list of notifications associated with the given user ID, allowing for the retrieval of all notifications for a particular user.
     /// </summary>
     /// <param name="userId">The ID of the user for whom to retrieve notifications.</param>
     /// <returns>A task that represents the asynchronous operation, containing a list of notifications for the specified user.</returns>
-    Task<List<Notification>> GetByUserIdAsync(int userId);
+    Task<List<Notification>> GetByUserIdAsync(Guid userId);
 
     /// <summary>
     /// Asynchronously deletes a notification by its unique identifier. This method removes the specified notification from the data source.

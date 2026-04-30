@@ -70,8 +70,9 @@
                 <StackPanel>
                     <views:QuestUserPage x:Name="QuestUserTab"
                                          Visibility="Visible"/>
-                    <views:QuestApprovalPage x:Name="QuestAdminTab" 
-                                             Visibility="Collapsed"/>
+                    <Border x:Name="QuestAdminTabContainer" Visibility="Collapsed">
+                        <views:QuestApprovalPage x:Name="QuestAdminTab" />
+                    </Border>
                 </StackPanel>
             </PivotItem>
 

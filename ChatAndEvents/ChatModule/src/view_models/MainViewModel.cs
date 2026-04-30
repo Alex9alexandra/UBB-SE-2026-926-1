@@ -13,6 +13,7 @@ using Events_GSS.Services.Interfaces; // For IUserService
 using Events_GSS.ViewModels;
 using System;
 using System.Threading.Tasks;
+using Events_GSS.Views; 
 
 namespace ChatModule.ViewModels
 {
@@ -223,9 +224,25 @@ namespace ChatModule.ViewModels
         /// <returns></returns>
         private async Task GoToMyEventsAsync()
         {
-            var vm = new EventListingViewModel(_eventRepository);
-            await vm.LoadEventsAsync();
+            var vm = new MyEventsViewModel(_eventService, _userService, _attendedEventService);
+
+            vm.EventDetailsRequested += (selectedEvent) =>
+            {
+                _ = GoToMyEventDetailsAsync(selectedEvent);
+            };
+
+            await vm.LoadMyEventsAsync();
             CurrentPage = vm;
+        }
+
+        private Task GoToMyEventDetailsAsync(Event selectedEvent)
+        {
+            var vm = new EventDetailViewModel(selectedEvent, this._attendedEventService);
+
+            // Back from detail goes back to My Events, not the public list
+            vm.BackRequested += () => _ = this.GoToMyEventsAsync();
+            this.CurrentPage = vm;
+            return Task.CompletedTask;
         }
 
         private async Task GoToReputationAsync()
@@ -235,10 +252,12 @@ namespace ChatModule.ViewModels
             CurrentPage = vm;
         }
 
-        private Task GoToNotificationsAsync()
+        private async Task GoToNotificationsAsync()
         {
-            CurrentPage = new NotificationViewModel(_notificationService, _userService);
-            return Task.CompletedTask;
+            var vm = new NotificationViewModel(_notificationService, _userService);
+            await vm.LoadAsync();
+
+            CurrentPage = vm;
         }
 
         private async Task GoToCreateEventAsync()

@@ -15,18 +15,18 @@ using Microsoft.UI.Xaml;
 namespace Events_GSS.ViewModels;
 
 public record DiscussionReactionPayload(DiscussionMessageItemViewModel Message, string Emoji);
-public record MutePayload(int TargetUserId, DateTime? Until);
+public record MutePayload(Guid TargetUserId, DateTime? Until);
 
 public partial class DiscussionViewModel : ObservableObject
 {
     private readonly IDiscussionService _service;
     private readonly Event _event;
-    private readonly int _currentUserId;
+    private readonly Guid _currentUserId;
 
     public DiscussionViewModel(
         Event forEvent,
         IDiscussionService service,
-        int currentUserId,
+        Guid currentUserId,
         bool isAdmin)
     {
         _event = forEvent;
@@ -224,7 +224,7 @@ public partial class DiscussionViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private async Task UnmuteUserAsync(int targetUserId)
+    private async Task UnmuteUserAsync(Guid targetUserId)
     {
         await RunGuardedAsync(async () =>
         {

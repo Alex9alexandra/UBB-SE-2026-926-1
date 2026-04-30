@@ -26,6 +26,13 @@ public interface IEventRepository
     Task<Event?> GetByIdAsync(int eventId);
 
     /// <summary>
+    /// Retrieves all events administered by a specific user.
+    /// </summary>
+    /// <param name="adminId">The admin user identifier.</param>
+    /// <returns>A list of events where the user is the admin.</returns>
+    Task<List<Event>> GetByAdminIdAsync(Guid adminId);
+
+    /// <summary>
     /// Adds a new event to the repository.
     /// </summary>
     /// <param name="eventEntity">The event entity to add.</param>

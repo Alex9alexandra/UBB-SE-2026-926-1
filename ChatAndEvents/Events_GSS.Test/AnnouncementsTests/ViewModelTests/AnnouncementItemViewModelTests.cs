@@ -88,8 +88,8 @@ namespace Events_GSS.Tests.AnnouncementsTests.ViewModelTests
             {
                 Reactions = new List<AnnouncementReaction>
         {
-            new() { Emoji = "👍", Author = new User { UserId = 1 } },
-            new() { Emoji = "🔥", Author = new User { UserId = 2 } }
+            new() { Emoji = "👍", Author = new User { UserId = Guid.Parse("00000000-0000-0000-0000-000000000001") } },
+            new() { Emoji = "🔥", Author = new User { UserId = Guid.Parse("00000000-0000-0000-0000-000000000002") } }
         }
             };
 
@@ -105,12 +105,12 @@ namespace Events_GSS.Tests.AnnouncementsTests.ViewModelTests
             {
                 Reactions = new List<AnnouncementReaction>
         {
-            new() { Emoji = "👍", Author = new User { UserId = 1 } },
-            new() { Emoji = "👍", Author = new User { UserId = 2 } }
+            new() { Emoji = "👍", Author = new User { UserId = Guid.Parse("00000000-0000-0000-0000-000000000001") } },
+            new() { Emoji = "👍", Author = new User { UserId = Guid.Parse("00000000-0000-0000-0000-000000000002") } }
         }
             };
 
-            var core = new AnnouncementItemViewModelCore(model, 1);
+            var core = new AnnouncementItemViewModelCore(model, Guid.Parse("00000000-0000-0000-0000-000000000001"));
 
             var group = core.ReactionGroups.First(g => g.Emoji == "👍");
 
@@ -124,11 +124,11 @@ namespace Events_GSS.Tests.AnnouncementsTests.ViewModelTests
             {
                 Reactions = new List<AnnouncementReaction>
         {
-            new() { Emoji = "👍", Author = new User { UserId = 1 } }
+            new() { Emoji = "👍", Author = new User { UserId = Guid.Parse("00000000-0000-0000-0000-000000000001") } }
         }
             };
 
-            var core = new AnnouncementItemViewModelCore(model, 1);
+            var core = new AnnouncementItemViewModelCore(model, Guid.Parse("00000000-0000-0000-0000-000000000001"));
 
             Assert.True(core.ReactionGroups.First().CurrentUserReacted);
         }
@@ -140,11 +140,11 @@ namespace Events_GSS.Tests.AnnouncementsTests.ViewModelTests
             {
                 Reactions = new List<AnnouncementReaction>
         {
-            new() { Emoji = "👍", Author = new User { UserId = 2 } }
+            new() { Emoji = "👍", Author = new User { UserId = Guid.Parse("00000000-0000-0000-0000-000000000002") } }
         }
             };
 
-            var core = new AnnouncementItemViewModelCore(model, 1);
+            var core = new AnnouncementItemViewModelCore(model, Guid.Parse("00000000-0000-0000-0000-000000000001"));
 
             Assert.False(core.ReactionGroups.First().CurrentUserReacted);
         }
@@ -156,11 +156,11 @@ namespace Events_GSS.Tests.AnnouncementsTests.ViewModelTests
             {
                 Reactions = new List<AnnouncementReaction>
         {
-            new() { Emoji = "🔥", Author = new User { UserId = 1 } }
+            new() { Emoji = "🔥", Author = new User { UserId = Guid.Parse("00000000-0000-0000-0000-000000000001") } }
         }
             };
 
-            var core = new AnnouncementItemViewModelCore(model, 1);
+            var core = new AnnouncementItemViewModelCore(model, Guid.Parse("00000000-0000-0000-0000-000000000001"));
 
             Assert.Equal("🔥", core.CurrentUserEmoji);
         }
@@ -172,11 +172,11 @@ namespace Events_GSS.Tests.AnnouncementsTests.ViewModelTests
             {
                 Reactions = new List<AnnouncementReaction>
         {
-            new() { Emoji = "🔥", Author = new User { UserId = 2 } }
+            new() { Emoji = "🔥", Author = new User { UserId = Guid.Parse("00000000-0000-0000-0000-000000000002") } }
         }
             };
 
-            var core = new AnnouncementItemViewModelCore(model, 1);
+            var core = new AnnouncementItemViewModelCore(model, Guid.Parse("00000000-0000-0000-0000-000000000001"));
 
             Assert.Null(core.CurrentUserEmoji);
         }
