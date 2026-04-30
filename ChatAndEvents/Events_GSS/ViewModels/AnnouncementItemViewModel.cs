@@ -24,7 +24,7 @@ public partial class AnnouncementItemViewModel : ObservableObject
 
     public AnnouncementItemViewModel(
         Announcement announcementModel,
-        int currentUserId,
+        Guid currentUserId,
         bool isAdmin)
     {
         announcementItemViewModelCore = new AnnouncementItemViewModelCore(announcementModel, currentUserId);

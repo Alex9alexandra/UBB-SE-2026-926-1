@@ -35,7 +35,7 @@ public class ReputationRepository : IReputationRepository
     /// <param name="reputationPoints">The reputation points to set for the user.</param>
     /// <param name="tier">The tier to set for the user.</param>
     /// <returns>A task that represents the asynchronous operation.</returns>
-    public async Task SetReputationAsync(int userId, int reputationPoints, string tier)
+    public async Task SetReputationAsync(Guid userId, int reputationPoints, string tier)
     {
         using var connection = this.connectionFactory.CreateConnection();
         await connection.OpenAsync();
@@ -51,7 +51,7 @@ public class ReputationRepository : IReputationRepository
                 Tier = @Tier
             WHERE UserId = @UserId", connection);
 
-        command.Parameters.Add("@UserId", SqlDbType.Int).Value = userId;
+        command.Parameters.Add("@UserId", SqlDbType.UniqueIdentifier).Value = userId;
         command.Parameters.Add("@ReputationPoints", SqlDbType.Int).Value = reputationPoints;
         command.Parameters.Add("@Tier", SqlDbType.NVarChar).Value = tier;
 
@@ -63,7 +63,7 @@ public class ReputationRepository : IReputationRepository
     /// </summary>
     /// <param name="userId">The ID of the user for whom to retrieve reputation points.</param>
     /// <returns>A task that represents the asynchronous operation, containing the reputation points of the specified user.</returns>
-    public async Task<int> GetReputationPointsAsync(int userId)
+    public async Task<int> GetReputationPointsAsync(Guid userId)
     {
         using var connection = this.connectionFactory.CreateConnection();
         await connection.OpenAsync();
@@ -73,7 +73,7 @@ public class ReputationRepository : IReputationRepository
             SELECT ISNULL(ReputationPoints, 0)
             FROM users_RP_scores
             WHERE UserId = @UserId", connection);
-        command.Parameters.Add("@UserId", SqlDbType.Int).Value = userId;
+        command.Parameters.Add("@UserId", SqlDbType.UniqueIdentifier).Value = userId;
 
         var result = await command.ExecuteScalarAsync();
         return result is int reputation ? reputation : 0;
@@ -84,7 +84,7 @@ public class ReputationRepository : IReputationRepository
     /// </summary>
     /// <param name="userId">The ID of the user for whom to retrieve the tier.</param>
     /// <returns>A task that represents the asynchronous operation, containing the tier of the specified user.</returns>
-    public async Task<string> GetTierAsync(int userId)
+    public async Task<string> GetTierAsync(Guid userId)
     {
         using var connection = this.connectionFactory.CreateConnection();
         await connection.OpenAsync();
@@ -94,7 +94,7 @@ public class ReputationRepository : IReputationRepository
             SELECT ISNULL(Tier, @DefaultTier)
             FROM users_RP_scores
             WHERE UserId = @UserId", connection);
-        command.Parameters.Add("@UserId", SqlDbType.Int).Value = userId;
+        command.Parameters.Add("@UserId", SqlDbType.UniqueIdentifier).Value = userId;
         command.Parameters.Add("@DefaultTier", SqlDbType.NVarChar).Value = SharedReputationConstants.NewcomerTier;
 
         var result = await command.ExecuteScalarAsync();

@@ -25,7 +25,7 @@ namespace Events_GSS.Data.Repositories
         /// <param name="eventId">The event identifier.</param>
         /// <param name="userId">The user identifier.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
-        Task DeleteAsync(int eventId, int userId);
+        Task DeleteAsync(int eventId, Guid userId);
 
         /// <summary>
         /// Updates the archived status of an attended event.
@@ -34,7 +34,7 @@ namespace Events_GSS.Data.Repositories
         /// <param name="userId">The user identifier.</param>
         /// <param name="isArchived">The archived status to set.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
-        Task UpdateIsArchivedAsync(int eventId, int userId, bool isArchived);
+        Task UpdateIsArchivedAsync(int eventId, Guid userId, bool isArchived);
 
         /// <summary>
         /// Updates the favourite status of an attended event.
@@ -43,7 +43,7 @@ namespace Events_GSS.Data.Repositories
         /// <param name="userId">The user identifier.</param>
         /// <param name="isFavourite">The favourite status to set.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
-        Task UpdateIsFavouriteAsync(int eventId, int userId, bool isFavourite);
+        Task UpdateIsFavouriteAsync(int eventId, Guid userId, bool isFavourite);
 
         /// <summary>
         /// Gets an attended event by event and user identifiers.
@@ -51,14 +51,14 @@ namespace Events_GSS.Data.Repositories
         /// <param name="eventId">The event identifier.</param>
         /// <param name="userId">The user identifier.</param>
         /// <returns>The attended event if found; otherwise, null.</returns>
-        Task<AttendedEvent?> GetAsync(int eventId, int userId);
+        Task<AttendedEvent?> GetAsync(int eventId, Guid userId);
 
         /// <summary>
         /// Gets all attended events for a specific user.
         /// </summary>
         /// <param name="userId">The user identifier.</param>
         /// <returns>A list of attended events for the user.</returns>
-        Task<List<AttendedEvent>> GetByUserIdAsync(int userId);
+        Task<List<AttendedEvent>> GetByUserIdAsync(Guid userId);
 
         /// <summary>
         /// Gets common events attended by two users.
@@ -66,7 +66,7 @@ namespace Events_GSS.Data.Repositories
         /// <param name="userId">The first user identifier.</param>
         /// <param name="friendId">The second user identifier.</param>
         /// <returns>A list of common attended events.</returns>
-        Task<List<AttendedEvent>> GetCommonEventsAsync(int userId, int friendId);
+        Task<List<AttendedEvent>> GetCommonEventsAsync(Guid userId, Guid friendId);
 
         /// <summary>
         /// Gets the count of attendees for a specific event.

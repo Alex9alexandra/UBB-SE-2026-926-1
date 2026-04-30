@@ -68,7 +68,7 @@ public class ReputationService : IReputationService
     /// </summary>
     /// <param name="userId">The ID of the user whose reputation points are to be retrieved.</param>
     /// <returns>A task that represents the asynchronous operation. The task result contains the reputation points of the specified user.</returns>
-    public async Task<int> GetReputationPointsAsync(int userId)
+    public async Task<int> GetReputationPointsAsync(Guid userId)
     {
         return await this.reputationRepository.GetReputationPointsAsync(userId);
     }
@@ -78,7 +78,7 @@ public class ReputationService : IReputationService
     /// </summary>
     /// <param name="userId">The ID of the user whose reputation tier is to be retrieved.</param>
     /// <returns>A task that represents the asynchronous operation. The task result contains the reputation tier of the specified user.</returns>
-    public async Task<string> GetTierAsync(int userId)
+    public async Task<string> GetTierAsync(Guid userId)
     {
         return await this.reputationRepository.GetTierAsync(userId);
     }
@@ -88,7 +88,7 @@ public class ReputationService : IReputationService
     /// </summary>
     /// <param name="userId">The ID of the user whose achievements are to be retrieved.</param>
     /// <returns>A task that represents the asynchronous operation. The task result contains a list of achievements for the specified user.</returns>
-    public async Task<List<Achievement>> GetAchievementsAsync(int userId)
+    public async Task<List<Achievement>> GetAchievementsAsync(Guid userId)
     {
         return await this.achievementService.GetUserAchievementsAsync(userId);
     }
@@ -98,7 +98,7 @@ public class ReputationService : IReputationService
     /// </summary>
     /// <param name="userId">The ID of the user whose permission to post memories is to be checked.</param>
     /// <returns>A task that represents the asynchronous operation. The task result contains a boolean value indicating whether the user has permission to post memories.</returns>
-    public async Task<bool> CanPostMemoriesAsync(int userId)
+    public async Task<bool> CanPostMemoriesAsync(Guid userId)
     {
         var reputationPoints = await this.GetReputationPointsAsync(userId);
         return reputationPoints > ReputationThresholds.PostMemories;
@@ -109,7 +109,7 @@ public class ReputationService : IReputationService
     /// </summary>
     /// <param name="userId">The ID of the user whose permission to post messages is to be checked.</param>
     /// <returns>A task that represents the asynchronous operation. The task result contains a boolean value indicating whether the user has permission to post messages.</returns>
-    public async Task<bool> CanPostMessagesAsync(int userId)
+    public async Task<bool> CanPostMessagesAsync(Guid userId)
     {
         var reputationPoints = await this.GetReputationPointsAsync(userId);
         return reputationPoints > ReputationThresholds.PostMessages;
@@ -120,7 +120,7 @@ public class ReputationService : IReputationService
     /// </summary>
     /// <param name="userId">The ID of the user whose permission to create events is to be checked.</param>
     /// <returns>A task that represents the asynchronous operation. The task result contains a boolean value indicating whether the user has permission to create events.</returns>
-    public async Task<bool> CanCreateEventsAsync(int userId)
+    public async Task<bool> CanCreateEventsAsync(Guid userId)
     {
         var reputationPoints = await this.GetReputationPointsAsync(userId);
         return reputationPoints > ReputationThresholds.CreateEvents;
@@ -131,7 +131,7 @@ public class ReputationService : IReputationService
     /// </summary>
     /// <param name="userId">The ID of the user whose permission to attend events is to be checked.</param>
     /// <returns>A task that represents the asynchronous operation. The task result contains a boolean value indicating whether the user has permission to attend events.</returns>
-    public async Task<bool> CanAttendEventsAsync(int userId)
+    public async Task<bool> CanAttendEventsAsync(Guid userId)
     {
         var reputationPoints = await this.GetReputationPointsAsync(userId);
         return reputationPoints > ReputationThresholds.AttendEvents;

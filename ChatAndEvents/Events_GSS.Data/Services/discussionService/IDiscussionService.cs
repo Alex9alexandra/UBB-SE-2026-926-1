@@ -9,20 +9,20 @@ namespace Events_GSS.Data.Services.discussionService;
 public interface IDiscussionService
 {
     // ── Messages ──────────────────────────────────────────────
-    Task<List<DiscussionMessage>> GetMessagesAsync(int eventId, int userId);
-    Task CreateMessageAsync(string? text, string? mediaPath, int eventId, int userId, int? replyToId);
-    Task DeleteMessageAsync(int messageId, int userId, int eventId);
+    Task<List<DiscussionMessage>> GetMessagesAsync(int eventId, Guid userId);
+    Task CreateMessageAsync(string? text, string? mediaPath, int eventId, Guid userId, int? replyToId);
+    Task DeleteMessageAsync(int messageId, Guid userId, int eventId);
 
     // ── Reactions ─────────────────────────────────────────────
-    Task ReactAsync(int messageId, int userId, string emoji);
-    Task RemoveReactionAsync(int messageId, int userId);
+    Task ReactAsync(int messageId, Guid userId, string emoji);
+    Task RemoveReactionAsync(int messageId, Guid userId);
 
     // ── Mutes ─────────────────────────────────────────────────
-    Task MuteUserAsync(int eventId, int targetUserId, DateTime? muteUntil, int adminUserId);
-    Task UnmuteUserAsync(int eventId, int targetUserId, int adminUserId);
+    Task MuteUserAsync(int eventId, Guid targetUserId, DateTime? muteUntil, Guid adminUserId);
+    Task UnmuteUserAsync(int eventId, Guid targetUserId, Guid adminUserId);
 
     // ── Slow Mode ───────────────────────────────────────────────
-    Task SetSlowModeAsync(int eventId, int? seconds, int adminUserId);
+    Task SetSlowModeAsync(int eventId, int? seconds, Guid adminUserId);
     Task<int?> GetSlowModeSecondsAsync(int eventId);
 
     // ── Participants ─────────────────────────────────────────────────────

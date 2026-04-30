@@ -12,9 +12,9 @@ using Events_GSS.Data.Models;
 public sealed class AnnouncementItemViewModelCore
 {
     private readonly Announcement announcementModel;
-    private readonly int currentUserId;
+    private readonly Guid currentUserId;
 
-    public AnnouncementItemViewModelCore(Announcement announcementModel, int currentUserId)
+    public AnnouncementItemViewModelCore(Announcement announcementModel, Guid currentUserId)
     {
         this.announcementModel = announcementModel;
         this.currentUserId = currentUserId;

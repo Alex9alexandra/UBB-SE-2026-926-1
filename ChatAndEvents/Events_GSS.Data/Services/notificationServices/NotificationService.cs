@@ -33,7 +33,7 @@ public class NotificationService : INotificationService
     /// <param name="title">The title of the notification.</param>
     /// <param name="description">The description or content of the notification.</param>
     /// <returns>A task that represents the asynchronous operation of sending the notification.</returns>
-    public async Task NotifyAsync(int userId, string title, string description)
+    public async Task NotifyAsync(Guid userId, string title, string description)
     {
         await this.notificationRepository.AddAsync(
             userId,
@@ -47,7 +47,7 @@ public class NotificationService : INotificationService
     /// </summary>
     /// <param name="userId">The ID of the user for whom to retrieve notifications.</param>
     /// <returns>A task that represents the asynchronous operation, containing a list of notifications for the specified user.</returns>
-    public async Task<List<Notification>> GetNotificationsAsync(int userId)
+    public async Task<List<Notification>> GetNotificationsAsync(Guid userId)
     {
         return await this.notificationRepository.GetByUserIdAsync(userId);
     }

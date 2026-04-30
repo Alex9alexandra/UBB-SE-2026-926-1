@@ -14,14 +14,14 @@ public interface IReputationRepository
     /// </summary>
     /// <param name="userId">The ID of the user for whom to retrieve reputation points.</param>
     /// <returns>A task that represents the asynchronous operation, containing the reputation points of the specified user.</returns>
-    Task<int> GetReputationPointsAsync(int userId);
+    Task<int> GetReputationPointsAsync(Guid userId);
 
     /// <summary>
     /// Asynchronously retrieves the tier for a specific user by their user ID.
     /// </summary>
     /// <param name="userId">The ID of the user for whom to retrieve the tier.</param>
     /// <returns>A task that represents the asynchronous operation, containing the tier of the specified user.</returns>
-    Task<string> GetTierAsync(int userId);
+    Task<string> GetTierAsync(Guid userId);
 
     /// <summary>
     /// Asynchronously sets the reputation points and tier for a specific user by their user ID.
@@ -30,5 +30,5 @@ public interface IReputationRepository
     /// <param name="reputationPoints">The reputation points to set for the user.</param>
     /// <param name="tier">The tier to set for the user.</param>
     /// <returns>A task that represents the asynchronous operation.</returns>
-    Task SetReputationAsync(int userId, int reputationPoints, string tier);
+    Task SetReputationAsync(Guid userId, int reputationPoints, string tier);
 }

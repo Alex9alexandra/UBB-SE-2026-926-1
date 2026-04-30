@@ -19,7 +19,7 @@ namespace Events_GSS.Test.AnnouncementsTests.ServiceTests
     public class AnnouncementServiceTests
     {
         private const int EventId = 1;
-        private const int UserId = 10;
+        private Guid UserId = new Guid("00000000-0000-0000-0000-000000000010");
         private const int AnnouncementId = 5;
 
         private readonly Mock<IAnnouncementRepository> repoMock;
@@ -75,7 +75,7 @@ namespace Events_GSS.Test.AnnouncementsTests.ServiceTests
         {
             eventRepoMock
                 .Setup(r => r.GetByIdAsync(EventId))
-                .ReturnsAsync(new Event { Admin = new User { UserId = 999 } });
+                .ReturnsAsync(new Event { Admin = new User { UserId = Guid.Parse("00000000-0000-0000-0000-000000000999") } });
 
             await Assert.ThrowsAsync<UnauthorizedAccessException>(() =>
                 service.CreateAnnouncementAsync("msg", EventId, UserId));
@@ -324,7 +324,7 @@ namespace Events_GSS.Test.AnnouncementsTests.ServiceTests
                 .Setup(r => r.GetByIdAsync(EventId))
                 .ReturnsAsync(new Event
                 {
-                    Admin = new User { UserId = 999 }
+                    Admin = new User { UserId = Guid.Parse("00000000-0000-0000-0000-000000000999") }
                 });
 
             repoMock
@@ -607,14 +607,14 @@ namespace Events_GSS.Test.AnnouncementsTests.ServiceTests
             {
                 new AnnouncementReadReceipt
                 {
-                    User = new User { UserId = 1 }
+                    User = new User { UserId = Guid.Parse("00000000-0000-0000-0000-000000000001") }
                 }
             };
 
             var participants = new List<User>
             {
-                new User { UserId = 1 },
-                new User { UserId = 2 }
+                new User { UserId = Guid.Parse("00000000-0000-0000-0000-000000000001") },
+                new User { UserId = Guid.Parse("00000000-0000-0000-0000-000000000002") }
             };
 
             repoMock
@@ -637,7 +637,7 @@ namespace Events_GSS.Test.AnnouncementsTests.ServiceTests
             {
                 new AnnouncementReadReceipt
                 {
-                    User = new User { UserId = 1 }
+                    User = new User { UserId = Guid.Parse("00000000-0000-0000-0000-000000000001") }
                 }
             };
 
@@ -679,7 +679,7 @@ namespace Events_GSS.Test.AnnouncementsTests.ServiceTests
                     Id = 1,
                     Emoji = "👍",
                     AnnouncementId = 1,
-                    Author = new User { UserId = 1 }
+                    Author = new User { UserId = Guid.Parse("00000000-0000-0000-0000-000000000001") }
                 })
             };
 
@@ -708,7 +708,7 @@ namespace Events_GSS.Test.AnnouncementsTests.ServiceTests
                     Id = 1,
                     Emoji = "👍",
                     AnnouncementId = 1,
-                    Author = new User { UserId = 1 }
+                    Author = new User { UserId = Guid.Parse("00000000-0000-0000-0000-000000000001") }
                 })
             };
 
@@ -737,14 +737,14 @@ namespace Events_GSS.Test.AnnouncementsTests.ServiceTests
                     Id = 1,
                     Emoji = "👍",
                     AnnouncementId = 1,
-                    Author = new User { UserId = 1 }
+                    Author = new User { UserId = Guid.Parse("00000000-0000-0000-0000-000000000001") }
                 }),
                 (1, new AnnouncementReaction
                 {
                     Id = 2,
                     Emoji = "🔥",
                     AnnouncementId = 1,
-                    Author = new User { UserId = 2 }
+                    Author = new User { UserId = Guid.Parse("00000000-0000-0000-0000-000000000002") }
                 })
             };
 
