@@ -40,7 +40,7 @@ namespace Events_GSS.ViewModels
         public async Task LoadAsync()
         {
             IsLoading = true;
-            var currentUser = _userService.GetCurrentUser();
+            var currentUser = await _userService.GetCurrentUser();
             var notifications = await _notificationService.GetNotificationsAsync(currentUser.UserId);
             Notifications = new ObservableCollection<Notification>(notifications);
             IsLoading = false;

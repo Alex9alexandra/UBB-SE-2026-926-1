@@ -33,12 +33,12 @@ public class ChatUserService : IUserService
         currentUserId = userId;
     }
 
-    public Events_GSS.Data.Models.User GetCurrentUser()
+    public async Task<Events_GSS.Data.Models.User> GetCurrentUser()
     {
-        var chatUser = chatUserRepo.GetByIdAsync(currentUserId).Result;
+        var chatUser = await chatUserRepo.GetByIdAsync(currentUserId);
         if (chatUser == null) throw new Exception("User not found");
 
-        int rep = reputationRepo.GetReputationPointsAsync(chatUser.Id).Result;
+        int rep = await reputationRepo.GetReputationPointsAsync(chatUser.Id);
 
         return new Events_GSS.Data.Models.User
         {
@@ -48,12 +48,12 @@ public class ChatUserService : IUserService
         };
     }
 
-    public Events_GSS.Data.Models.User? GetUserById(Guid userId)
+    public async Task<Events_GSS.Data.Models.User?> GetUserById(Guid userId)
     {
-        var chatUser = chatUserRepo.GetByIdAsync(userId).Result;
+        var chatUser = await chatUserRepo.GetByIdAsync(userId);
         if (chatUser == null) return null;
 
-        int rep = reputationRepo.GetReputationPointsAsync(userId).Result;
+        int rep = await reputationRepo.GetReputationPointsAsync(userId);
 
         return new Events_GSS.Data.Models.User
         {

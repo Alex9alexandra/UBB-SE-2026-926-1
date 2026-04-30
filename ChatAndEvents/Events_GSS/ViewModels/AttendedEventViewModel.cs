@@ -320,7 +320,7 @@ namespace Events_GSS.ViewModels
 
             try
             {
-                this.CurrentUser = this.userService.GetCurrentUser();
+                this.CurrentUser = await this.userService.GetCurrentUser();
 
                 this.ReputationViewModel = new ReputationViewModel(this.userService, this.reputationService, this.achievementService);
                 await this.ReputationViewModel.LoadAsync();

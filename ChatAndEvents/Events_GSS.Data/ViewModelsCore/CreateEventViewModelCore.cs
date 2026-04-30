@@ -435,7 +435,7 @@ namespace Events_GSS.Data.Services.ViewModelCore
         /// Builds the event creation DTO.
         /// </summary>
         /// <returns>The event creation DTO.</returns>
-        public CreateEventDto BuildDto()
+        public async Task<CreateEventDto> BuildDto()
         {
             int? maxPeople = int.TryParse(this.MaximumPeopleText, out var parsed) ? parsed : null;
 
@@ -450,7 +450,7 @@ namespace Events_GSS.Data.Services.ViewModelCore
                 MaximumPeople = maxPeople,
                 EventBannerPath = this.EventBannerPath,
                 Category = this.SelectedCategory,
-                Admin = this.userService.GetCurrentUser(),
+                Admin = await this.userService.GetCurrentUser(),
                 SelectedQuests = new List<Quest>(this.selectedQuests),
             };
         }
@@ -521,7 +521,7 @@ namespace Events_GSS.Data.Services.ViewModelCore
         /// <returns>A task representing the asynchronous operation with the event creation DTO.</returns>
         public async Task<CreateEventDto> CreateEventAsync()
         {
-            var dto = this.BuildDto();
+            var dto = await this.BuildDto();
 
             var eventEntity = new Event
             {
@@ -540,7 +540,7 @@ namespace Events_GSS.Data.Services.ViewModelCore
             int newEventId = await this.eventService.CreateEventAsync(eventEntity);
             eventEntity.EventId = newEventId;
 
-            await this.attendedEventService.AttendEventAsync(newEventId, this.userService.GetCurrentUser().UserId);
+            await this.attendedEventService.AttendEventAsync(newEventId, (await this.userService.GetCurrentUser()).UserId);
 
             foreach (var quest in dto.SelectedQuests)
             {

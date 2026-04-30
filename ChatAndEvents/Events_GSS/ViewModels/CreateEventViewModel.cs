@@ -349,7 +349,7 @@ public partial class CreateEventViewModel : ObservableObject
     /// Builds the event DTO from current form data.
     /// </summary>
     /// <returns>A <see cref="CreateEventDto"/> containing the event data.</returns>
-    public CreateEventDto BuildDto() => this.viewModelCore.BuildDto();
+    public async Task<CreateEventDto> BuildDto() => await this.viewModelCore.BuildDto();
 
     /// <summary>
     /// Builds a text summary of the event creation details.

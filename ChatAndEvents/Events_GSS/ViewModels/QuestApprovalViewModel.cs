@@ -97,7 +97,7 @@ public partial class QuestApprovalViewModel : ObservableObject
     [RelayCommand]
     public async Task DeleteAsync(QuestMemory proof)
     {
-        await questApprovalService.DeleteSubmissionAsync(proof, userService.GetCurrentUser());
+        await questApprovalService.DeleteSubmissionAsync(proof, await userService.GetCurrentUser());
         Submissions.Remove(proof);
     }
 }

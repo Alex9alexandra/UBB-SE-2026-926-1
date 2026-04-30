@@ -17,7 +17,7 @@ using Events_GSS.Views;
 
 namespace ChatModule.ViewModels
 {
-    public class MainViewModel : BaseViewModel
+    public class MainViewModel : BaseViewModel    
     {
         // --- Chat Services ---
         private readonly ConversationListService _conversationListService;

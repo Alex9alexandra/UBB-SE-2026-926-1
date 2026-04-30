@@ -72,7 +72,7 @@ public class ReputationViewModel : INotifyPropertyChanged
 
         try
         {
-            var user = _userService.GetCurrentUser();
+            var user = await _userService.GetCurrentUser();
             UserName = user.Name;
             ReputationPoints = await _reputationService.GetReputationPointsAsync(user.UserId);
             CurrentTier = await _reputationService.GetTierAsync(user.UserId);

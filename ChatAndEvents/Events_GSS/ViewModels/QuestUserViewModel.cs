@@ -102,7 +102,7 @@ public partial class QuestUserViewModel : ObservableObject
 
         try
         {
-            var questResults = await core.GetQuestsAsync(currentEvent, userService.GetCurrentUser());
+            var questResults = await core.GetQuestsAsync(currentEvent, await userService.GetCurrentUser());
 
             var approvedQuestIds = questResults
                 .Where(questMemory => questMemory.ProofStatus == QuestMemoryStatus.Approved)
@@ -140,7 +140,7 @@ public partial class QuestUserViewModel : ObservableObject
             var proof = new Memory(args.photoPath, args.text, DateTime.UtcNow)
             {
                 Event = currentEvent,
-                Author = userService.GetCurrentUser()
+                Author = await userService.GetCurrentUser()
             };
             await questApprovalService.SubmitProofAsync(args.quest.Quest, proof);
             await LoadQuestsAsync();
@@ -157,7 +157,7 @@ public partial class QuestUserViewModel : ObservableObject
     {
         try
         {
-            await questApprovalService.DeleteSubmissionAsync(item.QuestMemory, userService.GetCurrentUser());
+            await questApprovalService.DeleteSubmissionAsync(item.QuestMemory, await userService.GetCurrentUser());
             await LoadQuestsAsync();
         }
         catch (Exception exception)

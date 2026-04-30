@@ -157,7 +157,7 @@ namespace ChatModule
             Events_GSS.App.Services = eventServices.BuildServiceProvider();
 
             var chatUserService = new ChatUserService(
-                userRepository,                                                          // ChatModule's IUserRepository - already created above
+                userRepository,                                                          
                 Events_GSS.App.Services.GetRequiredService<IReputationRepository>(),
                 Events_GSS.App.Services.GetRequiredService<IAttendedEventService>());
 

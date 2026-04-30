@@ -29,16 +29,16 @@ public sealed partial class EventDetailPage : Page
         this.currentEvent = viewModel.SelectedEvent;
 
         // Bypass OnNavigatedTo and load the tabs immediately
-        SetupPageData();
+        _= SetupPageData();
     }
 
-    private void SetupPageData()
+    private async Task SetupPageData()
     {
         this.EventNameText.Text = currentEvent.Name;
         this.EventInfoText.Text = $"{currentEvent.StartDateTime:MMM dd, yyyy HH:mm} • {currentEvent.Location}";
 
         var userService = App.Services.GetRequiredService<IUserService>();
-        var currentUser = userService.GetCurrentUser();
+        var currentUser = await userService.GetCurrentUser();
         Guid userId = currentUser.UserId;
         bool isAdmin = currentEvent.Admin?.UserId == userId;
 
@@ -103,7 +103,7 @@ public sealed partial class EventDetailPage : Page
         if (this.currentEvent == null) return;
 
         var userService = App.Services.GetRequiredService<IUserService>();
-        var userId = userService.GetCurrentUser().UserId;
+        var userId = (await userService.GetCurrentUser()).UserId;
 
         try
         {

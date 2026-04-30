@@ -164,7 +164,7 @@ namespace Events_GSS.Data.Services.ViewModelCore
 
             try
             {
-                this.CurrentUser = this.userService.GetCurrentUser();
+                this.CurrentUser = await this.userService.GetCurrentUser();
 
                 this.allEvents = await this.attendedEventService.GetAttendedEventsAsync(this.CurrentUser.UserId);
 

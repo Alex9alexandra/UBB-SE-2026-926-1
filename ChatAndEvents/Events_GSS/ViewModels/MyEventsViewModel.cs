@@ -59,7 +59,7 @@ namespace Events_GSS.ViewModels
             IsLoading = true;
             try
             {
-                var currentUser = _userService.GetCurrentUser();
+                var currentUser = await _userService.GetCurrentUser();
 
                 // Events where user is admin
                 var adminEvents = await _eventService.GetMyEventsAsync(currentUser.UserId);
