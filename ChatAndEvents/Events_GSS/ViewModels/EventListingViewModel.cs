@@ -2,8 +2,8 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using Events_GSS.Data.Models;
-using Events_GSS.Data.Repositories.eventRepository;
+using ChatAndEvents.Data.EventsData.Models;
+using ChatAndEvents.Data.EventsData.Repositories.eventRepository;
 
 namespace Events_GSS.ViewModels
 {

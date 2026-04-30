@@ -6,14 +6,13 @@ namespace Events_GSS.Views
 {
     using System;
     using System.Threading.Tasks;
-
-    using Events_GSS.Data.Models;
     using Events_GSS.ViewModels;
-    using Events_GSS.Data.ViewModels;
 
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
     using Microsoft.UI.Xaml.Controls.Primitives;
+    using ChatAndEvents.Data.EventsData.Models;
+    using ChatAndEvents.Data.EventsData.ViewModels;
 
     /// <summary>
     /// Interaction logic for the Memory View control.

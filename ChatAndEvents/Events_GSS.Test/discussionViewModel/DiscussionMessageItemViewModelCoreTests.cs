@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-
-using Events_GSS.Data.Models;
+using ChatAndEvents.Data.EventsData.Models;
+using ChatAndEvents.Data.EventsData.ViewModelsCore;
 using Events_GSS.ViewModels;
-using Events_GSS.ViewModelsCore;
 
 using Xunit;
 

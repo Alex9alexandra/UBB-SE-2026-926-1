@@ -26,7 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Events_GSS.Data\Events_GSS.Data.csproj" />
+    <ProjectReference Include="..\Events_GSS.Data\ChatAndEvents.Data.csproj" />
   </ItemGroup>
 
   <ItemGroup>

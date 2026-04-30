@@ -1,10 +1,9 @@
-using Events_GSS.Data.Models;
-
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Imaging;
 
 using Events_GSS.ViewModels;
+using ChatAndEvents.Data.EventsData.Models;
 
 namespace Events_GSS.Views;
 

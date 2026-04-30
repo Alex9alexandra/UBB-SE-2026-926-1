@@ -1,7 +1,6 @@
 using System;
 using System.Threading.Tasks;
-using ChatModule.Models;
-using ChatModule.src.domain;
+using ChatAndEvents.Data.ChatData.domain;
 using ChatModule.src.view_models;
 using Microsoft.UI.Xaml.Controls;
 using Windows.Storage.Pickers;

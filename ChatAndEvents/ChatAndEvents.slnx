@@ -15,7 +15,7 @@
     <Platform Solution="*|x86" Project="x86" />
     <Deploy />
   </Project>
-  <Project Path="Events_GSS.Data/Events_GSS.Data.csproj">
+  <Project Path="Events_GSS.Data/ChatAndEvents.Data.csproj">
     <Platform Solution="*|x64" Project="x64" />
   </Project>
   <Project Path="Events_GSS.Test/Events_GSS.Test.csproj">

@@ -4,10 +4,9 @@
 
 namespace Events_GSS.ViewModels;
 
+using ChatAndEvents.Data.EventsData.Models;
+using ChatAndEvents.Data.EventsData.ViewModelsCore;
 using CommunityToolkit.Mvvm.ComponentModel;
-
-using Events_GSS.Data.Models;
-using Events_GSS.Data.ViewModelsCore;
 
 using System;
 using System.Collections.Generic;

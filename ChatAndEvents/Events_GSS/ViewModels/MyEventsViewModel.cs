@@ -2,9 +2,10 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using Events_GSS.Data.Models;
-using Events_GSS.Data.Services.eventServices;
-using Events_GSS.Services.Interfaces;
+using ChatAndEvents.Data.EventsData.Models;
+using ChatAndEvents.Data.EventsData.Services.attendedEventServices;
+using ChatAndEvents.Data.EventsData.Services.eventServices;
+using ChatAndEvents.Data.EventsData.Services.userServices;
 
 namespace Events_GSS.ViewModels
 {

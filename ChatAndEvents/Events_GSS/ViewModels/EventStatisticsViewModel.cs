@@ -3,9 +3,8 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-
-using Events_GSS.Data.Models;
-using Events_GSS.Data.Services.eventStatisticsServices;
+using ChatAndEvents.Data.EventsData.Models;
+using ChatAndEvents.Data.EventsData.Services.eventStatisticsServices;
 
 namespace Events_GSS.ViewModels;
 

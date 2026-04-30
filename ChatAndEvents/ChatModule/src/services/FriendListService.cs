@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using ChatModule.Models;
-using ChatModule.Repositories;
-using ChatModule.src.Interfaces.Repositories;
+using ChatAndEvents.Data.ChatData.domain;
+using ChatAndEvents.Data.ChatData.interfaces.Repositories;
+using ChatAndEvents.Data.ChatData.repositories;
 using ChatModule.src.Interfaces.Services;
 
 namespace ChatModule.Services

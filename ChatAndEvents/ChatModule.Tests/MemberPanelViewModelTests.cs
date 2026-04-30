@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using ChatModule.Models;
-using ChatModule.src.domain.Enums;
+using ChatAndEvents.Data.ChatData.domain;
 using ChatModule.src.Interfaces.Services;
 using ChatModule.src.view_models;
 using Moq;

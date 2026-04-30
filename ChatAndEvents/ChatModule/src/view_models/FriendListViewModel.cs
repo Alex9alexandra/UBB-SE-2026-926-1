@@ -1,7 +1,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
-using ChatModule.Models;
+using ChatAndEvents.Data.ChatData.domain;
 using ChatModule.Services;
 using ChatModule.src.Interfaces.Services;
 using ChatModule.ViewModels;

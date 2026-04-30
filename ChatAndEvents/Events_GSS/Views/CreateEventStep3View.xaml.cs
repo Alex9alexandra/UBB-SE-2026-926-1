@@ -1,10 +1,9 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-
-using Events_GSS.Data.Models;
 using Events_GSS.ViewModels;
 
 using System;
+using ChatAndEvents.Data.EventsData.Models;
 
 namespace Events_GSS.Views;
 
@@ -37,7 +36,7 @@ public sealed partial class CreateEventStep3View : UserControl
         }
     }
 
-    private async void OnEventCreated(Events_GSS.Data.Models.CreateEventDto? dto)
+    private async void OnEventCreated(CreateEventDto? dto)
     {
         // Hide the main content
         this.MainContent.Visibility = Visibility.Collapsed;

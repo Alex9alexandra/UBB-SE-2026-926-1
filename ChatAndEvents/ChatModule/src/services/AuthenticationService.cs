@@ -2,9 +2,8 @@
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using ChatModule.Models;
-using ChatModule.Repositories;
-using ChatModule.src.domain.Enums;
+using ChatAndEvents.Data.ChatData.domain;
+using ChatAndEvents.Data.ChatData.repositories;
 
 namespace ChatModule.Services
 {

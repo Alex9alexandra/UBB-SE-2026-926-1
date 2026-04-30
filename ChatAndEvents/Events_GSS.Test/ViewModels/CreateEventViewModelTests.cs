@@ -4,14 +4,16 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using Events_GSS.Data.Models;
-using Events_GSS.Data.Services.ViewModelCore;
-using Events_GSS.Data.Services.eventServices;
-using Events_GSS.Data.Services.Interfaces;
-using Events_GSS.Services.Interfaces;
 
 using Moq;
 
 using Xunit;
+using ChatAndEvents.Data.EventsData.Models;
+using ChatAndEvents.Data.EventsData.Services.attendedEventServices;
+using ChatAndEvents.Data.EventsData.Services.eventServices;
+using ChatAndEvents.Data.EventsData.Services.Interfaces;
+using ChatAndEvents.Data.EventsData.Services.userServices;
+using ChatAndEvents.Data.EventsData.ViewModelsCore;
 
 namespace Events_GSS.Tests.ViewModels
 {

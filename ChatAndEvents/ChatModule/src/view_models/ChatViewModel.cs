@@ -6,10 +6,9 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using ChatModule.Models;
+using ChatAndEvents.Data.ChatData.domain;
+using ChatAndEvents.Data.ChatData.interfaces.Repositories;
 using ChatModule.Services;
-using ChatModule.src.domain.Enums;
-using ChatModule.src.Interfaces.Repositories;
 using ChatModule.ViewModels;
 
 namespace ChatModule.src.view_models

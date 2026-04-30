@@ -3,10 +3,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Moq;
 using Xunit;
-using ChatModule.Models;
-using ChatModule.Repositories;
 using ChatModule.Services;
-using ChatModule.src.domain.Enums;
+using ChatAndEvents.Data.ChatData.domain;
+using ChatAndEvents.Data.ChatData.repositories;
 
 namespace ChatModule.Tests
 {

@@ -2,12 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
-using Events_GSS.Data.Models;
-using Events_GSS.Data.Repositories;
-using Events_GSS.Data.Repositories.eventRepository;
-using Events_GSS.Data.Services;
-
+using ChatAndEvents.Data.EventsData.Models;
+using ChatAndEvents.Data.EventsData.Repositories.announcementRepository;
+using ChatAndEvents.Data.EventsData.Repositories.eventRepository;
+using ChatAndEvents.Data.EventsData.Services.announcementServices;
 using Moq;
 
 using NSubstitute;

@@ -4,19 +4,18 @@ using System.Text;
 
 using Moq;
 
-using Xunit; 
-
-using Events_GSS.Data.Services;
-using Events_GSS.Data.Repositories;
+using Xunit;
 using Events_GSS.Data.Services.Interfaces;
-using Events_GSS.Data.Models;
-using Events_GSS.Data.Repositories.eventRepository;
-using Events_GSS.Data.Services.reputationService;
-using Events_GSS.Data.Services.notificationServices;
 using System.Security.Cryptography.X509Certificates;
 using Windows.AI.MachineLearning.Preview;
 using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 using Microsoft.Extensions.Logging;
+using ChatAndEvents.Data.EventsData.Models;
+using ChatAndEvents.Data.EventsData.Repositories.discussionRepository;
+using ChatAndEvents.Data.EventsData.Repositories.eventRepository;
+using ChatAndEvents.Data.EventsData.Services.discussionService;
+using ChatAndEvents.Data.EventsData.Services.notificationServices;
+using ChatAndEvents.Data.EventsData.Services.reputationService;
 
 namespace Events_GSS.Test.discussionService;
 

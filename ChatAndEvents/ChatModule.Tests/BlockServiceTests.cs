@@ -1,8 +1,7 @@
-﻿using ChatModule.Models;
-using ChatModule.Repositories;
+﻿using ChatAndEvents.Data.ChatData.domain;
+using ChatAndEvents.Data.ChatData.interfaces.Repositories;
+using ChatAndEvents.Data.ChatData.repositories;
 using ChatModule.Services;
-using ChatModule.src.domain.Enums;
-using ChatModule.src.Interfaces.Repositories;
 using Moq;
 using System;
 using System.Collections.Generic;

@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using ChatModule.Models;
+using ChatAndEvents.Data.ChatData.domain;
+using ChatAndEvents.Data.ChatData.interfaces.Repositories;
 using ChatModule.Services;
-using ChatModule.src.domain.Enums;
-using ChatModule.src.Interfaces.Repositories;
 using ChatModule.src.view_models;
 using Moq;
 using Xunit;

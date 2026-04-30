@@ -1,7 +1,6 @@
-﻿using ChatModule.Models;
+﻿using ChatAndEvents.Data.ChatData.domain;
 using ChatModule.Services;
 using ChatModule.src.domain;
-using ChatModule.src.domain.Enums;
 using ChatModule.src.Interfaces.Services;
 using ChatModule.src.view_models;
 using Moq;

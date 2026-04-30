@@ -1,11 +1,9 @@
-﻿
-
-using Events_GSS.Data.Models;
-using Events_GSS.Data.Repositories.notificationRepository;
-using Events_GSS.Data.Services.notificationServices;
+﻿using Events_GSS.Data.Services.notificationServices;
 
 using Xunit;
 using Moq;
+using ChatAndEvents.Data.EventsData.Models;
+using ChatAndEvents.Data.EventsData.Repositories.notificationRepository;
 
 namespace Events_GSS.Test.Services;
 

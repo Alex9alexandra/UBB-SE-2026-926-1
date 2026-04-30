@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
-using Events_GSS.Data.Models;
-using Events_GSS.Data.Services.announcementServices;
-using Events_GSS.Data.Services.ViewModelCore;
-using Events_GSS.Services.Interfaces;
-
+using ChatAndEvents.Data.EventsData.Models;
+using ChatAndEvents.Data.EventsData.Services.announcementServices;
+using ChatAndEvents.Data.EventsData.Services.attendedEventServices;
+using ChatAndEvents.Data.EventsData.Services.userServices;
+using ChatAndEvents.Data.EventsData.ViewModelsCore;
 using Moq;
 
 using Xunit;

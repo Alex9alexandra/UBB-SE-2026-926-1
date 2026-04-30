@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using ChatModule.src.domain;
+using ChatAndEvents.Data.ChatData.domain;
 
 namespace ChatModule.src.Interfaces.Services
 {

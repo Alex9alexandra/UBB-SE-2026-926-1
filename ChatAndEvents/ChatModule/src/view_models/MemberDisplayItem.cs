@@ -1,5 +1,5 @@
 using System;
-using ChatModule.src.domain.Enums;
+using ChatAndEvents.Data.ChatData.domain;
 using Microsoft.UI.Xaml.Media;
 using Windows.UI;
 

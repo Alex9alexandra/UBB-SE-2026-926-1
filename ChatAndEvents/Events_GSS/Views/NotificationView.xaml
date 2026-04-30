@@ -7,7 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    xmlns:models="using:Events_GSS.Data.Models"
+    xmlns:models="using:ChatAndEvents.Data.EventsData.Models"
     xmlns:converters="using:Events_GSS.Converters"
     x:Name="Root">
 

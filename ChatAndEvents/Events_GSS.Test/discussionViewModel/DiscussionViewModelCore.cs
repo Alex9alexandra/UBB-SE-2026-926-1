@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using ChatAndEvents.Data.EventsData.ViewModelsCore;
 using Events_GSS.ViewModels;
-using Events_GSS.ViewModelsCore;
 
 using Xunit;
 

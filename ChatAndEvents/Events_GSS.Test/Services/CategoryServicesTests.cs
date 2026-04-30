@@ -1,10 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-
-using Events_GSS.Data.Models;
-using Events_GSS.Data.Repositories.categoriesRepository;
-using Events_GSS.Data.Services.categoryServices;
-
+using ChatAndEvents.Data.EventsData.Models;
+using ChatAndEvents.Data.EventsData.Repositories.categoriesRepository;
+using ChatAndEvents.Data.EventsData.Services.categoryServices;
 using Moq;
 
 using Xunit;

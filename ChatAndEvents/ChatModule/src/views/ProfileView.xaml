@@ -3,7 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:converters="using:ChatModule.src.views.Converters"
-    xmlns:models="using:ChatModule.Models"
+    xmlns:models="using:ChatAndEvents.Data.ChatData.domain"
     x:Name="RootControl">
 
     <UserControl.Resources>

@@ -1,6 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-
-using Events_GSS.Data.Models;
+﻿using ChatAndEvents.Data.EventsData.Models;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace Events_GSS.ViewModels;
 

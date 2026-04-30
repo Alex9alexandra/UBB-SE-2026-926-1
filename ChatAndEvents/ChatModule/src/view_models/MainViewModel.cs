@@ -1,19 +1,21 @@
 using ChatModule.Services;
 using ChatModule.src.view_models;
-using Events_GSS.Data.Models;
-using Events_GSS.Data.Repositories.eventRepository;
-using Events_GSS.Data.Repositories.notificationRepository;
-using Events_GSS.Data.Repositories.reputationRepository;
-using Events_GSS.Data.Services.achievementServices;
-using Events_GSS.Data.Services.eventServices;
-using Events_GSS.Data.Services.Interfaces; // For IEventService, IQuestService, IAttendedEventService
-using Events_GSS.Data.Services.notificationServices;
-using Events_GSS.Data.Services.reputationService;
-using Events_GSS.Services.Interfaces; // For IUserService
+using ChatAndEvents.Data.EventsData.Repositories.notificationRepository;
+using ChatAndEvents.Data.EventsData.Repositories.reputationRepository;
 using Events_GSS.ViewModels;
 using System;
 using System.Threading.Tasks;
-using Events_GSS.Views; 
+using Events_GSS.Views;
+using ChatAndEvents.Data.EventsData.Models;
+using ChatAndEvents.Data.EventsData.Repositories.eventRepository;
+using ChatAndEvents.Data.EventsData.Services.achievementServices;
+using ChatAndEvents.Data.EventsData.Services.attendedEventServices;
+using ChatAndEvents.Data.EventsData.Services.eventServices;
+using ChatAndEvents.Data.EventsData.Services.Interfaces;
+using ChatAndEvents.Data.EventsData.Services.notificationServices;
+using ChatAndEvents.Data.EventsData.Services.reputationService;
+using ChatAndEvents.Data.EventsData.Services.userServices;
+using ChatAndEvents.Data.ChatData.domain;
 
 namespace ChatModule.ViewModels
 {
@@ -328,7 +330,7 @@ namespace ChatModule.ViewModels
         {
             if (CurrentUserId != Guid.Empty)
             {
-                _ = _profileService.UpdateStatusAsync(CurrentUserId, ChatModule.src.domain.Enums.UserStatus.Offline);
+                _ = _profileService.UpdateStatusAsync(CurrentUserId, UserStatus.Offline);
             }
 
             CurrentUserId = Guid.Empty;

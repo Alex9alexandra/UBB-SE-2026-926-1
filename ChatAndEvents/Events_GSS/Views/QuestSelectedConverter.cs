@@ -1,7 +1,7 @@
 using System;
 using Microsoft.UI.Xaml.Data;
-using Events_GSS.Data.Models;
 using Events_GSS.ViewModels;
+using ChatAndEvents.Data.EventsData.Models;
 
 namespace Events_GSS.Views
 {

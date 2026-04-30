@@ -2,11 +2,10 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
-using ChatModule.Models;
 using ChatModule.Services;
 using ChatModule.ViewModels;
-using ChatModule.src.domain;
 using ChatModule.src.Interfaces.Services;
+using ChatAndEvents.Data.ChatData.domain;
 
 namespace ChatModule.src.view_models
 {

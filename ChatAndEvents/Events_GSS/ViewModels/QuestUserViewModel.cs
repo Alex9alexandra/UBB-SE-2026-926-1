@@ -3,14 +3,12 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
-
+using ChatAndEvents.Data.EventsData.Models;
+using ChatAndEvents.Data.EventsData.Services.Interfaces;
+using ChatAndEvents.Data.EventsData.Services.userServices;
+using ChatAndEvents.Data.EventsData.ViewModelsCore;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-
-using Events_GSS.Data.Models;
-using Events_GSS.Data.Services.Interfaces;
-using Events_GSS.Data.ViewModelCore;
-using Events_GSS.Services.Interfaces;
 
 using Microsoft.Extensions.DependencyInjection;
 

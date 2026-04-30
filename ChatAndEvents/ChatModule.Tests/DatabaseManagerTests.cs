@@ -1,9 +1,9 @@
 using System;
 using System.Threading.Tasks;
 using Xunit;
-using ChatModule.Repositories;
 using Microsoft.Extensions.Configuration;
 using System.IO;
+using ChatAndEvents.Data.ChatData.repositories;
 
 namespace ChatModule.Tests
 {

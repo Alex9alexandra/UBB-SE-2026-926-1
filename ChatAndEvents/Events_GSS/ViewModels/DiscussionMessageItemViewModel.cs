@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using ChatAndEvents.Data.EventsData.Models;
+using ChatAndEvents.Data.EventsData.ViewModelsCore;
 using CommunityToolkit.Mvvm.ComponentModel;
-
-using Events_GSS.Data.Models;
-using Events_GSS.ViewModelsCore;
 
 namespace Events_GSS.ViewModels;
 

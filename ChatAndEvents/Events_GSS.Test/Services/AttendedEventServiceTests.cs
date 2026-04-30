@@ -2,14 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
+using ChatAndEvents.Data.EventsData.Messaging;
+using ChatAndEvents.Data.EventsData.Models;
+using ChatAndEvents.Data.EventsData.Repositories;
+using ChatAndEvents.Data.EventsData.Services.attendedEventServices;
+using ChatAndEvents.Data.EventsData.Services.reputationService;
 using CommunityToolkit.Mvvm.Messaging;
-
-using Events_GSS.Data.Messaging;
-using Events_GSS.Data.Models;
-using Events_GSS.Data.Repositories;
-using Events_GSS.Data.Services.reputationService;
-using Events_GSS.Services;
 
 using Moq;
 

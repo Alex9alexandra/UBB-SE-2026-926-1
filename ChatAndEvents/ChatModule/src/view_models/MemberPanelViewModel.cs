@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
-using ChatModule.Models;
+using ChatAndEvents.Data.ChatData.domain;
 using ChatModule.src.Interfaces.Services;
 using ChatModule.ViewModels;
 
@@ -169,7 +169,7 @@ namespace ChatModule.src.view_models
                         TimeoutUntil = participant.TimeoutUntil
                     };
 
-                    if (participant.Role == ChatModule.src.domain.Enums.ParticipantRole.Banned)
+                    if (participant.Role == ParticipantRole.Banned)
                     {
                         BannedMembers.Add(item);
                     }
@@ -179,7 +179,7 @@ namespace ChatModule.src.view_models
                     }
 
                     if (participant.UserId == _currentUserId &&
-                        participant.Role == ChatModule.src.domain.Enums.ParticipantRole.Admin)
+                        participant.Role == ParticipantRole.Admin)
                     {
                         IsAdmin = true;
                     }

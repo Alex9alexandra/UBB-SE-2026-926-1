@@ -2,7 +2,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using ChatModule.Models;
+using ChatAndEvents.Data.ChatData.domain;
 using ChatModule.Services;
 using ChatModule.ViewModels;
 

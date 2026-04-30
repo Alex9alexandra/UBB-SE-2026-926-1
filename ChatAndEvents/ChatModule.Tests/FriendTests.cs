@@ -1,6 +1,5 @@
 ﻿using System;
-using ChatModule.Models;
-using ChatModule.src.domain.Enums;
+using ChatAndEvents.Data.ChatData.domain;
 using Xunit;
 
 namespace ChatModule.Tests

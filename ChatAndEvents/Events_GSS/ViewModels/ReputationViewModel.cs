@@ -1,7 +1,7 @@
-using Events_GSS.Data.Models;
-using Events_GSS.Data.Services.achievementServices;
-using Events_GSS.Data.Services.reputationService;
-using Events_GSS.Services.Interfaces;
+using ChatAndEvents.Data.EventsData.Models;
+using ChatAndEvents.Data.EventsData.Services.achievementServices;
+using ChatAndEvents.Data.EventsData.Services.reputationService;
+using ChatAndEvents.Data.EventsData.Services.userServices;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;

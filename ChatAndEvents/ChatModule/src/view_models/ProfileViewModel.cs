@@ -1,9 +1,8 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
-using ChatModule.Models;
+using ChatAndEvents.Data.ChatData.domain;
 using ChatModule.Services;
-using ChatModule.src.domain.Enums;
 
 namespace ChatModule.ViewModels;
 public class ProfileViewModel : BaseViewModel
