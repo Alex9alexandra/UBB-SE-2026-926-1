@@ -13,6 +13,9 @@ public class MemoryConfiguration : IEntityTypeConfiguration<Memory>
         e.Property(m => m.MemoryId)
             .ValueGeneratedOnAdd();
 
+        e.Ignore(m => m.LikesCount);
+        e.Ignore(m => m.IsLikedByCurrentUser);
+
         e.HasOne(m => m.Event)
             .WithMany(ev => ev.Memories)
             .HasForeignKey(m => m.EventId);

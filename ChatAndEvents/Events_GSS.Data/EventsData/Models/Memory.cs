@@ -10,6 +10,7 @@ namespace ChatAndEvents.Data.EventsData.Models
         public DateTime CreatedAt { get; set; }
         public Event Event { get; set; } = null!;
         public User Author { get; set; } = null!;
+        public ICollection<MemoryLike> Likes { get; set; } = new List<MemoryLike>();
         public int LikesCount { get; set; }
         public bool IsLikedByCurrentUser { get; set; }
 

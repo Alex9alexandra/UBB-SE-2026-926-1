@@ -8,11 +8,13 @@ namespace ChatAndEvents.Data.EventsData.Repositories
     using System.Collections.Generic;
     using System.Data;
     using System.Threading.Tasks;
+    using ChatAndEvents.Data.Database;
     using ChatAndEvents.Data.EventsData.Database;
     using ChatAndEvents.Data.EventsData.Models;
     using ChatAndEvents.Data.EventsData.Repositories;
 
     using Microsoft.Data.SqlClient;
+    using Microsoft.EntityFrameworkCore;
 
     /// <summary>
     /// Repository for memory data.
@@ -34,10 +36,6 @@ namespace ChatAndEvents.Data.EventsData.Repositories
 
         private const string DeleteMemoryQuery = "DELETE FROM Memories WHERE MemoryId = @MemoryId";
 
-        private const string AddLikeQuery = "INSERT INTO MemoryLikes (MemoryId, UserId) VALUES (@MemoryId, @UserId)";
-
-        private const string RemoveLikeQuery = "DELETE FROM MemoryLikes WHERE MemoryId = @MemoryId AND UserId = @UserId";
-
         private const string GetByIdQuery = @"
             SELECT m.MemoryId, m.PhotoPath, m.Text, m.CreatedAt,
                    e.EventId, e.Name as EventName, e.AdminId as CreatedById,
@@ -47,18 +45,19 @@ namespace ChatAndEvents.Data.EventsData.Repositories
             INNER JOIN Users u ON u.Id = m.UserId
             WHERE m.MemoryId = @MemoryId";
 
-        private const string GetLikesQuery = "SELECT UserId FROM MemoryLikes WHERE MemoryId = @MemoryId";
-
         private readonly SqlConnectionFactory connectionFactory;
+        private readonly AppDbContext dbContext;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MemoryRepository"/> class.
         /// </summary>
         /// <param name="connectionFactory">The connection factory.</param>
-        public MemoryRepository(SqlConnectionFactory connectionFactory)
+        /// <param name="dbContext">The EF database context.</param>
+        public MemoryRepository(SqlConnectionFactory connectionFactory, AppDbContext dbContext)
         {
             // THIS is how we fix the underscore error!
             this.connectionFactory = connectionFactory;
+            this.dbContext = dbContext;
         }
 
         /// <summary>
@@ -141,12 +140,14 @@ namespace ChatAndEvents.Data.EventsData.Repositories
         /// <returns>A task representing the operation.</returns>
         public async Task AddLikeAsync(int memoryId, Guid userId)
         {
-            using var connection = this.connectionFactory.CreateConnection();
-            await connection.OpenAsync();
-            using var command = new SqlCommand(AddLikeQuery, connection);
-            command.Parameters.Add("@MemoryId", SqlDbType.Int).Value = memoryId;
-            command.Parameters.Add("@UserId", SqlDbType.Int).Value = userId;
-            await command.ExecuteNonQueryAsync();
+            var memoryLike = new MemoryLike
+            {
+                MemoryId = memoryId,
+                UserId = userId,
+            };
+
+            this.dbContext.MemoryLikes.Add(memoryLike);
+            await this.dbContext.SaveChangesAsync();
         }
 
         /// <summary>
@@ -157,12 +158,14 @@ namespace ChatAndEvents.Data.EventsData.Repositories
         /// <returns>A task representing the operation.</returns>
         public async Task RemoveLikeAsync(int memoryId, Guid userId)
         {
-            using var connection = this.connectionFactory.CreateConnection();
-            await connection.OpenAsync();
-            using var command = new SqlCommand(RemoveLikeQuery, connection);
-            command.Parameters.Add("@MemoryId", SqlDbType.Int).Value = memoryId;
-            command.Parameters.Add("@UserId", SqlDbType.UniqueIdentifier).Value = userId;
-            await command.ExecuteNonQueryAsync();
+            var memoryLike = await this.dbContext.MemoryLikes.FindAsync(memoryId, userId);
+            if (memoryLike == null)
+            {
+                return;
+            }
+
+            this.dbContext.MemoryLikes.Remove(memoryLike);
+            await this.dbContext.SaveChangesAsync();
         }
 
         /// <summary>
@@ -172,20 +175,11 @@ namespace ChatAndEvents.Data.EventsData.Repositories
         /// <returns>A list of user IDs.</returns>
         public async Task<List<Guid>> GetLikesAsync(int memoryId)
         {
-            using var connection = this.connectionFactory.CreateConnection();
-            await connection.OpenAsync();
-            using var command = new SqlCommand(GetLikesQuery, connection);
-            command.Parameters.Add("@MemoryId", SqlDbType.Int).Value = memoryId;
-
-            using var reader = await command.ExecuteReaderAsync();
-            var userIds = new List<Guid>();
-
-            while (await reader.ReadAsync())
-            {
-                userIds.Add((Guid)reader["UserId"]);
-            }
-
-            return userIds;
+            return await this.dbContext.MemoryLikes
+                .AsNoTracking()
+                .Where(memoryLike => memoryLike.MemoryId == memoryId)
+                .Select(memoryLike => memoryLike.UserId)
+                .ToListAsync();
         }
 
         /// <summary>

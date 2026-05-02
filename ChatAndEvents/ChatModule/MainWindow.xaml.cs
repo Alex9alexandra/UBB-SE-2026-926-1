@@ -18,6 +18,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 using Events_GSS.ViewModels;
 using Events_GSS.Views;
 using ChatAndEvents.Data.EventsData.Database;
+using ChatAndEvents.Data.Database;
 using ChatAndEvents.Data.EventsData.Repositories;
 using ChatAndEvents.Data.EventsData.Repositories.achievementRepository;
 using ChatAndEvents.Data.EventsData.Repositories.announcementRepository;
@@ -41,6 +42,7 @@ using ChatAndEvents.Data.EventsData.Services.reputationService;
 using ChatAndEvents.Data.EventsData.Services.userServices;
 using ChatAndEvents.Data.ChatData.repositories;
 using ChatAndEvents.Data.ChatData.domain;
+using Microsoft.EntityFrameworkCore;
 
 namespace ChatModule
 {
@@ -119,6 +121,7 @@ namespace ChatModule
 
             var eventServices = new ServiceCollection();
             eventServices.AddSingleton<SqlConnectionFactory>(sqlConnectionFactory);
+            eventServices.AddDbContext<AppDbContext>(options => options.UseSqlServer(eventsConnectionString));
 
             // Register all Repositories
             eventServices.AddTransient<IEventRepository, EventRepository>();

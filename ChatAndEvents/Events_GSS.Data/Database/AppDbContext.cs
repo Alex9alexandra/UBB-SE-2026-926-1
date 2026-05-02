@@ -23,6 +23,7 @@ public class AppDbContext : DbContext
     public DbSet<Event> Events { get; set; }
     public DbSet<AttendedEvent> AttendedEvents { get; set; }
     public DbSet<Memory> Memories { get; set; }
+    public DbSet<MemoryLike> MemoryLikes { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -37,5 +38,6 @@ public class AppDbContext : DbContext
         modelBuilder.ApplyConfiguration(new EventConfiguration());
         modelBuilder.ApplyConfiguration(new AttendedEventConfiguration());
         modelBuilder.ApplyConfiguration(new MemoryConfiguration());
+        modelBuilder.ApplyConfiguration(new MemoryLikeConfiguration());
     }
 }
