@@ -4,12 +4,11 @@
 
 namespace ChatAndEvents.Data.EventsData.Repositories.reputationRepository;
 
-using System.Net.NetworkInformation;
-
 using System.Data;
 
-using Microsoft.Data.SqlClient;
 using ChatAndEvents.Data.EventsData.Database;
+using ChatAndEvents.Data.EventsData.Models;
+using Microsoft.Data.SqlClient;
 
 /// <summary>
 /// Implements the <see cref="IReputationRepository"/> interface, providing methods to manage and retrieve user reputation points and tiers in the system. This class interacts with a SQL database to perform operations related to user reputation, allowing for setting and retrieving reputation points and tiers based on user activity and achievements. The repository ensures that reputation data is stored and accessed efficiently, supporting the gamification features of the application.
@@ -36,6 +35,17 @@ public class ReputationRepository : IReputationRepository
     /// <returns>A task that represents the asynchronous operation.</returns>
     public async Task SetReputationAsync(Guid userId, int reputationPoints, string tier)
     {
+        await this.SetReputationAsync(new UserReputationScore
+        {
+            UserId = userId,
+            ReputationPoints = reputationPoints,
+            Tier = tier,
+        });
+    }
+
+    /// <inheritdoc/>
+    public async Task SetReputationAsync(UserReputationScore reputationScore)
+    {
         using var connection = this.connectionFactory.CreateConnection();
         await connection.OpenAsync();
 
@@ -50,11 +60,43 @@ public class ReputationRepository : IReputationRepository
                 Tier = @Tier
             WHERE UserId = @UserId", connection);
 
-        command.Parameters.Add("@UserId", SqlDbType.UniqueIdentifier).Value = userId;
-        command.Parameters.Add("@ReputationPoints", SqlDbType.Int).Value = reputationPoints;
-        command.Parameters.Add("@Tier", SqlDbType.NVarChar).Value = tier;
+        command.Parameters.Add("@UserId", SqlDbType.UniqueIdentifier).Value = reputationScore.UserId;
+        command.Parameters.Add("@ReputationPoints", SqlDbType.Int).Value = reputationScore.ReputationPoints;
+        command.Parameters.Add("@Tier", SqlDbType.NVarChar, 50).Value = reputationScore.Tier;
 
         await command.ExecuteNonQueryAsync();
+    }
+
+    /// <inheritdoc/>
+    public async Task<UserReputationScore> GetReputationScoreAsync(Guid userId)
+    {
+        using var connection = this.connectionFactory.CreateConnection();
+        await connection.OpenAsync();
+
+        var command = new SqlCommand(
+            @"
+            SELECT UserId, ReputationPoints, Tier
+            FROM users_RP_scores
+            WHERE UserId = @UserId", connection);
+        command.Parameters.Add("@UserId", SqlDbType.UniqueIdentifier).Value = userId;
+
+        using var reader = await command.ExecuteReaderAsync();
+        if (!await reader.ReadAsync())
+        {
+            return new UserReputationScore
+            {
+                UserId = userId,
+                ReputationPoints = 0,
+                Tier = SharedReputationConstants.NewcomerTier,
+            };
+        }
+
+        return new UserReputationScore
+        {
+            UserId = reader.GetGuid(reader.GetOrdinal("UserId")),
+            ReputationPoints = reader.GetInt32(reader.GetOrdinal("ReputationPoints")),
+            Tier = reader.GetString(reader.GetOrdinal("Tier")),
+        };
     }
 
     /// <summary>
@@ -64,18 +106,8 @@ public class ReputationRepository : IReputationRepository
     /// <returns>A task that represents the asynchronous operation, containing the reputation points of the specified user.</returns>
     public async Task<int> GetReputationPointsAsync(Guid userId)
     {
-        using var connection = this.connectionFactory.CreateConnection();
-        await connection.OpenAsync();
-
-        var command = new SqlCommand(
-            @"
-            SELECT ISNULL(ReputationPoints, 0)
-            FROM users_RP_scores
-            WHERE UserId = @UserId", connection);
-        command.Parameters.Add("@UserId", SqlDbType.UniqueIdentifier).Value = userId;
-
-        var result = await command.ExecuteScalarAsync();
-        return result is int reputation ? reputation : 0;
+        var reputationScore = await this.GetReputationScoreAsync(userId);
+        return reputationScore.ReputationPoints;
     }
 
     /// <summary>
@@ -85,19 +117,8 @@ public class ReputationRepository : IReputationRepository
     /// <returns>A task that represents the asynchronous operation, containing the tier of the specified user.</returns>
     public async Task<string> GetTierAsync(Guid userId)
     {
-        using var connection = this.connectionFactory.CreateConnection();
-        await connection.OpenAsync();
-
-        var command = new SqlCommand(
-            @"
-            SELECT ISNULL(Tier, @DefaultTier)
-            FROM users_RP_scores
-            WHERE UserId = @UserId", connection);
-        command.Parameters.Add("@UserId", SqlDbType.UniqueIdentifier).Value = userId;
-        command.Parameters.Add("@DefaultTier", SqlDbType.NVarChar).Value = SharedReputationConstants.NewcomerTier;
-
-        var result = await command.ExecuteScalarAsync();
-        return result as string ?? SharedReputationConstants.NewcomerTier;
+        var reputationScore = await this.GetReputationScoreAsync(userId);
+        return reputationScore.Tier;
     }
 }
 
