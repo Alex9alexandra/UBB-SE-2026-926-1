@@ -12,6 +12,13 @@ using ChatAndEvents.Data.EventsData.Models;
 public interface IReputationService
 {
     /// <summary>
+    /// Asynchronously retrieves the full reputation score record for a specific user by their user ID.
+    /// </summary>
+    /// <param name="userId">The ID of the user for whom to retrieve reputation.</param>
+    /// <returns>A task containing the user's reputation score record.</returns>
+    Task<UserReputationScore> GetReputationScoreAsync(Guid userId);
+
+    /// <summary>
     /// Asynchronously retrieves the reputation points for a specific user by their user ID. This method interacts with the underlying data repository to fetch the current reputation points of the specified user, which can be used to determine their tier, achievements, and permissions within the system. The reputation points are typically calculated based on user activity, contributions, and engagement in various events and interactions within the application.
     /// </summary>
     /// <param name="userId">The ID of the user for whom to retrieve reputation points.</param>

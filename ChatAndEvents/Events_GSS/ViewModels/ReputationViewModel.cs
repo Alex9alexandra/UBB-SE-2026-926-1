@@ -73,9 +73,11 @@ public class ReputationViewModel : INotifyPropertyChanged
         try
         {
             var user = await _userService.GetCurrentUser();
+            var reputationScore = await _reputationService.GetReputationScoreAsync(user.UserId);
+
             UserName = user.Name;
-            ReputationPoints = await _reputationService.GetReputationPointsAsync(user.UserId);
-            CurrentTier = await _reputationService.GetTierAsync(user.UserId);
+            ReputationPoints = reputationScore.ReputationPoints;
+            CurrentTier = reputationScore.Tier;
 
             Achievements = new ObservableCollection<Achievement>(
                 await _achievementService.GetUserAchievementsAsync(user.UserId));

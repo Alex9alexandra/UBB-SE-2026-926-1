@@ -25,5 +25,10 @@ namespace ChatAndEvents.Data.EventsData.Models
         /// Gets or sets the reputation points of the user.
         /// </summary>
         public int ReputationPoints { get; set; } = UserDefaults.DefaultReputationPoints;
+
+        /// <summary>
+        /// Gets or sets the user's reputation score record.
+        /// </summary>
+        public UserReputationScore? ReputationScore { get; set; }
     }
 }

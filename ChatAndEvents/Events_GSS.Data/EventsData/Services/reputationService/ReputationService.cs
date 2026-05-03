@@ -66,9 +66,16 @@ public class ReputationService : IReputationService
     /// </summary>
     /// <param name="userId">The ID of the user whose reputation points are to be retrieved.</param>
     /// <returns>A task that represents the asynchronous operation. The task result contains the reputation points of the specified user.</returns>
+    public async Task<UserReputationScore> GetReputationScoreAsync(Guid userId)
+    {
+        return await this.reputationRepository.GetReputationScoreAsync(userId);
+    }
+
+    /// <inheritdoc/>
     public async Task<int> GetReputationPointsAsync(Guid userId)
     {
-        return await this.reputationRepository.GetReputationPointsAsync(userId);
+        var reputationScore = await this.GetReputationScoreAsync(userId);
+        return reputationScore.ReputationPoints;
     }
 
     /// <summary>
@@ -78,7 +85,8 @@ public class ReputationService : IReputationService
     /// <returns>A task that represents the asynchronous operation. The task result contains the reputation tier of the specified user.</returns>
     public async Task<string> GetTierAsync(Guid userId)
     {
-        return await this.reputationRepository.GetTierAsync(userId);
+        var reputationScore = await this.GetReputationScoreAsync(userId);
+        return reputationScore.Tier;
     }
 
     /// <summary>
@@ -98,7 +106,8 @@ public class ReputationService : IReputationService
     /// <returns>A task that represents the asynchronous operation. The task result contains a boolean value indicating whether the user has permission to post memories.</returns>
     public async Task<bool> CanPostMemoriesAsync(Guid userId)
     {
-        var reputationPoints = await this.GetReputationPointsAsync(userId);
+        var reputationScore = await this.GetReputationScoreAsync(userId);
+        var reputationPoints = reputationScore.ReputationPoints;
         return reputationPoints > ReputationThresholds.PostMemories;
     }
 
@@ -109,7 +118,8 @@ public class ReputationService : IReputationService
     /// <returns>A task that represents the asynchronous operation. The task result contains a boolean value indicating whether the user has permission to post messages.</returns>
     public async Task<bool> CanPostMessagesAsync(Guid userId)
     {
-        var reputationPoints = await this.GetReputationPointsAsync(userId);
+        var reputationScore = await this.GetReputationScoreAsync(userId);
+        var reputationPoints = reputationScore.ReputationPoints;
         return reputationPoints > ReputationThresholds.PostMessages;
     }
 
@@ -120,7 +130,8 @@ public class ReputationService : IReputationService
     /// <returns>A task that represents the asynchronous operation. The task result contains a boolean value indicating whether the user has permission to create events.</returns>
     public async Task<bool> CanCreateEventsAsync(Guid userId)
     {
-        var reputationPoints = await this.GetReputationPointsAsync(userId);
+        var reputationScore = await this.GetReputationScoreAsync(userId);
+        var reputationPoints = reputationScore.ReputationPoints;
         return reputationPoints > ReputationThresholds.CreateEvents;
     }
 
@@ -131,7 +142,8 @@ public class ReputationService : IReputationService
     /// <returns>A task that represents the asynchronous operation. The task result contains a boolean value indicating whether the user has permission to attend events.</returns>
     public async Task<bool> CanAttendEventsAsync(Guid userId)
     {
-        var reputationPoints = await this.GetReputationPointsAsync(userId);
+        var reputationScore = await this.GetReputationScoreAsync(userId);
+        var reputationPoints = reputationScore.ReputationPoints;
         return reputationPoints > ReputationThresholds.AttendEvents;
     }
 
@@ -148,7 +160,8 @@ public class ReputationService : IReputationService
 
             if (ReputationDeltasMap.TryGetValue(message.Value, out int delta))
             {
-                var current = await this.reputationRepository.GetReputationPointsAsync(message.UserId);
+                var currentScore = await this.reputationRepository.GetReputationScoreAsync(message.UserId);
+                var current = currentScore.ReputationPoints;
 
                 var newReputation = Math.Max(
                     ReputationConstants.MinReputation,
@@ -156,7 +169,12 @@ public class ReputationService : IReputationService
 
                 var newTier = this.CalculateTier(newReputation);
 
-                await this.reputationRepository.SetReputationAsync(message.UserId, newReputation, newTier);
+                await this.reputationRepository.SetReputationAsync(new UserReputationScore
+                {
+                    UserId = message.UserId,
+                    ReputationPoints = newReputation,
+                    Tier = newTier,
+                });
                 await this.achievementService.CheckAndAwardAchievementsAsync(message.UserId);
             }
         }
@@ -174,7 +192,8 @@ public class ReputationService : IReputationService
             var ev = await this.eventRepository.GetByIdAsync(eventId);
             if (ev?.Admin != null)
             {
-                var current = await this.reputationRepository.GetReputationPointsAsync(ev.Admin.UserId);
+                var currentScore = await this.reputationRepository.GetReputationScoreAsync(ev.Admin.UserId);
+                var current = currentScore.ReputationPoints;
 
                 var newReputation = Math.Max(
                     ReputationConstants.MinReputation,
@@ -182,10 +201,12 @@ public class ReputationService : IReputationService
 
                 var newTier = this.CalculateTier(newReputation);
 
-                await this.reputationRepository.SetReputationAsync(
-                    ev.Admin.UserId,
-                    newReputation,
-                    newTier);
+                await this.reputationRepository.SetReputationAsync(new UserReputationScore
+                {
+                    UserId = ev.Admin.UserId,
+                    ReputationPoints = newReputation,
+                    Tier = newTier,
+                });
             }
         }
     }

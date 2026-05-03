@@ -3,7 +3,6 @@ using ChatAndEvents.Data.EventsData.Models;
 using ChatAndEvents.Data.EventsData.Repositories.reputationRepository;
 using ChatAndEvents.Data.EventsData.Services.attendedEventServices;
 using ChatAndEvents.Data.EventsData.Services.userServices;
-using ChatAndEvents.Data.EventsData.Models;
 using ChatModule.Services;
 using Events_GSS.Services;
 using System;
@@ -39,13 +38,14 @@ public class ChatUserService : IUserService
         var chatUser = await chatUserRepo.GetByIdAsync(currentUserId);
         if (chatUser == null) throw new Exception("User not found");
 
-        int rep = await reputationRepo.GetReputationPointsAsync(chatUser.Id);
+        var reputationScore = await reputationRepo.GetReputationScoreAsync(chatUser.Id);
 
         return new ChatAndEvents.Data.EventsData.Models.User
         {
             UserId = chatUser.Id,
             Name = chatUser.Username,
-            ReputationPoints = rep
+            ReputationPoints = reputationScore.ReputationPoints,
+            ReputationScore = reputationScore,
         };
     }
 
@@ -54,13 +54,14 @@ public class ChatUserService : IUserService
         var chatUser = await chatUserRepo.GetByIdAsync(userId);
         if (chatUser == null) return null;
 
-        int rep = await reputationRepo.GetReputationPointsAsync(userId);
+        var reputationScore = await reputationRepo.GetReputationScoreAsync(userId);
 
         return new ChatAndEvents.Data.EventsData.Models.User
         {
             UserId = chatUser.Id,
             Name = chatUser.Username,
-            ReputationPoints = rep
+            ReputationPoints = reputationScore.ReputationPoints,
+            ReputationScore = reputationScore,
         };
     }
 

@@ -24,6 +24,7 @@ public class AppDbContext : DbContext
     public DbSet<AttendedEvent> AttendedEvents { get; set; }
     public DbSet<Memory> Memories { get; set; }
     public DbSet<MemoryLike> MemoryLikes { get; set; }
+    public DbSet<UserReputationScore> UserReputationScores { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -39,5 +40,6 @@ public class AppDbContext : DbContext
         modelBuilder.ApplyConfiguration(new AttendedEventConfiguration());
         modelBuilder.ApplyConfiguration(new MemoryConfiguration());
         modelBuilder.ApplyConfiguration(new MemoryLikeConfiguration());
+        modelBuilder.ApplyConfiguration(new UserReputationScoreConfiguration());
     }
 }
