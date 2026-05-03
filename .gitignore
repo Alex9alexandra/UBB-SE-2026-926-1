@@ -425,3 +425,4 @@ FodyWeavers.xsd
 # Rider generated files
 _ReSharper.Caches/
 .idea_modules/
+.dotnet_home/
