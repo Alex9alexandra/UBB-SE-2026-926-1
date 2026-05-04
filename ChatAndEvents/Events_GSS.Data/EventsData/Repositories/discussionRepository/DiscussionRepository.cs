@@ -1,13 +1,12 @@
-﻿using System;
+﻿namespace ChatAndEvents.Data.EventsData.Repositories.discussionRepository;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ChatAndEvents.Data.EventsData.Database;
-using ChatAndEvents.Data.EventsData.Models;
 using Microsoft.Data.SqlClient;
-
-namespace ChatAndEvents.Data.EventsData.Repositories.discussionRepository;
-
+using ChatAndEvents.Data.EventsData.Models;
 public class DiscussionRepository : IDiscussionRepository
 {
     private readonly SqlConnectionFactory connectionFactory;

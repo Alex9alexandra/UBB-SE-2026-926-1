@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+//using ChatAndEvents.Data.ChatData.domain;
 
 namespace Events_GSS.Data.Models;
 
@@ -19,7 +21,8 @@ public class DiscussionMessage
     public bool IsEdited { get; set; }
 
     // Navigation
-    public Event? AssociatedEvent { get; set; }
+    public Discussion? AssociatedDiscussion { get; set; }
+
     public User? Author { get; set; }
     public DiscussionMessage? ReplyTo { get; set; }
 

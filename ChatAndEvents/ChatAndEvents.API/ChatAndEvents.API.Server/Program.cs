@@ -1,3 +1,5 @@
+//using ChatAndEvents.Data.Database;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add service defaults & Aspire client integrations.
