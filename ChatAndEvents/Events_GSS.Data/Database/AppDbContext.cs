@@ -27,6 +27,8 @@ public class AppDbContext : DbContext
     public DbSet<UserReputationScore> UserReputationScores { get; set; }
     public DbSet<AnnouncementReadReceipt> AnnouncementReadReceipts { get; set; }
     public DbSet<QuestMemory> QuestMemories { get; set; }
+    public DbSet<Announcement> Announcements { get; set; }
+    public DbSet<AnnouncementReaction> AnnouncementReactions { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

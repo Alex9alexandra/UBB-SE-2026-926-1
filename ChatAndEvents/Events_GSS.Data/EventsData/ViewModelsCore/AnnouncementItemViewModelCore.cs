@@ -45,12 +45,12 @@ public sealed class AnnouncementItemViewModelCore
                 Emoji = group.Key,
                 Count = group.Count(),
                 CurrentUserReacted =
-                    group.Any(r => r.Author.UserId == currentUserId),
+                    group.Any(r => r.Author.Id == currentUserId),
             })
             .ToList();
 
     public string? CurrentUserEmoji =>
         announcementModel.Reactions
-            .FirstOrDefault(r => r.Author.UserId == currentUserId)?
+            .FirstOrDefault(r => r.Author.Id == currentUserId)?
             .Emoji;
 }

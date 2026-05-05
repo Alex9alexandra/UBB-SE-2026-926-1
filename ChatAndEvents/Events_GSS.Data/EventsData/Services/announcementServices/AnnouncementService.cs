@@ -313,7 +313,7 @@ public class AnnouncementService : IAnnouncementService
         var participants = await this.announcementRepository.GetAllParticipantsAsync(eventId);
 
         var readerIds = readers
-            .Select(reader => reader.User.UserId)
+            .Select(reader => reader.User.Id)
             .ToHashSet();
 
         var nonReaders = participants

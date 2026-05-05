@@ -8,9 +8,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ChatAndEvents.Data.EventsData.Repositories
 {
-    /// <summary>
-    /// Repository for managing attended event records in the database.
-    /// </summary>
     public class AttendedEventRepository : IAttendedEventRepository
     {
         private readonly AppDbContext _db;

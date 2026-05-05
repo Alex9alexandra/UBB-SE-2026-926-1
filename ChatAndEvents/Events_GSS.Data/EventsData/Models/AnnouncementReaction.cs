@@ -27,7 +27,7 @@ public class AnnouncementReaction
     /// <summary>
     /// Gets or sets the author of the reaction.
     /// </summary>
-    required public User Author { get; set; }
+    required public ChatAndEvents.Data.ChatData.domain.User Author { get; set; }
 
     public Guid AuthorId { get; set; }
     public Announcement Announcement { get; set; }
