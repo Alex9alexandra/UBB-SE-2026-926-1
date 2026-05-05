@@ -212,7 +212,7 @@ public sealed partial class AnnouncementControl : UserControl
                 });
                 row.Children.Add(new TextBlock
                 {
-                    Text = receipt.User.Name,
+                    Text = receipt.User.Username,
                     Style = (Style)Application.Current.Resources["BodyTextBlockStyle"],
                 });
                 row.Children.Add(new TextBlock

@@ -6,218 +6,118 @@ namespace ChatAndEvents.Data.EventsData.Repositories
 {
     using System;
     using System.Collections.Generic;
-    using System.Data;
+    using System.Linq;
     using System.Threading.Tasks;
     using ChatAndEvents.Data.Database;
-    using ChatAndEvents.Data.EventsData.Database;
     using ChatAndEvents.Data.EventsData.Models;
-    using ChatAndEvents.Data.EventsData.Repositories;
-
-    using Microsoft.Data.SqlClient;
     using Microsoft.EntityFrameworkCore;
 
-    /// <summary>
-    /// Repository for memory data.
-    /// </summary>
     public class MemoryRepository : IMemoryRepository
     {
-        private const string GetMemoriesByEventQuery = @"
-            SELECT m.MemoryId, m.UserId, m.PhotoPath, m.Text, m.CreatedAt,
-                   e.EventId, e.Name, e.AdminId
-            FROM Memories m
-            INNER JOIN Events e ON e.EventId = m.EventId
-            WHERE m.EventId = @EventId
-            ORDER BY m.CreatedAt DESC";
+        private readonly AppDbContext _db;
 
-        private const string InsertMemoryQuery = @"
-            INSERT INTO Memories (EventId, UserId, PhotoPath, Text, CreatedAt)
-            OUTPUT INSERTED.MemoryId
-            VALUES (@EventId, @UserId, @PhotoPath, @Text, @CreatedAt)";
-
-        private const string DeleteMemoryQuery = "DELETE FROM Memories WHERE MemoryId = @MemoryId";
-
-        private const string GetByIdQuery = @"
-            SELECT m.MemoryId, m.PhotoPath, m.Text, m.CreatedAt,
-                   e.EventId, e.Name as EventName, e.AdminId as CreatedById,
-                   u.Id as AuthorId, u.Name as AuthorName, u.Email as AuthorEmail
-            FROM Memories m
-            INNER JOIN Events e ON e.EventId = m.EventId
-            INNER JOIN Users u ON u.Id = m.UserId
-            WHERE m.MemoryId = @MemoryId";
-
-        private readonly SqlConnectionFactory connectionFactory;
-        private readonly AppDbContext dbContext;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MemoryRepository"/> class.
-        /// </summary>
-        /// <param name="connectionFactory">The connection factory.</param>
-        /// <param name="dbContext">The EF database context.</param>
-        public MemoryRepository(SqlConnectionFactory connectionFactory, AppDbContext dbContext)
+        public MemoryRepository(AppDbContext _db)
         {
-            // THIS is how we fix the underscore error!
-            this.connectionFactory = connectionFactory;
-            this.dbContext = dbContext;
+            this._db = _db;
         }
 
-        /// <summary>
-        /// Gets memories by event ID.
-        /// </summary>
-        /// <param name="eventId">The event ID.</param>
-        /// <returns>A list of memories.</returns>
         public async Task<List<Memory>> GetByEventAsync(int eventId)
         {
-            using var connection = this.connectionFactory.CreateConnection();
-            await connection.OpenAsync();
-            using var command = new SqlCommand(GetMemoriesByEventQuery, connection);
-
-            command.Parameters.Add("@EventId", SqlDbType.Int).Value = eventId;
-
-            using var reader = await command.ExecuteReaderAsync();
-            var memories = new List<Memory>();
-
-            while (await reader.ReadAsync())
-            {
-                memories.Add(new Memory
-                {
-                    MemoryId = (int)reader["MemoryId"],
-                    PhotoPath = reader["PhotoPath"] == DBNull.Value ? null : (string)reader["PhotoPath"],
-                    Text = reader["Text"] == DBNull.Value ? null : (string)reader["Text"],
-                    CreatedAt = (DateTime)reader["CreatedAt"],
-                    Event = new Event
-                    {
-                        EventId = (int)reader["EventId"],
-                        Name = (string)reader["Name"],
-                        Admin = new User { UserId = (Guid)reader["AdminId"] },
-                    },
-                    Author = new User { UserId = (Guid)reader["UserId"] },
-                });
-            }
-
-            return memories;
+            return await _db.Memories
+                .AsNoTracking()
+                .Include(memory => memory.Event)
+                    .ThenInclude(@event => @event.Admin)
+                .Include(memory => memory.Author)
+                .Where(memory => memory.EventId == eventId)
+                .OrderByDescending(memory => memory.CreatedAt)
+                .ToListAsync();
         }
 
-        /// <summary>
-        /// Adds a memory to the database.
-        /// </summary>
-        /// <param name="memory">The memory to add.</param>
-        /// <returns>The ID of the new memory.</returns>
         public async Task<int> AddAsync(Memory memory)
         {
-            using var connection = this.connectionFactory.CreateConnection();
-            await connection.OpenAsync();
-            using var command = new SqlCommand(InsertMemoryQuery, connection);
+            if (memory.Event == null || memory.Author == null)
+            {
+                throw new ArgumentException("Event and Author are required.", nameof(memory));
+            }
 
-            command.Parameters.Add("@EventId", SqlDbType.Int).Value = memory.Event.EventId;
-            command.Parameters.Add("@UserId", SqlDbType.Int).Value = memory.Author.UserId;
-            command.Parameters.Add("@PhotoPath", SqlDbType.NVarChar).Value = (object?)memory.PhotoPath ?? DBNull.Value;
-            command.Parameters.Add("@Text", SqlDbType.NVarChar).Value = (object?)memory.Text ?? DBNull.Value;
-            command.Parameters.Add("@CreatedAt", SqlDbType.DateTime2).Value = memory.CreatedAt;
+            var memoryEntity = new Memory
+            {
+                PhotoPath = memory.PhotoPath,
+                Text = memory.Text,
+                CreatedAt = memory.CreatedAt,
+                EventId = memory.Event.EventId,
+                AuthorId = memory.Author.UserId,
+            };
 
-            var result = await command.ExecuteScalarAsync();
-            return (int)result!;
+            _db.Memories.Add(memoryEntity);
+            await _db.SaveChangesAsync();
+            memory.MemoryId = memoryEntity.MemoryId;
+            return memoryEntity.MemoryId;
         }
 
-        /// <summary>
-        /// Deletes a memory from the database.
-        /// </summary>
-        /// <param name="memoryId">The ID of the memory.</param>
-        /// <returns>A task representing the operation.</returns>
         public async Task DeleteAsync(int memoryId)
         {
-            using var connection = this.connectionFactory.CreateConnection();
-            await connection.OpenAsync();
-            using var command = new SqlCommand(DeleteMemoryQuery, connection);
-            command.Parameters.Add("@MemoryId", SqlDbType.Int).Value = memoryId;
-            await command.ExecuteNonQueryAsync();
+            var memory = await _db.Memories.FindAsync(memoryId);
+            if (memory == null)
+            {
+                return;
+            }
+
+            _db.Memories.Remove(memory);
+            await _db.SaveChangesAsync();
         }
 
-        /// <summary>
-        /// Adds a like to a memory.
-        /// </summary>
-        /// <param name="memoryId">The memory ID.</param>
-        /// <param name="userId">The user ID.</param>
-        /// <returns>A task representing the operation.</returns>
         public async Task AddLikeAsync(int memoryId, Guid userId)
         {
+            if (await _db.Memories.FindAsync(memoryId) == null)
+            {
+                throw new InvalidOperationException("Memory not found.");
+            }
+
+            if (await _db.Users.FindAsync(userId) == null)
+            {
+                throw new InvalidOperationException("User not found.");
+            }
+
             var memoryLike = new MemoryLike
             {
                 MemoryId = memoryId,
                 UserId = userId,
             };
 
-            this.dbContext.MemoryLikes.Add(memoryLike);
-            await this.dbContext.SaveChangesAsync();
+            _db.MemoryLikes.Add(memoryLike);
+            await _db.SaveChangesAsync();
         }
 
-        /// <summary>
-        /// Removes a like from a memory.
-        /// </summary>
-        /// <param name="memoryId">The memory ID.</param>
-        /// <param name="userId">The user ID.</param>
-        /// <returns>A task representing the operation.</returns>
         public async Task RemoveLikeAsync(int memoryId, Guid userId)
         {
-            var memoryLike = await this.dbContext.MemoryLikes.FindAsync(memoryId, userId);
+            var memoryLike = await _db.MemoryLikes.FindAsync(memoryId, userId);
             if (memoryLike == null)
             {
                 return;
             }
 
-            this.dbContext.MemoryLikes.Remove(memoryLike);
-            await this.dbContext.SaveChangesAsync();
+            _db.MemoryLikes.Remove(memoryLike);
+            await _db.SaveChangesAsync();
         }
 
-        /// <summary>
-        /// Gets the list of user IDs who liked a memory.
-        /// </summary>
-        /// <param name="memoryId">The memory ID.</param>
-        /// <returns>A list of user IDs.</returns>
         public async Task<List<Guid>> GetLikesAsync(int memoryId)
         {
-            return await this.dbContext.MemoryLikes
+            return await _db.MemoryLikes
                 .AsNoTracking()
                 .Where(memoryLike => memoryLike.MemoryId == memoryId)
                 .Select(memoryLike => memoryLike.UserId)
                 .ToListAsync();
         }
 
-        /// <summary>
-        /// Gets a memory by its ID.
-        /// </summary>
-        /// <param name="memoryId">The memory ID.</param>
-        /// <returns>The memory object.</returns>
         public async Task<Memory?> GetByIdAsync(int memoryId)
         {
-            using var connection = this.connectionFactory.CreateConnection();
-            await connection.OpenAsync();
-            using var command = new SqlCommand(GetByIdQuery, connection);
-            command.Parameters.Add("@MemoryId", SqlDbType.Int).Value = memoryId;
-
-            using var reader = await command.ExecuteReaderAsync();
-            if (!await reader.ReadAsync())
-            {
-                return null;
-            }
-
-            return new Memory
-            {
-                MemoryId = (int)reader["MemoryId"],
-                PhotoPath = reader["PhotoPath"] == DBNull.Value ? null : (string)reader["PhotoPath"],
-                Text = reader["Text"] == DBNull.Value ? null : (string)reader["Text"],
-                CreatedAt = (DateTime)reader["CreatedAt"],
-                Event = new Event
-                {
-                    EventId = (int)reader["EventId"],
-                    Name = (string)reader["EventName"],
-                    Admin = new User { UserId = (Guid)reader["CreatedById"] },
-                },
-                Author = new User
-                {
-                    UserId = (Guid)reader["AuthorId"],
-                    Name = (string)reader["AuthorName"],
-                },
-            };
+            return await _db.Memories
+                .AsNoTracking()
+                .Include(memory => memory.Event)
+                    .ThenInclude(@event => @event.Admin)
+                .Include(memory => memory.Author)
+                .FirstOrDefaultAsync(memory => memory.MemoryId == memoryId);
         }
     }
 }
