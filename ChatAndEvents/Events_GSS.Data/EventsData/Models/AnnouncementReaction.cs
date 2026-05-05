@@ -28,7 +28,7 @@ public class AnnouncementReaction
     /// Gets or sets the author of the reaction.
     /// </summary>
     required public User Author { get; set; }
-    public Guid UserId { get; set; }
+
+    public Guid AuthorId { get; set; }
     public Announcement Announcement { get; set; }
-    public User User { get; set; }
 }

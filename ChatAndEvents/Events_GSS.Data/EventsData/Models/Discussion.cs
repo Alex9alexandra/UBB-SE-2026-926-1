@@ -24,4 +24,6 @@ public class Discussion
 
     // O discuție conține o listă de mesaje
     public List<DiscussionMessage> Messages { get; set; } = new();
+    public List<DiscussionReaction> Reactions { get; set; } = new();
+    public List<DiscussionMute> Mutes { get; set; } = new();
 }

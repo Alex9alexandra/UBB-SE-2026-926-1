@@ -52,4 +52,6 @@ public interface IEventRepository
     /// <param name="eventId">The unique identifier of the event to delete.</param>
     /// <returns>A task that represents the asynchronous operation.</returns>
     Task DeleteAsync(int eventId);
+    Task IncrementEnrolledCountAsync(int eventId);
+    Task DecrementEnrolledCountAsync(int eventId);
 }

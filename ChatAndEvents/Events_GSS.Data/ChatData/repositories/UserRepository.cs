@@ -2,223 +2,71 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using ChatAndEvents.Data.ChatData.domain;
-using Microsoft.Data.SqlClient;
+using ChatAndEvents.Data.Database;
+using Microsoft.EntityFrameworkCore;
 
 namespace ChatAndEvents.Data.ChatData.repositories
 {
     public class UserRepository : IUserRepository
     {
-        private readonly DatabaseManager dataBaseManager;
+        private readonly AppDbContext _db;
 
-        public UserRepository(DatabaseManager dataBaseManager)
+        public UserRepository(AppDbContext db)
         {
-            this.dataBaseManager = dataBaseManager ?? throw new ArgumentNullException(nameof(dataBaseManager));
+            _db = db ?? throw new ArgumentNullException(nameof(db));
         }
 
         public async Task<User?> GetByIdAsync(Guid id)
         {
-            await using var connection = new SqlConnection(dataBaseManager.ConnectionString);
-            await connection.OpenAsync();
-
-            const string sql = "SELECT TOP 1 * FROM Users WHERE Id = @Id";
-            await using var command = new SqlCommand(sql, connection);
-            command.Parameters.AddWithValue("@Id", id);
-
-            await using var reader = await command.ExecuteReaderAsync();
-            if (!await reader.ReadAsync())
-            {
-                return null;
-            }
-
-            return MapUser(reader);
+            return await _db.Users.FirstOrDefaultAsync(u => u.Id == id);
         }
 
         public async Task<User?> GetByUsernameAsync(string username)
         {
-            await using var connection = new SqlConnection(dataBaseManager.ConnectionString);
-            await connection.OpenAsync();
-
-            const string sql = "SELECT TOP 1 * FROM Users WHERE Username = @Username";
-            await using var command = new SqlCommand(sql, connection);
-            command.Parameters.AddWithValue("@Username", username);
-
-            await using var reader = await command.ExecuteReaderAsync();
-            if (!await reader.ReadAsync())
-            {
-                return null;
-            }
-
-            return MapUser(reader);
+            return await _db.Users.FirstOrDefaultAsync(u => u.Username == username);
         }
 
         public async Task<User?> GetByEmailAsync(string email)
         {
-            await using var connection = new SqlConnection(dataBaseManager.ConnectionString);
-            await connection.OpenAsync();
-
-            const string sql = "SELECT TOP 1 * FROM Users WHERE Email = @Email";
-            await using var command = new SqlCommand(sql, connection);
-            command.Parameters.AddWithValue("@Email", email);
-
-            await using var reader = await command.ExecuteReaderAsync();
-            if (!await reader.ReadAsync())
-            {
-                return null;
-            }
-
-            return MapUser(reader);
+            return await _db.Users.FirstOrDefaultAsync(u => u.Email == email);
         }
 
         public async Task<List<User>> GetAllAsync()
         {
-            var users = new List<User>();
-
-            await using var connection = new SqlConnection(dataBaseManager.ConnectionString);
-            await connection.OpenAsync();
-
-            const string sql = "SELECT * FROM Users";
-            await using var command = new SqlCommand(sql, connection);
-            await using var reader = await command.ExecuteReaderAsync();
-
-            while (await reader.ReadAsync())
-            {
-                users.Add(MapUser(reader));
-            }
-
-            return users;
+            return await _db.Users.ToListAsync();
         }
 
         public async Task<List<User>> SearchByUsernameAsync(string query)
         {
-            var users = new List<User>();
-
-            await using var connection = new SqlConnection(dataBaseManager.ConnectionString);
-            await connection.OpenAsync();
-
-            const string sql = "SELECT * FROM Users WHERE Username LIKE @Query";
-            await using var command = new SqlCommand(sql, connection);
-            command.Parameters.AddWithValue("@Query", $"%{query}%");
-
-            await using var reader = await command.ExecuteReaderAsync();
-
-            while (await reader.ReadAsync())
-            {
-                users.Add(MapUser(reader));
-            }
-
-            return users;
+            return await _db.Users
+                .Where(u => u.Username.Contains(query))
+                .ToListAsync();
         }
 
         public async Task CreateAsync(User user)
         {
-            await using var connection = new SqlConnection(dataBaseManager.ConnectionString);
-            await connection.OpenAsync();
-
-            const string sql = @"
-INSERT INTO Users
-    (Id, Username, Email, PasswordHash, AvatarUrl, Bio, Status, Birthday, Phone)
-VALUES
-    (@Id, @Username, @Email, @PasswordHash, @AvatarUrl, @Bio, @Status, @Birthday, @Phone);";
-
-            await using var command = new SqlCommand(sql, connection);
-            command.Parameters.AddWithValue("@Id", user.Id);
-            command.Parameters.AddWithValue("@Username", user.Username);
-            command.Parameters.AddWithValue("@Email", user.Email);
-            command.Parameters.AddWithValue("@PasswordHash", user.PasswordHash);
-            command.Parameters.AddWithValue("@AvatarUrl", (object?)user.AvatarUrl ?? DBNull.Value);
-            command.Parameters.AddWithValue("@Bio", (object?)user.Bio ?? DBNull.Value);
-            command.Parameters.AddWithValue("@Status", (int)user.Status);
-            command.Parameters.AddWithValue("@Birthday", (object?)user.Birthday ?? DBNull.Value);
-            command.Parameters.AddWithValue("@Phone", (object?)user.Phone ?? DBNull.Value);
-
-            await command.ExecuteNonQueryAsync();
+            _db.Users.Add(user);
+            await _db.SaveChangesAsync();
         }
 
         public async Task UpdateAsync(User user)
         {
-            await using var connection = new SqlConnection(dataBaseManager.ConnectionString);
-            await connection.OpenAsync();
-
-            const string sql = @"
-UPDATE Users
-SET Username = @Username,
-    Email = @Email,
-    AvatarUrl = @AvatarUrl,
-    Bio = @Bio,
-    Status = @Status,
-    Phone = @Phone,
-    Birthday = @Birthday
-WHERE Id = @Id;";
-
-            await using var command = new SqlCommand(sql, connection);
-            command.Parameters.AddWithValue("@Username", user.Username);
-            command.Parameters.AddWithValue("@Email", user.Email);
-            command.Parameters.AddWithValue("@AvatarUrl", (object?)user.AvatarUrl ?? DBNull.Value);
-            command.Parameters.AddWithValue("@Bio", (object?)user.Bio ?? DBNull.Value);
-            command.Parameters.AddWithValue("@Status", (int)user.Status);
-            command.Parameters.AddWithValue("@Phone", (object?)user.Phone ?? DBNull.Value);
-            command.Parameters.AddWithValue("@Birthday", (object?)user.Birthday ?? DBNull.Value);
-            command.Parameters.AddWithValue("@Id", user.Id);
-
-            await command.ExecuteNonQueryAsync();
+            _db.Users.Update(user);
+            await _db.SaveChangesAsync();
         }
 
         public async Task UpdatePasswordAsync(Guid id, string passwordHash)
         {
-            await using var connection = new SqlConnection(dataBaseManager.ConnectionString);
-            await connection.OpenAsync();
-
-            const string sql = @"
-UPDATE Users
-SET PasswordHash = @PasswordHash
-WHERE Id = @Id;";
-
-            await using var command = new SqlCommand(sql, connection);
-            command.Parameters.AddWithValue("@PasswordHash", passwordHash);
-            command.Parameters.AddWithValue("@Id", id);
-
-            await command.ExecuteNonQueryAsync();
+            var user = await _db.Users.FindAsync(id);
+            if (user == null) return;
+            user.PasswordHash = passwordHash;
+            await _db.SaveChangesAsync();
         }
 
         public async Task DeleteAsync(User user)
         {
-            await using var connection = new SqlConnection(dataBaseManager.ConnectionString);
-            await connection.OpenAsync();
-
-            const string sql = @"
-DELETE FROM Users
-WHERE Id = @Id;";
-
-            await using var command = new SqlCommand(sql, connection);
-            command.Parameters.AddWithValue("@Id", user.Id);
-
-            await command.ExecuteNonQueryAsync();
-        }
-
-        private static User MapUser(SqlDataReader reader)
-        {
-            var idOrdinal = reader.GetOrdinal("Id");
-            var usernameOrdinal = reader.GetOrdinal("Username");
-            var emailOrdinal = reader.GetOrdinal("Email");
-            var passwordHashOrdinal = reader.GetOrdinal("PasswordHash");
-            var avatarUrlOrdinal = reader.GetOrdinal("AvatarUrl");
-            var bioOrdinal = reader.GetOrdinal("Bio");
-            var statusOrdinal = reader.GetOrdinal("Status");
-            var birthdayOrdinal = reader.GetOrdinal("Birthday");
-            var phoneOrdinal = reader.GetOrdinal("Phone");
-
-            return new User
-            {
-                Id = reader.GetGuid(idOrdinal),
-                Username = reader.GetString(usernameOrdinal),
-                Email = reader.GetString(emailOrdinal),
-                PasswordHash = reader.GetString(passwordHashOrdinal),
-                AvatarUrl = reader.IsDBNull(avatarUrlOrdinal) ? null : reader.GetString(avatarUrlOrdinal),
-                Bio = reader.IsDBNull(bioOrdinal) ? null : reader.GetString(bioOrdinal),
-                Status = (UserStatus)reader.GetByte(statusOrdinal),
-                Birthday = reader.IsDBNull(birthdayOrdinal) ? null : reader.GetDateTime(birthdayOrdinal),
-                Phone = reader.IsDBNull(phoneOrdinal) ? null : reader.GetString(phoneOrdinal),
-            };
+            _db.Users.Remove(user);
+            await _db.SaveChangesAsync();
         }
     }
 }

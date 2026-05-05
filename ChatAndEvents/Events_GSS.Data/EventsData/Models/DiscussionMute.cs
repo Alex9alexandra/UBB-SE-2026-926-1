@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Events_GSS.Data.Models;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -20,5 +21,6 @@ public class DiscussionMute
     public User User { get; set; }
     public int DiscussionId { get; set; }
     public Guid UserId {  get; set; }
+    public Discussion Discussion { get; internal set; }
 }
 

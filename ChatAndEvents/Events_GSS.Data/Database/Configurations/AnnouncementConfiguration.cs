@@ -17,9 +17,9 @@ public class AnnouncementConfiguration : IEntityTypeConfiguration<Announcement>
             .WithMany(ev => ev.Announcements)
             .HasForeignKey(a => a.EventId);
 
-        e.HasOne(a => a.User)
+        e.HasOne(a => a.Author)
             .WithMany()
-            .HasForeignKey(a => a.UserId)
+            .HasForeignKey(a => a.AuthorId)
             .OnDelete(DeleteBehavior.Restrict);
     }
 }

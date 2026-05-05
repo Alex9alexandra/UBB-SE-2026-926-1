@@ -64,8 +64,7 @@ namespace ChatAndEvents.Data.EventsData.Models
         public List<AnnouncementReaction> Reactions { get; set; } = new List<AnnouncementReaction>();
         public int AnnouncementId { get; set; }
         public int EventId { get; set; }
-        public User User { get; set; }
-        public Guid UserId { get; set; }
+        public Guid AuthorId { get; set; }
         public ICollection<AnnouncementReadReceipt> ReadReceipts { get; set; }
 
     }

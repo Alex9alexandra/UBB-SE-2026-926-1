@@ -11,7 +11,5 @@ public class QuestMemory
     public QuestMemoryStatus ProofStatus { get; set; } = QuestMemoryStatus.Submitted;
     public int QuestId { get; set; }
     public int MemoryId { get; set; }
-    public Quest Quest { get; set; }
-    public Memory Memory { get; set; }
 
 }

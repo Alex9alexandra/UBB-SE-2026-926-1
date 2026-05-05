@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ChatAndEvents.Data.EventsData.Models;
+using Events_GSS.Data.Models;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -12,4 +14,5 @@ public class DiscussionReaction
     public int DiscussionId { get; set; }
     public Guid UserId { get; set; }
     public User User { get; set; }
+    public Discussion Discussion { get; internal set; }
 }

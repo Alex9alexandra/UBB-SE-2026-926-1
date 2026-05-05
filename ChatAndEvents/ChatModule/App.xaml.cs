@@ -1,15 +1,18 @@
-﻿using System;
+﻿using ChatAndEvents.Data.ChatData.repositories;
+using ChatAndEvents.Data.Database;
+using ChatAndEvents.Data.EventsData.Repositories;
+using ChatModule.Services;
+using ChatModule.src.views;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.UI.Xaml;
+using System;
 using System.Configuration;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using ChatAndEvents.Data.ChatData.repositories;
-using ChatAndEvents.Data.EventsData.Repositories;
-using ChatModule.Services;
-using ChatModule.src.views;
-using Microsoft.UI.Xaml;
 
 
 namespace ChatModule
@@ -38,16 +41,17 @@ namespace ChatModule
         [ExcludeFromCodeCoverage]
         protected override void OnLaunched(LaunchActivatedEventArgs args)
         {
-            var configuredConnection = ConfigurationManager.ConnectionStrings["ChatModuleDb"]?.ConnectionString;
-            if (!string.IsNullOrWhiteSpace(configuredConnection))
-            {
-                DatabaseManager = new DatabaseManager(configuredConnection);
-            }
+            var connectionString =
+                 ConfigurationManager.ConnectionStrings["ChatAndEventsDB"]?.ConnectionString
+                 ?? "Data Source=./SQLEXPRESS;Initial Catalog=ChatAndEventsDB;Integrated Security=True;Encrypt=True;TrustServerCertificate=True;";
 
-            var db = DatabaseManager
-                     ?? new DatabaseManager("Data Source=localhost;Initial Catalog=ChatModule;Integrated Security=True;Encrypt=False;TrustServerCertificate=True;");
+            var options = new DbContextOptionsBuilder<AppDbContext>()
+                .UseSqlServer(connectionString)
+                .Options;
 
-            var authService = new AuthenticationService(new UserRepository(db));
+            var db = new AppDbContext(options);
+            var userRepo = new UserRepository(db);  
+            var authService = new AuthenticationService(userRepo);
 
             _loginWindow = new LoginWindow(authService);
             _loginWindow.LoginSucceeded += OnLoginSucceededAsync;

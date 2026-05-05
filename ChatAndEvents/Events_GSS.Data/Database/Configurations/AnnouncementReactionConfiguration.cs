@@ -8,15 +8,16 @@ public class AnnouncementReactionConfiguration : IEntityTypeConfiguration<Announ
 {
     public void Configure(EntityTypeBuilder<AnnouncementReaction> e)
     {
-        e.HasKey(ar => new { ar.AnnouncementId, ar.UserId });
+        e.HasKey(ar => new { ar.AnnouncementId, ar.AuthorId });
 
         e.HasOne(ar => ar.Announcement)
             .WithMany(a => a.Reactions)
-            .HasForeignKey(ar => ar.AnnouncementId);
+            .HasForeignKey(ar => ar.AnnouncementId)
+            .OnDelete(DeleteBehavior.NoAction);
 
-        e.HasOne(ar => ar.User)
+        e.HasOne(ar => ar.Author)
             .WithMany()
-            .HasForeignKey(ar => ar.UserId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .HasForeignKey(ar => ar.AuthorId)
+            .OnDelete(DeleteBehavior.NoAction);
     }
 }

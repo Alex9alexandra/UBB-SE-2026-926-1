@@ -25,6 +25,8 @@ public class AppDbContext : DbContext
     public DbSet<Memory> Memories { get; set; }
     public DbSet<MemoryLike> MemoryLikes { get; set; }
     public DbSet<UserReputationScore> UserReputationScores { get; set; }
+    public DbSet<AnnouncementReadReceipt> AnnouncementReadReceipts { get; set; }
+    public DbSet<QuestMemory> QuestMemories { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -41,5 +43,7 @@ public class AppDbContext : DbContext
         modelBuilder.ApplyConfiguration(new MemoryConfiguration());
         modelBuilder.ApplyConfiguration(new MemoryLikeConfiguration());
         modelBuilder.ApplyConfiguration(new UserReputationScoreConfiguration());
+        modelBuilder.ApplyConfiguration(new AnnouncementReadReceiptConfiguration());
+        modelBuilder.ApplyConfiguration(new QuestMemoryConfiguration());
     }
 }

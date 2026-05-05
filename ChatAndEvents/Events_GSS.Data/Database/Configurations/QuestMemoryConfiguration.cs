@@ -10,11 +10,11 @@ public class QuestMemoryConfiguration : IEntityTypeConfiguration<QuestMemory>
     {
         e.HasKey(qm => new { qm.QuestId, qm.MemoryId });
 
-        e.HasOne(qm => qm.Quest)
+        e.HasOne(qm => qm.ForQuest)
             .WithMany(q => q.QuestMemories)
             .HasForeignKey(qm => qm.QuestId);
 
-        e.HasOne(qm => qm.Memory)
+        e.HasOne(qm => qm.Proof)
             .WithMany()
             .HasForeignKey(qm => qm.MemoryId);
     }

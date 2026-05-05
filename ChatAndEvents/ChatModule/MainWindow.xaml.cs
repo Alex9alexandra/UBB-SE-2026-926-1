@@ -78,9 +78,11 @@ namespace ChatModule
             _initialUserId = userId;
             _initialUsername = username;
             string eventsConnectionString = "Data Source=.\\SQLEXPRESS;Initial Catalog=ISSEvents;Integrated Security=True;Encrypt=True;TrustServerCertificate=True;";
-            var db = (Application.Current as App)?.DatabaseManager
-                     ?? new DatabaseManager("Data Source=.\\SQLEXPRESS;Initial Catalog=ChatModule;Integrated Security=True;Encrypt=True;TrustServerCertificate=True;");
-            var sqlConnectionFactory = new SqlConnectionFactory(eventsConnectionString);
+
+            var options = new DbContextOptionsBuilder<AppDbContext>()
+                .UseSqlServer("Data Source=.\\SQLEXPRESS;Initial Catalog=ChatAndEventsDB;Integrated Security=True;Encrypt=True;TrustServerCertificate=True;")
+                .Options;
+            var db = new AppDbContext(options);
 
             var userRepository = new UserRepository(db);
             var friendRepository = new FriendRepository(db);
@@ -203,9 +205,10 @@ namespace ChatModule
 
             ViewModel.NavigateToLoginRequested += () =>
             {
-                var dbContext = (Application.Current as App)?.DatabaseManager
-                         ?? new DatabaseManager("Data Source=localhost;Initial Catalog=ChatModule;Integrated Security=True;Encrypt=False;TrustServerCertificate=True;");
-                var loginWindow = new LoginWindow(new AuthenticationService(new UserRepository(dbContext)));
+                var loginOptions = new DbContextOptionsBuilder<AppDbContext>()
+                    .UseSqlServer("Data Source=.\\SQLEXPRESS;Initial Catalog=ChatAndEventsDB;Integrated Security=True;Encrypt=True;TrustServerCertificate=True;")
+                    .Options;
+                var loginWindow = new LoginWindow(new AuthenticationService(new UserRepository(new AppDbContext(loginOptions))));
                 loginWindow.LoginSucceeded += (newUserId, newUsername) =>
                 {
                     var nextMain = new MainWindow(newUserId, newUsername);

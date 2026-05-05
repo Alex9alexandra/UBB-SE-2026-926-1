@@ -15,8 +15,8 @@ public class Event
     public string? EventBannerPath { get; set; }
     public int? SlowModeSeconds { get; set; }
     public int EnrolledCount { get; set; } = 0;
-    public Guid? AdminId { get; internal set; }
-    public int? CategoryId { get; internal set; }
+    public Guid? AdminId { get; set; }
+    public int? CategoryId { get; set; }
     // Navigation properties 
     public Category? Category { get; set; }
     public User? Admin { get; set; }
