@@ -16,7 +16,7 @@ namespace ChatAndEvents.Data.EventsData.Repositories
         /// </summary>
         /// <param name="attendedEvent">The attended event to add.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
-        Task AddAsync(AttendedEvent attendedEvent);
+        Task AddAsync(AttendedEvent attendedEventEntity);
 
         /// <summary>
         /// Deletes an attended event.
