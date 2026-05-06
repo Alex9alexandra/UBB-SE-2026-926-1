@@ -1,38 +1,21 @@
-// <copyright file="ReputationRepository.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
-// </copyright>
-
 namespace ChatAndEvents.Data.EventsData.Repositories.reputationRepository;
 
-using System.Data;
-
-using ChatAndEvents.Data.EventsData.Database;
+using System;
+using System.Threading.Tasks;
+using ChatAndEvents.Data.Database;
 using ChatAndEvents.Data.EventsData.Models;
-using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 
-/// <summary>
-/// Implements the <see cref="IReputationRepository"/> interface, providing methods to manage and retrieve user reputation points and tiers in the system. This class interacts with a SQL database to perform operations related to user reputation, allowing for setting and retrieving reputation points and tiers based on user activity and achievements. The repository ensures that reputation data is stored and accessed efficiently, supporting the gamification features of the application.
-/// </summary>
+
 public class ReputationRepository : IReputationRepository
 {
-    private readonly SqlConnectionFactory connectionFactory;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="ReputationRepository"/> class with the specified SQL connection factory. The connection factory is used to create database connections for executing SQL commands related to user reputation management.
-    /// </summary>
-    /// <param name="factory">The SQL connection factory used to create database connections.</param>
-    public ReputationRepository(SqlConnectionFactory factory)
+    private readonly AppDbContext _db;
+    
+    public ReputationRepository(AppDbContext db)
     {
-        this.connectionFactory = factory;
+        _db = db;
     }
-
-    /// <summary>
-    /// Asynchronously sets the reputation points and tier for a specific user by their user ID. This method checks if a record for the user already exists in the users_RP_scores table; if it does not exist, it inserts a new record with the provided reputation points and tier. If a record already exists, it updates the existing record with the new reputation points and tier. This ensures that the user's reputation data is accurately maintained in the database, allowing for dynamic updates based on user activity and achievements.
-    /// </summary>
-    /// <param name="userId">The ID of the user for whom to set the reputation points and tier.</param>
-    /// <param name="reputationPoints">The reputation points to set for the user.</param>
-    /// <param name="tier">The tier to set for the user.</param>
-    /// <returns>A task that represents the asynchronous operation.</returns>
+    
     public async Task SetReputationAsync(Guid userId, int reputationPoints, string tier)
     {
         await this.SetReputationAsync(new UserReputationScore
@@ -42,46 +25,36 @@ public class ReputationRepository : IReputationRepository
             Tier = tier,
         });
     }
-
-    /// <inheritdoc/>
+    
     public async Task SetReputationAsync(UserReputationScore reputationScore)
     {
-        using var connection = this.connectionFactory.CreateConnection();
-        await connection.OpenAsync();
+        if (reputationScore == null)
+            throw new ArgumentException("Reputation score is required.", nameof(reputationScore));
+        
+        var existingScore = await _db.UserReputationScores
+            .FirstOrDefaultAsync(u => u.UserId == reputationScore.UserId);
 
-        var command = new SqlCommand(
-            @"
-        IF NOT EXISTS (SELECT 1 FROM users_RP_scores WHERE UserId = @UserId)
-            INSERT INTO users_RP_scores (UserId, ReputationPoints, Tier) 
-            VALUES (@UserId, @ReputationPoints, @Tier)
-        ELSE
-            UPDATE users_RP_scores
-            SET ReputationPoints = @ReputationPoints,
-                Tier = @Tier
-            WHERE UserId = @UserId", connection);
+        if (existingScore == null)
+        {
+            _db.UserReputationScores.Add(reputationScore);
+        }
+        else
+        {
+            existingScore.ReputationPoints = reputationScore.ReputationPoints;
+            existingScore.Tier = reputationScore.Tier;
+            _db.UserReputationScores.Update(existingScore);
+        }
 
-        command.Parameters.Add("@UserId", SqlDbType.UniqueIdentifier).Value = reputationScore.UserId;
-        command.Parameters.Add("@ReputationPoints", SqlDbType.Int).Value = reputationScore.ReputationPoints;
-        command.Parameters.Add("@Tier", SqlDbType.NVarChar, 50).Value = reputationScore.Tier;
-
-        await command.ExecuteNonQueryAsync();
+        await _db.SaveChangesAsync();
     }
-
-    /// <inheritdoc/>
+    
     public async Task<UserReputationScore> GetReputationScoreAsync(Guid userId)
     {
-        using var connection = this.connectionFactory.CreateConnection();
-        await connection.OpenAsync();
-
-        var command = new SqlCommand(
-            @"
-            SELECT UserId, ReputationPoints, Tier
-            FROM users_RP_scores
-            WHERE UserId = @UserId", connection);
-        command.Parameters.Add("@UserId", SqlDbType.UniqueIdentifier).Value = userId;
-
-        using var reader = await command.ExecuteReaderAsync();
-        if (!await reader.ReadAsync())
+        var reputationScore = await _db.UserReputationScores
+            .AsNoTracking()
+            .FirstOrDefaultAsync(u => u.UserId == userId);
+        
+        if (reputationScore == null)
         {
             return new UserReputationScore
             {
@@ -91,30 +64,15 @@ public class ReputationRepository : IReputationRepository
             };
         }
 
-        return new UserReputationScore
-        {
-            UserId = reader.GetGuid(reader.GetOrdinal("UserId")),
-            ReputationPoints = reader.GetInt32(reader.GetOrdinal("ReputationPoints")),
-            Tier = reader.GetString(reader.GetOrdinal("Tier")),
-        };
+        return reputationScore;
     }
-
-    /// <summary>
-    /// Asynchronously retrieves the reputation points for a specific user by their user ID. This method executes an SQL SELECT command to fetch the reputation points from the users_RP_scores table based on the provided user ID. If the user does not have a record in the users_RP_scores table, it returns 0 as the default reputation points, ensuring that users without any recorded reputation are treated as having no points. This allows for efficient retrieval of a user's reputation points, which can be used to determine their tier and access to certain features in the application.
-    /// </summary>
-    /// <param name="userId">The ID of the user for whom to retrieve reputation points.</param>
-    /// <returns>A task that represents the asynchronous operation, containing the reputation points of the specified user.</returns>
+    
     public async Task<int> GetReputationPointsAsync(Guid userId)
     {
         var reputationScore = await this.GetReputationScoreAsync(userId);
         return reputationScore.ReputationPoints;
     }
-
-    /// <summary>
-    /// Asynchronously retrieves the tier for a specific user by their user ID. This method executes an SQL SELECT command to fetch the tier from the users_RP_scores table based on the provided user ID. If the user does not have a record in the users_RP_scores table, it returns "Newcomer" as the default tier, ensuring that users without any recorded reputation are treated as newcomers. This allows for efficient retrieval of a user's tier, which can be used to determine their access to certain features and benefits in the application based on their reputation level.
-    /// </summary>
-    /// <param name="userId">The ID of the user for whom to retrieve the tier.</param>
-    /// <returns>A task that represents the asynchronous operation, containing the tier of the specified user.</returns>
+    
     public async Task<string> GetTierAsync(Guid userId)
     {
         var reputationScore = await this.GetReputationScoreAsync(userId);
@@ -122,13 +80,7 @@ public class ReputationRepository : IReputationRepository
     }
 }
 
-/// <summary>
-/// Defines shared constants for the reputation system, such as default tier names. This class provides a centralized location for any constant values related to user reputation, ensuring consistency across the application when referring to specific tiers or other fixed values in the reputation management logic.
-/// </summary>
 public static class SharedReputationConstants
 {
-    /// <summary>
-    /// The default tier assigned to users who do not have any recorded reputation points. This constant is used as a fallback value when retrieving a user's tier from the database, ensuring that users without any reputation data are categorized as "Newcomer" by default. This allows for a clear distinction between users who have not yet earned any reputation and those who have achieved higher tiers based on their activity and contributions in the application.
-    /// </summary>
     public const string NewcomerTier = "Newcomer";
 }
