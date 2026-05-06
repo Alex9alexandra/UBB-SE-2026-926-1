@@ -4,30 +4,24 @@
 
 namespace ChatAndEvents.Data.EventsData.Repositories.notificationRepository;
 
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Text;
-using ChatAndEvents.Data.EventsData.Database;
+using ChatAndEvents.Data.Database;
 using ChatAndEvents.Data.EventsData.Models;
-using ChatAndEvents.Data.EventsData.Repositories;
-
-using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 
 /// <summary>
 /// Implements the <see cref="INotificationRepository"/> interface, providing methods to manage and retrieve notifications for users in the system. This class interacts with a SQL database to perform CRUD operations on notifications, allowing for adding new notifications, retrieving notifications by user ID, and deleting notifications by their unique identifier.
 /// </summary>
 public class NotificationRepository : INotificationRepository
 {
-    private readonly SqlConnectionFactory connectionFactory;
+    private readonly AppDbContext _db;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="NotificationRepository"/> class with the specified SQL connection factory. The connection factory is used to create database connections for executing SQL commands related to notifications.
     /// </summary>
-    /// <param name="factory">The SQL connection factory used to create database connections.</param>
-    public NotificationRepository(SqlConnectionFactory factory)
+    /// <param name="db">The application database context.</param>
+    public NotificationRepository(AppDbContext db)
     {
-        this.connectionFactory = factory;
+        _db = db ?? throw new ArgumentNullException(nameof(db));
     }
 
     /// <summary>
@@ -40,20 +34,15 @@ public class NotificationRepository : INotificationRepository
     /// <returns>A task that represents the asynchronous operation.</returns>
     public async Task AddAsync(Guid userId, string title, string description, DateTime createdAt)
     {
-        const string query = @"
-                INSERT INTO Notifications (UserId, Title, Description, CreatedAt)
-                VALUES (@UserId, @Title, @Description, @CreatedAt)";
+        _db.Notifications.Add(new Notification
+        {
+            UserId = userId,
+            Title = title,
+            Description = description,
+            CreatedAt = createdAt,
+        });
 
-        using var connection = this.connectionFactory.CreateConnection();
-        await connection.OpenAsync();
-
-        using var command = new SqlCommand(query, connection);
-        command.Parameters.Add("@UserId", SqlDbType.UniqueIdentifier).Value = userId;
-        command.Parameters.Add("@Title", SqlDbType.NVarChar).Value = title;
-        command.Parameters.Add("@Description", SqlDbType.NVarChar).Value = description;
-        command.Parameters.Add("@CreatedAt", SqlDbType.DateTime).Value = createdAt;
-
-        await command.ExecuteNonQueryAsync();
+        await _db.SaveChangesAsync();
     }
 
     /// <summary>
@@ -63,48 +52,12 @@ public class NotificationRepository : INotificationRepository
     /// <returns>A task that represents the asynchronous operation, containing a list of notifications for the specified user.</returns>
     public async Task<List<Notification>> GetByUserIdAsync(Guid userId)
     {
-        const string query = @"
-                SELECT n.Id,
-                       n.Title,
-                       n.Description,
-                       n.CreatedAt,
-                       u.Id AS UserId,
-                       u.Name AS UserName,
-                       ISNULL(urp.ReputationPoints, 0) AS ReputationPoints
-                FROM Notifications n
-                INNER JOIN Users u ON n.UserId = u.Id
-                LEFT JOIN users_RP_scores urp ON u.Id = urp.UserId
-                WHERE n.UserId = @UserId
-                ORDER BY n.CreatedAt DESC";
-
-        using var connection = this.connectionFactory.CreateConnection();
-        await connection.OpenAsync();
-
-        using var command = new SqlCommand(query, connection);
-        command.Parameters.Add("@UserId", SqlDbType.UniqueIdentifier).Value = userId;
-
-        var notifications = new List<Notification>();
-
-        using var reader = await command.ExecuteReaderAsync();
-
-        while (await reader.ReadAsync())
-        {
-            notifications.Add(new Notification
-            {
-                Id = (int)reader["Id"],
-                Title = (string)reader["Title"],
-                Description = (string)reader["Description"],
-                CreatedAt = (DateTime)reader["CreatedAt"],
-                User = new User
-                {
-                    UserId = (Guid)reader["UserId"],
-                    Name = (string)reader["UserName"],
-                    ReputationPoints = (int)reader["ReputationPoints"],
-                },
-            });
-        }
-
-        return notifications;
+        return await _db.Notifications
+            .Include(n => n.User)
+            .ThenInclude(u => u.ReputationScore)
+            .Where(n => n.UserId == userId)
+            .OrderByDescending(n => n.CreatedAt)
+            .ToListAsync();
     }
 
     /// <summary>
@@ -114,14 +67,13 @@ public class NotificationRepository : INotificationRepository
     /// <returns>A task that represents the asynchronous operation.</returns>
     public async Task DeleteAsync(int notificationId)
     {
-        const string query = @"DELETE FROM Notifications WHERE Id = @NotificationId";
-        using var connection = this.connectionFactory.CreateConnection();
-        await connection.OpenAsync();
+        var notification = await _db.Notifications.FindAsync(notificationId);
+        if (notification == null)
+        {
+            return;
+        }
 
-        using var command = new SqlCommand(query, connection);
-
-        command.Parameters.Add("@NotificationId", SqlDbType.Int).Value = notificationId;
-
-        await command.ExecuteNonQueryAsync();
+        _db.Notifications.Remove(notification);
+        await _db.SaveChangesAsync();
     }
 }

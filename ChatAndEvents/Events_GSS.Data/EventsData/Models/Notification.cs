@@ -39,9 +39,14 @@ namespace ChatAndEvents.Data.EventsData.Models
         public int Id { get; set; }
 
         /// <summary>
+        /// Gets or sets the user id associated with the notification.
+        /// </summary>
+        public Guid UserId { get; set; }
+
+        /// <summary>
         /// Gets or sets the user associated with the notification.
         /// </summary>
-        public User User { get; set; }
+        public User User { get; set; } = null!;
 
         /// <summary>
         /// Gets or sets the title of the notification.

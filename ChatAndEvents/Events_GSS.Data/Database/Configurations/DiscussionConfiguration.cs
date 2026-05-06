@@ -23,5 +23,9 @@ public class DiscussionConfiguration : IEntityTypeConfiguration<Discussion>
             .WithMany()
             .HasForeignKey("CreatorId")
             .OnDelete(DeleteBehavior.Restrict);
+
+        e.Ignore(d => d.Messages);
+        e.Ignore(d => d.Reactions);
+        e.Ignore(d => d.Mutes);
     }
 }
