@@ -48,6 +48,7 @@ public sealed partial class EventDetailPage : Page
         if (isAdmin)
         {
             this.StatisticsButton.Visibility = Visibility.Visible;
+            this.JoinLeaveButton.Visibility = Visibility.Collapsed;
         }
 
         // 3. Announcements Tab
