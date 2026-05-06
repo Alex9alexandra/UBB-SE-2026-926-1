@@ -1,6 +1,5 @@
 using System.Diagnostics;
 
-using ChatAndEvents.Data.EventsData.Database;
 using ChatAndEvents.Data.EventsData.Models;
 using ChatAndEvents.Data.EventsData.Repositories;
 using ChatAndEvents.Data.EventsData.Services.Interfaces;

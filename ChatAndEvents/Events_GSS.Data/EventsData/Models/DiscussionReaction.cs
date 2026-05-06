@@ -10,9 +10,10 @@ public class DiscussionReaction
     public int Id { get; set; }
     public required string Emoji { get; set; }
     public required DiscussionMessage Message { get; set; }
+    public int MessageId { get; set; }
     public required User Author { get; set; }
+    public Guid AuthorId { get; set; }
     public int DiscussionId { get; set; }
     public Guid UserId { get; set; }
-    public User User { get; set; }
     public Discussion Discussion { get; internal set; }
 }

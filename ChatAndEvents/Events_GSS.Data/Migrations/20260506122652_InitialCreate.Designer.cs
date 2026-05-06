@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ChatAndEvents.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260505001105_InitialCreate")]
+    [Migration("20260506122652_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -262,16 +262,37 @@ namespace ChatAndEvents.Data.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("ChatAndEvents.Data.EventsData.Models.Announcement", b =>
+            modelBuilder.Entity("ChatAndEvents.Data.EventsData.Models.Achievement", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("AchievementId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AchievementId"));
 
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsUnlocked")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("AchievementId");
+
+                    b.ToTable("Achievements");
+                });
+
+            modelBuilder.Entity("ChatAndEvents.Data.EventsData.Models.Announcement", b =>
+                {
                     b.Property<int>("AnnouncementId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AnnouncementId"));
 
                     b.Property<Guid>("AuthorId")
                         .HasColumnType("uniqueidentifier");
@@ -280,6 +301,9 @@ namespace ChatAndEvents.Data.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<int>("EventId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Id")
                         .HasColumnType("int");
 
                     b.Property<bool>("IsEdited")
@@ -298,23 +322,17 @@ namespace ChatAndEvents.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
+                    b.HasKey("AnnouncementId");
 
                     b.HasIndex("AuthorId");
 
                     b.HasIndex("EventId");
 
-                    b.ToTable("Announcement");
+                    b.ToTable("Announcements");
                 });
 
             modelBuilder.Entity("ChatAndEvents.Data.EventsData.Models.AnnouncementReaction", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
                     b.Property<int>("AnnouncementId")
                         .HasColumnType("int");
 
@@ -325,13 +343,14 @@ namespace ChatAndEvents.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
 
-                    b.HasIndex("AnnouncementId");
+                    b.HasKey("AnnouncementId", "AuthorId");
 
                     b.HasIndex("AuthorId");
 
-                    b.ToTable("AnnouncementReaction");
+                    b.ToTable("AnnouncementReactions");
                 });
 
             modelBuilder.Entity("ChatAndEvents.Data.EventsData.Models.AnnouncementReadReceipt", b =>
@@ -394,6 +413,111 @@ namespace ChatAndEvents.Data.Migrations
                     b.HasKey("CategoryId");
 
                     b.ToTable("Category");
+                });
+
+            modelBuilder.Entity("ChatAndEvents.Data.EventsData.Models.DiscussionMessage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("AssociatedEventEventId")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("AuthorUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsEdited")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("MediaPath")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Message")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("ReplyToId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AssociatedEventEventId");
+
+                    b.HasIndex("AuthorUserId");
+
+                    b.HasIndex("ReplyToId");
+
+                    b.ToTable("DiscussionMessages");
+                });
+
+            modelBuilder.Entity("ChatAndEvents.Data.EventsData.Models.DiscussionMute", b =>
+                {
+                    b.Property<int>("DiscussionId")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("EventId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsPermanent")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("MutedById")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("MutedUntil")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("MutedUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("DiscussionId", "UserId");
+
+                    b.HasIndex("MutedById");
+
+                    b.HasIndex("MutedUserId");
+
+                    b.ToTable("DiscussionMutes");
+                });
+
+            modelBuilder.Entity("ChatAndEvents.Data.EventsData.Models.DiscussionReaction", b =>
+                {
+                    b.Property<int>("DiscussionId")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AuthorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Emoji")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MessageId")
+                        .HasColumnType("int");
+
+                    b.HasKey("DiscussionId", "UserId");
+
+                    b.HasIndex("AuthorId");
+
+                    b.HasIndex("MessageId");
+
+                    b.ToTable("DiscussionReactions");
                 });
 
             modelBuilder.Entity("ChatAndEvents.Data.EventsData.Models.Event", b =>
@@ -498,6 +622,35 @@ namespace ChatAndEvents.Data.Migrations
                     b.ToTable("MemoryLikes", (string)null);
                 });
 
+            modelBuilder.Entity("ChatAndEvents.Data.EventsData.Models.Notification", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Notifications", (string)null);
+                });
+
             modelBuilder.Entity("ChatAndEvents.Data.EventsData.Models.Quest", b =>
                 {
                     b.Property<int>("Id")
@@ -529,7 +682,7 @@ namespace ChatAndEvents.Data.Migrations
 
                     b.HasIndex("PrerequisiteQuestId");
 
-                    b.ToTable("Quest");
+                    b.ToTable("Quests");
                 });
 
             modelBuilder.Entity("ChatAndEvents.Data.EventsData.Models.QuestMemory", b =>
@@ -588,6 +741,42 @@ namespace ChatAndEvents.Data.Migrations
                     b.HasKey("UserId");
 
                     b.ToTable("users_RP_scores", (string)null);
+                });
+
+            modelBuilder.Entity("Events_GSS.Data.Models.Discussion", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<Guid>("CreatorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("EventId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsClosed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatorId");
+
+                    b.HasIndex("EventId");
+
+                    b.ToTable("Discussions");
                 });
 
             modelBuilder.Entity("ChatAndEvents.Data.ChatData.domain.Conversation", b =>
@@ -690,7 +879,7 @@ namespace ChatAndEvents.Data.Migrations
                     b.HasOne("ChatAndEvents.Data.EventsData.Models.User", "Author")
                         .WithMany()
                         .HasForeignKey("AuthorId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("ChatAndEvents.Data.EventsData.Models.Event", "Event")
@@ -709,13 +898,13 @@ namespace ChatAndEvents.Data.Migrations
                     b.HasOne("ChatAndEvents.Data.EventsData.Models.Announcement", "Announcement")
                         .WithMany("Reactions")
                         .HasForeignKey("AnnouncementId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("ChatAndEvents.Data.EventsData.Models.User", "Author")
+                    b.HasOne("ChatAndEvents.Data.ChatData.domain.User", "Author")
                         .WithMany()
                         .HasForeignKey("AuthorId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Announcement");
@@ -731,7 +920,7 @@ namespace ChatAndEvents.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ChatAndEvents.Data.EventsData.Models.User", "User")
+                    b.HasOne("ChatAndEvents.Data.ChatData.domain.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -759,6 +948,81 @@ namespace ChatAndEvents.Data.Migrations
                     b.Navigation("Event");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ChatAndEvents.Data.EventsData.Models.DiscussionMessage", b =>
+                {
+                    b.HasOne("ChatAndEvents.Data.EventsData.Models.Event", "AssociatedEvent")
+                        .WithMany()
+                        .HasForeignKey("AssociatedEventEventId");
+
+                    b.HasOne("ChatAndEvents.Data.EventsData.Models.User", "Author")
+                        .WithMany()
+                        .HasForeignKey("AuthorUserId");
+
+                    b.HasOne("ChatAndEvents.Data.EventsData.Models.DiscussionMessage", "ReplyTo")
+                        .WithMany()
+                        .HasForeignKey("ReplyToId");
+
+                    b.Navigation("AssociatedEvent");
+
+                    b.Navigation("Author");
+
+                    b.Navigation("ReplyTo");
+                });
+
+            modelBuilder.Entity("ChatAndEvents.Data.EventsData.Models.DiscussionMute", b =>
+                {
+                    b.HasOne("Events_GSS.Data.Models.Discussion", "Discussion")
+                        .WithMany("Mutes")
+                        .HasForeignKey("DiscussionId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("ChatAndEvents.Data.EventsData.Models.User", "MutedBy")
+                        .WithMany()
+                        .HasForeignKey("MutedById")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("ChatAndEvents.Data.EventsData.Models.User", "MutedUser")
+                        .WithMany()
+                        .HasForeignKey("MutedUserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Discussion");
+
+                    b.Navigation("MutedBy");
+
+                    b.Navigation("MutedUser");
+                });
+
+            modelBuilder.Entity("ChatAndEvents.Data.EventsData.Models.DiscussionReaction", b =>
+                {
+                    b.HasOne("ChatAndEvents.Data.EventsData.Models.User", "Author")
+                        .WithMany()
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Events_GSS.Data.Models.Discussion", "Discussion")
+                        .WithMany("Reactions")
+                        .HasForeignKey("DiscussionId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("ChatAndEvents.Data.EventsData.Models.DiscussionMessage", "Message")
+                        .WithMany("Reactions")
+                        .HasForeignKey("MessageId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Author");
+
+                    b.Navigation("Discussion");
+
+                    b.Navigation("Message");
                 });
 
             modelBuilder.Entity("ChatAndEvents.Data.EventsData.Models.Event", b =>
@@ -816,6 +1080,17 @@ namespace ChatAndEvents.Data.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("ChatAndEvents.Data.EventsData.Models.Notification", b =>
+                {
+                    b.HasOne("ChatAndEvents.Data.EventsData.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("ChatAndEvents.Data.EventsData.Models.Quest", b =>
                 {
                     b.HasOne("ChatAndEvents.Data.EventsData.Models.Event", "Event")
@@ -863,6 +1138,25 @@ namespace ChatAndEvents.Data.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Events_GSS.Data.Models.Discussion", b =>
+                {
+                    b.HasOne("ChatAndEvents.Data.EventsData.Models.User", "Creator")
+                        .WithMany()
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ChatAndEvents.Data.EventsData.Models.Event", "AssociatedEvent")
+                        .WithMany()
+                        .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AssociatedEvent");
+
+                    b.Navigation("Creator");
+                });
+
             modelBuilder.Entity("ChatAndEvents.Data.ChatData.domain.Conversation", b =>
                 {
                     b.Navigation("Messages");
@@ -875,6 +1169,11 @@ namespace ChatAndEvents.Data.Migrations
                     b.Navigation("Reactions");
 
                     b.Navigation("ReadReceipts");
+                });
+
+            modelBuilder.Entity("ChatAndEvents.Data.EventsData.Models.DiscussionMessage", b =>
+                {
+                    b.Navigation("Reactions");
                 });
 
             modelBuilder.Entity("ChatAndEvents.Data.EventsData.Models.Event", b =>
@@ -901,6 +1200,13 @@ namespace ChatAndEvents.Data.Migrations
             modelBuilder.Entity("ChatAndEvents.Data.EventsData.Models.User", b =>
                 {
                     b.Navigation("ReputationScore");
+                });
+
+            modelBuilder.Entity("Events_GSS.Data.Models.Discussion", b =>
+                {
+                    b.Navigation("Mutes");
+
+                    b.Navigation("Reactions");
                 });
 #pragma warning restore 612, 618
         }

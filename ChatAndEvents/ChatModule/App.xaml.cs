@@ -43,7 +43,7 @@ namespace ChatModule
         {
             var connectionString =
                  ConfigurationManager.ConnectionStrings["ChatAndEventsDB"]?.ConnectionString
-                 ?? "Data Source=./SQLEXPRESS;Initial Catalog=ChatAndEventsDB;Integrated Security=True;Encrypt=True;TrustServerCertificate=True;";
+                 ?? "Data Source=.\\SQLEXPRESS;Initial Catalog=ChatAndEventsDB;Integrated Security=True;Encrypt=True;TrustServerCertificate=True;";
 
             var options = new DbContextOptionsBuilder<AppDbContext>()
                 .UseSqlServer(connectionString)

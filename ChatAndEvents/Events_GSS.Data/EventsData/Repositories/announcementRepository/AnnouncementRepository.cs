@@ -8,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 namespace ChatAndEvents.Data.EventsData.Repositories.announcementRepository;
 
 using System.Data;
-using ChatAndEvents.Data.EventsData.Database;
 using ChatAndEvents.Data.EventsData.Models;
 
 using Microsoft.Data.SqlClient;

@@ -1,6 +1,5 @@
 ﻿using System.Data;
 using ChatAndEvents.Data.Database;
-using ChatAndEvents.Data.EventsData.Database;
 using ChatAndEvents.Data.EventsData.Models;
 using ChatAndEvents.Data.EventsData.Models;
 using Microsoft.Data.SqlClient;

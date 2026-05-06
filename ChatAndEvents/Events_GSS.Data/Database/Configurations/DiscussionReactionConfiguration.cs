@@ -12,11 +12,17 @@ public class DiscussionReactionConfiguration : IEntityTypeConfiguration<Discussi
 
         e.HasOne(dr => dr.Discussion)
             .WithMany(d => d.Reactions)
-            .HasForeignKey(dr => dr.DiscussionId);
+            .HasForeignKey(dr => dr.DiscussionId)
+            .OnDelete(DeleteBehavior.NoAction);
 
-        e.HasOne(dr => dr.User)
+        e.HasOne(dr => dr.Author)
             .WithMany()
-            .HasForeignKey(dr => dr.UserId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .HasForeignKey(dr => dr.AuthorId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        e.HasOne(dr => dr.Message)
+            .WithMany(m => m.Reactions)
+            .HasForeignKey(dr => dr.MessageId)
+            .OnDelete(DeleteBehavior.NoAction);
     }
 }

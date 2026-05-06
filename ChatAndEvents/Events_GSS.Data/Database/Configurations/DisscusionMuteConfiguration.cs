@@ -12,11 +12,16 @@ public class DiscussionMuteConfiguration : IEntityTypeConfiguration<DiscussionMu
 
         e.HasOne(dm => dm.Discussion)
             .WithMany(d => d.Mutes)
-            .HasForeignKey(dm => dm.DiscussionId);
+            .HasForeignKey(dm => dm.DiscussionId)
+            .OnDelete(DeleteBehavior.NoAction);
 
-        e.HasOne(dm => dm.User)
+        e.HasOne(dm => dm.MutedUser)
             .WithMany()
-            .HasForeignKey(dm => dm.UserId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .HasForeignKey(dm => dm.MutedUserId)
+            .OnDelete(DeleteBehavior.NoAction);
+        e.HasOne(dm=>dm.MutedBy)
+            .WithMany()
+            .HasForeignKey(dm => dm.MutedById)
+            .OnDelete(DeleteBehavior.NoAction);
     }
 }

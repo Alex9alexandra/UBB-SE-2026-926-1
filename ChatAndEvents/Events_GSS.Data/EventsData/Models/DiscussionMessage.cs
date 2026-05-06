@@ -1,9 +1,11 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ChatAndEvents.Data.EventsData.Models;
 
 public class DiscussionMessage
 {
+    public DiscussionMessage() { }
     public DiscussionMessage(int id, string? message, DateTime date)
     {
         Id = id;
@@ -26,5 +28,5 @@ public class DiscussionMessage
     public List<DiscussionReaction> Reactions { get; set; }
 
     // Non-persisted, computed at the service
-    public bool CanDelete { get; set; }
+    [NotMapped] public bool CanDelete { get; set; }
 }

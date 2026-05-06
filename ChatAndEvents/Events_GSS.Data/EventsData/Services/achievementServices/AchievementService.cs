@@ -7,7 +7,6 @@ namespace ChatAndEvents.Data.EventsData.Services.achievementServices;
 using System.Data;
 using ChatAndEvents.Data.EventsData.Models;
 using ChatAndEvents.Data.EventsData.Repositories.achievementRepository;
-using ChatAndEvents.Data.EventsData.Database;
 using Microsoft.Data.SqlClient;
 
 /// <summary>

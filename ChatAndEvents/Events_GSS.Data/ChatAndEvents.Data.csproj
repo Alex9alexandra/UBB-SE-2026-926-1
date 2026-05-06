@@ -38,6 +38,7 @@
     <Folder Include="Database\Migrations\" />
     <Folder Include="EventsData\Models\Statistics\" />
     <Folder Include="EventsData\Repositories\Interfaces\" />
+    <Folder Include="Migrations\" />
   </ItemGroup>
 
 

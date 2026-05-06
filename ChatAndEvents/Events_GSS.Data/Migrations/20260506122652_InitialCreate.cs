@@ -12,6 +12,21 @@ namespace ChatAndEvents.Data.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "Achievements",
+                columns: table => new
+                {
+                    AchievementId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsUnlocked = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Achievements", x => x.AchievementId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Category",
                 columns: table => new
                 {
@@ -93,6 +108,28 @@ namespace ChatAndEvents.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Notifications",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Notifications", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Notifications_User_UserId",
+                        column: x => x.UserId,
+                        principalTable: "User",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "users_RP_scores",
                 columns: table => new
                 {
@@ -108,7 +145,7 @@ namespace ChatAndEvents.Data.Migrations
                         column: x => x.UserId,
                         principalTable: "User",
                         principalColumn: "UserId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateTable(
@@ -140,32 +177,32 @@ namespace ChatAndEvents.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Announcement",
+                name: "Announcements",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    AnnouncementId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<int>(type: "int", nullable: false),
                     Message = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IsPinned = table.Column<bool>(type: "bit", nullable: false),
                     IsEdited = table.Column<bool>(type: "bit", nullable: false),
                     IsRead = table.Column<bool>(type: "bit", nullable: false),
                     IsExpanded = table.Column<bool>(type: "bit", nullable: false),
-                    AnnouncementId = table.Column<int>(type: "int", nullable: false),
                     EventId = table.Column<int>(type: "int", nullable: false),
                     AuthorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Announcement", x => x.Id);
+                    table.PrimaryKey("PK_Announcements", x => x.AnnouncementId);
                     table.ForeignKey(
-                        name: "FK_Announcement_Events_EventId",
+                        name: "FK_Announcements_Events_EventId",
                         column: x => x.EventId,
                         principalTable: "Events",
                         principalColumn: "EventId",
                         onDelete: ReferentialAction.NoAction);
                     table.ForeignKey(
-                        name: "FK_Announcement_User_AuthorId",
+                        name: "FK_Announcements_User_AuthorId",
                         column: x => x.AuthorId,
                         principalTable: "User",
                         principalColumn: "UserId",
@@ -197,7 +234,71 @@ namespace ChatAndEvents.Data.Migrations
                         column: x => x.UserId,
                         principalTable: "User",
                         principalColumn: "UserId",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.NoAction);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DiscussionMessages",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Message = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    MediaPath = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsEdited = table.Column<bool>(type: "bit", nullable: false),
+                    AssociatedEventEventId = table.Column<int>(type: "int", nullable: true),
+                    AuthorUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    ReplyToId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DiscussionMessages", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_DiscussionMessages_DiscussionMessages_ReplyToId",
+                        column: x => x.ReplyToId,
+                        principalTable: "DiscussionMessages",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_DiscussionMessages_Events_AssociatedEventEventId",
+                        column: x => x.AssociatedEventEventId,
+                        principalTable: "Events",
+                        principalColumn: "EventId");
+                    table.ForeignKey(
+                        name: "FK_DiscussionMessages_User_AuthorUserId",
+                        column: x => x.AuthorUserId,
+                        principalTable: "User",
+                        principalColumn: "UserId");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Discussions",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsClosed = table.Column<bool>(type: "bit", nullable: false),
+                    EventId = table.Column<int>(type: "int", nullable: false),
+                    CreatorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Discussions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Discussions_Events_EventId",
+                        column: x => x.EventId,
+                        principalTable: "Events",
+                        principalColumn: "EventId",
+                        onDelete: ReferentialAction.NoAction);
+                    table.ForeignKey(
+                        name: "FK_Discussions_User_CreatorId",
+                        column: x => x.CreatorId,
+                        principalTable: "User",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateTable(
@@ -226,11 +327,11 @@ namespace ChatAndEvents.Data.Migrations
                         column: x => x.AuthorId,
                         principalTable: "User",
                         principalColumn: "UserId",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Quest",
+                name: "Quests",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -243,45 +344,42 @@ namespace ChatAndEvents.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Quest", x => x.Id);
+                    table.PrimaryKey("PK_Quests", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Quest_Events_EventId",
+                        name: "FK_Quests_Events_EventId",
                         column: x => x.EventId,
                         principalTable: "Events",
                         principalColumn: "EventId",
                         onDelete: ReferentialAction.NoAction);
                     table.ForeignKey(
-                        name: "FK_Quest_Quest_PrerequisiteQuestId",
+                        name: "FK_Quests_Quests_PrerequisiteQuestId",
                         column: x => x.PrerequisiteQuestId,
-                        principalTable: "Quest",
+                        principalTable: "Quests",
                         principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
-                name: "AnnouncementReaction",
+                name: "AnnouncementReactions",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Emoji = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     AnnouncementId = table.Column<int>(type: "int", nullable: false),
-                    AuthorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    AuthorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false),
+                    Emoji = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AnnouncementReaction", x => x.Id);
+                    table.PrimaryKey("PK_AnnouncementReactions", x => new { x.AnnouncementId, x.AuthorId });
                     table.ForeignKey(
-                        name: "FK_AnnouncementReaction_Announcement_AnnouncementId",
+                        name: "FK_AnnouncementReactions_Announcements_AnnouncementId",
                         column: x => x.AnnouncementId,
-                        principalTable: "Announcement",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.NoAction);
+                        principalTable: "Announcements",
+                        principalColumn: "AnnouncementId");
                     table.ForeignKey(
-                        name: "FK_AnnouncementReaction_User_AuthorId",
+                        name: "FK_AnnouncementReactions_Users_AuthorId",
                         column: x => x.AuthorId,
-                        principalTable: "User",
-                        principalColumn: "UserId",
-                        onDelete: ReferentialAction.NoAction);
+                        principalTable: "Users",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -296,17 +394,81 @@ namespace ChatAndEvents.Data.Migrations
                 {
                     table.PrimaryKey("PK_AnnouncementReadReceipts", x => new { x.AnnouncementId, x.UserId });
                     table.ForeignKey(
-                        name: "FK_AnnouncementReadReceipts_Announcement_AnnouncementId",
+                        name: "FK_AnnouncementReadReceipts_Announcements_AnnouncementId",
                         column: x => x.AnnouncementId,
-                        principalTable: "Announcement",
-                        principalColumn: "Id",
+                        principalTable: "Announcements",
+                        principalColumn: "AnnouncementId",
                         onDelete: ReferentialAction.NoAction);
                     table.ForeignKey(
-                        name: "FK_AnnouncementReadReceipts_User_UserId",
+                        name: "FK_AnnouncementReadReceipts_Users_UserId",
                         column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.NoAction);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DiscussionMutes",
+                columns: table => new
+                {
+                    DiscussionId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    EventId = table.Column<int>(type: "int", nullable: false),
+                    MutedUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    MutedById = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    MutedUntil = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsPermanent = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DiscussionMutes", x => new { x.DiscussionId, x.UserId });
+                    table.ForeignKey(
+                        name: "FK_DiscussionMutes_Discussions_DiscussionId",
+                        column: x => x.DiscussionId,
+                        principalTable: "Discussions",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_DiscussionMutes_User_MutedById",
+                        column: x => x.MutedById,
                         principalTable: "User",
-                        principalColumn: "UserId",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "UserId");
+                    table.ForeignKey(
+                        name: "FK_DiscussionMutes_User_MutedUserId",
+                        column: x => x.MutedUserId,
+                        principalTable: "User",
+                        principalColumn: "UserId");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DiscussionReactions",
+                columns: table => new
+                {
+                    DiscussionId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false),
+                    Emoji = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    MessageId = table.Column<int>(type: "int", nullable: false),
+                    AuthorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DiscussionReactions", x => new { x.DiscussionId, x.UserId });
+                    table.ForeignKey(
+                        name: "FK_DiscussionReactions_DiscussionMessages_MessageId",
+                        column: x => x.MessageId,
+                        principalTable: "DiscussionMessages",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_DiscussionReactions_Discussions_DiscussionId",
+                        column: x => x.DiscussionId,
+                        principalTable: "Discussions",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_DiscussionReactions_User_AuthorId",
+                        column: x => x.AuthorId,
+                        principalTable: "User",
+                        principalColumn: "UserId");
                 });
 
             migrationBuilder.CreateTable(
@@ -351,9 +513,9 @@ namespace ChatAndEvents.Data.Migrations
                         principalColumn: "MemoryId",
                         onDelete: ReferentialAction.NoAction);
                     table.ForeignKey(
-                        name: "FK_QuestMemories_Quest_QuestId",
+                        name: "FK_QuestMemories_Quests_QuestId",
                         column: x => x.QuestId,
-                        principalTable: "Quest",
+                        principalTable: "Quests",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.NoAction);
                 });
@@ -468,29 +630,24 @@ namespace ChatAndEvents.Data.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Announcement_AuthorId",
-                table: "Announcement",
-                column: "AuthorId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Announcement_EventId",
-                table: "Announcement",
-                column: "EventId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_AnnouncementReaction_AnnouncementId",
-                table: "AnnouncementReaction",
-                column: "AnnouncementId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_AnnouncementReaction_AuthorId",
-                table: "AnnouncementReaction",
+                name: "IX_AnnouncementReactions_AuthorId",
+                table: "AnnouncementReactions",
                 column: "AuthorId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AnnouncementReadReceipts_UserId",
                 table: "AnnouncementReadReceipts",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Announcements_AuthorId",
+                table: "Announcements",
+                column: "AuthorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Announcements_EventId",
+                table: "Announcements",
+                column: "EventId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AttendedEvents_UserId",
@@ -506,6 +663,51 @@ namespace ChatAndEvents.Data.Migrations
                 name: "IX_Conversations_PinnedMessageId",
                 table: "Conversations",
                 column: "PinnedMessageId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DiscussionMessages_AssociatedEventEventId",
+                table: "DiscussionMessages",
+                column: "AssociatedEventEventId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DiscussionMessages_AuthorUserId",
+                table: "DiscussionMessages",
+                column: "AuthorUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DiscussionMessages_ReplyToId",
+                table: "DiscussionMessages",
+                column: "ReplyToId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DiscussionMutes_MutedById",
+                table: "DiscussionMutes",
+                column: "MutedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DiscussionMutes_MutedUserId",
+                table: "DiscussionMutes",
+                column: "MutedUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DiscussionReactions_AuthorId",
+                table: "DiscussionReactions",
+                column: "AuthorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DiscussionReactions_MessageId",
+                table: "DiscussionReactions",
+                column: "MessageId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Discussions_CreatorId",
+                table: "Discussions",
+                column: "CreatorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Discussions_EventId",
+                table: "Discussions",
+                column: "EventId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Events_AdminId",
@@ -564,6 +766,11 @@ namespace ChatAndEvents.Data.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Notifications_UserId",
+                table: "Notifications",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Participants_ConversationId",
                 table: "Participants",
                 column: "ConversationId");
@@ -585,19 +792,19 @@ namespace ChatAndEvents.Data.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Quest_EventId",
-                table: "Quest",
-                column: "EventId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Quest_PrerequisiteQuestId",
-                table: "Quest",
-                column: "PrerequisiteQuestId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_QuestMemories_MemoryId",
                 table: "QuestMemories",
                 column: "MemoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Quests_EventId",
+                table: "Quests",
+                column: "EventId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Quests_PrerequisiteQuestId",
+                table: "Quests",
+                column: "PrerequisiteQuestId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Users_Email",
@@ -624,11 +831,22 @@ namespace ChatAndEvents.Data.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
+                name: "FK_Conversations_Users_CreatedBy",
+                table: "Conversations");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_Messages_Users_UserId",
+                table: "Messages");
+
+            migrationBuilder.DropForeignKey(
                 name: "FK_Conversations_Messages_PinnedMessageId",
                 table: "Conversations");
 
             migrationBuilder.DropTable(
-                name: "AnnouncementReaction");
+                name: "Achievements");
+
+            migrationBuilder.DropTable(
+                name: "AnnouncementReactions");
 
             migrationBuilder.DropTable(
                 name: "AnnouncementReadReceipts");
@@ -637,10 +855,19 @@ namespace ChatAndEvents.Data.Migrations
                 name: "AttendedEvents");
 
             migrationBuilder.DropTable(
+                name: "DiscussionMutes");
+
+            migrationBuilder.DropTable(
+                name: "DiscussionReactions");
+
+            migrationBuilder.DropTable(
                 name: "Friends");
 
             migrationBuilder.DropTable(
                 name: "MemoryLikes");
+
+            migrationBuilder.DropTable(
+                name: "Notifications");
 
             migrationBuilder.DropTable(
                 name: "Participants");
@@ -652,13 +879,19 @@ namespace ChatAndEvents.Data.Migrations
                 name: "users_RP_scores");
 
             migrationBuilder.DropTable(
-                name: "Announcement");
+                name: "Announcements");
+
+            migrationBuilder.DropTable(
+                name: "DiscussionMessages");
+
+            migrationBuilder.DropTable(
+                name: "Discussions");
 
             migrationBuilder.DropTable(
                 name: "Memories");
 
             migrationBuilder.DropTable(
-                name: "Quest");
+                name: "Quests");
 
             migrationBuilder.DropTable(
                 name: "Events");
@@ -670,13 +903,13 @@ namespace ChatAndEvents.Data.Migrations
                 name: "User");
 
             migrationBuilder.DropTable(
+                name: "Users");
+
+            migrationBuilder.DropTable(
                 name: "Messages");
 
             migrationBuilder.DropTable(
                 name: "Conversations");
-
-            migrationBuilder.DropTable(
-                name: "Users");
         }
     }
 }

@@ -7,18 +7,15 @@ namespace ChatAndEvents.Data.EventsData.Models;
 
 public class DiscussionMute
 {
-    public int Id { get; set; }
     public int EventId { get; set; }
     public User MutedUser { get; set; } = null!;
+    public Guid MutedUserId { get; set; }
     public User MutedBy { get; set; } = null!;
+    public Guid MutedById { get; set; }
 
-    /// <summary>
-    /// Null means permanent mute.
-    /// </summary>
     public DateTime? MutedUntil { get; set; }
     public bool IsPermanent { get; set; }
     public DateTime CreatedAt { get; set; }
-    public User User { get; set; }
     public int DiscussionId { get; set; }
     public Guid UserId {  get; set; }
     public Discussion Discussion { get; internal set; }
