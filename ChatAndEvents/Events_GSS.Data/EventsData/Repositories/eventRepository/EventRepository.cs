@@ -37,6 +37,19 @@ public class EventRepository : IEventRepository
             throw new ArgumentException("Admin is required.", nameof(eventEntity));
 
         eventEntity.EnrolledCount = 0;
+
+        if (eventEntity.Category != null)
+        {
+            eventEntity.CategoryId = eventEntity.Category.CategoryId;
+            _db.Entry(eventEntity.Category).State = EntityState.Unchanged;
+        }
+
+        if (eventEntity.Admin != null)
+        {
+            eventEntity.AdminId = eventEntity.Admin.UserId;
+            _db.Entry(eventEntity.Admin).State = EntityState.Unchanged;
+        }
+
         _db.Events.Add(eventEntity);
         await _db.SaveChangesAsync();
         return eventEntity.EventId;

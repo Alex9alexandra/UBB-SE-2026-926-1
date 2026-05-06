@@ -46,6 +46,15 @@ namespace ChatAndEvents.Data.ChatData.repositories
         public async Task CreateAsync(User user)
         {
             _db.Users.Add(user);
+
+            var eventsUser = new ChatAndEvents.Data.EventsData.Models.User
+            {
+                UserId = user.Id,
+                Name = user.Username,
+                ReputationPoints = 0
+            };
+            _db.Set<ChatAndEvents.Data.EventsData.Models.User>().Add(eventsUser);
+
             await _db.SaveChangesAsync();
         }
 
@@ -54,7 +63,7 @@ namespace ChatAndEvents.Data.ChatData.repositories
             _db.Users.Update(user);
             await _db.SaveChangesAsync();
         }
-
+          
         public async Task UpdatePasswordAsync(Guid id, string passwordHash)
         {
             var user = await _db.Users.FindAsync(id);

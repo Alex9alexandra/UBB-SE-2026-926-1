@@ -30,5 +30,7 @@ namespace ChatAndEvents.Data.EventsData.Models
         /// Gets or sets the user's reputation score record.
         /// </summary>
         public UserReputationScore? ReputationScore { get; set; }
+
+        public User() { }
     }
 }

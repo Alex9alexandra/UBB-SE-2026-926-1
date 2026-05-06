@@ -159,7 +159,9 @@ namespace ChatModule
             var chatUserService = new ChatUserService(
                 userRepository,                                                          
                 Events_GSS.App.Services.GetRequiredService<IReputationRepository>(),
-                Events_GSS.App.Services.GetRequiredService<IAttendedEventService>());
+                Events_GSS.App.Services.GetRequiredService<IAttendedEventService>(),
+                db
+                );
 
             chatUserService.SetCurrentUserId(userId);
             eventServices.AddSingleton<IUserService>(chatUserService);

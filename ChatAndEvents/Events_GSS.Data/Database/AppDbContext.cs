@@ -66,5 +66,17 @@ public class AppDbContext : DbContext
         modelBuilder.ApplyConfiguration(new NotificationConfiguration());
         modelBuilder.ApplyConfiguration(new AnnouncementConfiguration());
         modelBuilder.ApplyConfiguration(new AnnouncementReactionConfiguration());
+
+
+        modelBuilder.Entity<ChatAndEvents.Data.EventsData.Models.Category>().HasData(
+        new ChatAndEvents.Data.EventsData.Models.Category { CategoryId = 1, Title = "NATURE" },
+        new ChatAndEvents.Data.EventsData.Models.Category { CategoryId = 2, Title = "FITNESS" },
+        new ChatAndEvents.Data.EventsData.Models.Category { CategoryId = 3, Title = "MUSIC" },
+        new ChatAndEvents.Data.EventsData.Models.Category { CategoryId = 4, Title = "SOCIAL" },
+        new ChatAndEvents.Data.EventsData.Models.Category { CategoryId = 5, Title = "ART" },
+        new ChatAndEvents.Data.EventsData.Models.Category { CategoryId = 6, Title = "PETS" },
+        new ChatAndEvents.Data.EventsData.Models.Category { CategoryId = 7, Title = "TECH" },
+        new ChatAndEvents.Data.EventsData.Models.Category { CategoryId = 8, Title = "FUN" }
+        );
     }
 }

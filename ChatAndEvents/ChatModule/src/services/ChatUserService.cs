@@ -1,10 +1,12 @@
 ﻿using ChatAndEvents.Data.ChatData.repositories;
+using ChatAndEvents.Data.Database;
 using ChatAndEvents.Data.EventsData.Models;
 using ChatAndEvents.Data.EventsData.Repositories.reputationRepository;
 using ChatAndEvents.Data.EventsData.Services.attendedEventServices;
 using ChatAndEvents.Data.EventsData.Services.userServices;
 using ChatModule.Services;
 using Events_GSS.Services;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,17 +17,19 @@ public class ChatUserService : IUserService
     private readonly IUserRepository chatUserRepo;
     private readonly IReputationRepository reputationRepo;
     private readonly IAttendedEventService attendedEventService;
-
+    private readonly AppDbContext _db;
     private Guid currentUserId;
 
     public ChatUserService(
         IUserRepository chatUserRepo,
         IReputationRepository reputationRepo,
-        IAttendedEventService attendedEventService)
+        IAttendedEventService attendedEventService,
+        AppDbContext db)
     {
         this.chatUserRepo = chatUserRepo;
         this.reputationRepo = reputationRepo;
         this.attendedEventService = attendedEventService;
+        this._db = db;
     }
 
     public void SetCurrentUserId(Guid userId)
@@ -35,34 +39,33 @@ public class ChatUserService : IUserService
 
     public async Task<ChatAndEvents.Data.EventsData.Models.User> GetCurrentUser()
     {
-        var chatUser = await chatUserRepo.GetByIdAsync(currentUserId);
-        if (chatUser == null) throw new Exception("User not found");
+        var reputationScore = await reputationRepo.GetReputationScoreAsync(currentUserId);
 
-        var reputationScore = await reputationRepo.GetReputationScoreAsync(chatUser.Id);
+        var eventsUser = await _db.Set<ChatAndEvents.Data.EventsData.Models.User>()
+            .FirstOrDefaultAsync(u => u.UserId == currentUserId);
 
-        return new ChatAndEvents.Data.EventsData.Models.User
-        {
-            UserId = chatUser.Id,
-            Name = chatUser.Username,
-            ReputationPoints = reputationScore.ReputationPoints,
-            ReputationScore = reputationScore,
-        };
+        if (eventsUser == null) throw new Exception("User not found");
+
+        eventsUser.ReputationPoints = reputationScore?.ReputationPoints ?? 0;
+        eventsUser.ReputationScore = reputationScore;
+
+        return eventsUser;
     }
 
     public async Task<ChatAndEvents.Data.EventsData.Models.User?> GetUserById(Guid userId)
     {
-        var chatUser = await chatUserRepo.GetByIdAsync(userId);
-        if (chatUser == null) return null;
-
         var reputationScore = await reputationRepo.GetReputationScoreAsync(userId);
 
-        return new ChatAndEvents.Data.EventsData.Models.User
-        {
-            UserId = chatUser.Id,
-            Name = chatUser.Username,
-            ReputationPoints = reputationScore.ReputationPoints,
-            ReputationScore = reputationScore,
-        };
+        var eventsUser = await _db.Set<ChatAndEvents.Data.EventsData.Models.User>()
+            .FirstOrDefaultAsync(u => u.UserId == userId);
+
+
+        if (eventsUser == null) return null;
+
+        eventsUser.ReputationPoints = reputationScore?.ReputationPoints ?? 0;
+        eventsUser.ReputationScore = reputationScore;
+
+        return eventsUser;
     }
 
     public List<ChatAndEvents.Data.EventsData.Models.User> GetFriends(Guid userId) => new();
