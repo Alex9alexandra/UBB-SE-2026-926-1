@@ -66,7 +66,7 @@ namespace ChatModule
         private readonly IModerationService _moderationService;
 
         private const string ConnectionString =
-            "Data Source=.\\SQLEXPRESS;Initial Catalog=ChatAndEventsDB;" +
+            "Data Source=localhost;Initial Catalog=ChatAndEventsDB;" +
             "Integrated Security=True;Encrypt=True;TrustServerCertificate=True;";
 
         public MainWindow()
