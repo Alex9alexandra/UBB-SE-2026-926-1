@@ -14,10 +14,6 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using Events_GSS.ViewModels;
-using Events_GSS.Views;
-using ChatAndEvents.Data.EventsData.Database;
 using ChatAndEvents.Data.Database;
 using ChatAndEvents.Data.EventsData.Repositories;
 using ChatAndEvents.Data.EventsData.Repositories.achievementRepository;
@@ -40,7 +36,6 @@ using ChatAndEvents.Data.EventsData.Services.Interfaces;
 using ChatAndEvents.Data.EventsData.Services.notificationServices;
 using ChatAndEvents.Data.EventsData.Services.reputationService;
 using ChatAndEvents.Data.EventsData.Services.userServices;
-using ChatAndEvents.Data.ChatData.repositories;
 using ChatAndEvents.Data.ChatData.domain;
 using Microsoft.EntityFrameworkCore;
 
@@ -77,7 +72,7 @@ namespace ChatModule
         {
             _initialUserId = userId;
             _initialUsername = username;
-            string eventsConnectionString = "Data Source=.\\SQLEXPRESS;Initial Catalog=ISSEvents;Integrated Security=True;Encrypt=True;TrustServerCertificate=True;";
+            
 
             var options = new DbContextOptionsBuilder<AppDbContext>()
                 .UseSqlServer("Data Source=.\\SQLEXPRESS;Initial Catalog=ChatAndEventsDB;Integrated Security=True;Encrypt=True;TrustServerCertificate=True;")
@@ -122,8 +117,7 @@ namespace ChatModule
 
 
             var eventServices = new ServiceCollection();
-            eventServices.AddSingleton<SqlConnectionFactory>(sqlConnectionFactory);
-            eventServices.AddDbContext<AppDbContext>(options => options.UseSqlServer(eventsConnectionString));
+            eventServices.AddSingleton(db);
 
             // Register all Repositories
             eventServices.AddTransient<IEventRepository, EventRepository>();
@@ -139,7 +133,7 @@ namespace ChatModule
             eventServices.AddTransient<IAchievementRepository, AchievementRepository>();
             eventServices.AddTransient<IEventStatisticsRepository, EventStatisticsRepository>();
 
-            // Register all Services
+            // Register all Services  
             eventServices.AddTransient<IEventService, EventService>();
             eventServices.AddTransient<ICategoryServices, CategoryServices>();
             eventServices.AddTransient<IQuestService, QuestService>();

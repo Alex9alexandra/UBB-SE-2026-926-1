@@ -1,0 +1,36 @@
+Pull Request Review Checklist
+
+Architecture & Database
+1. No Raw SQL: Database interactions use Entity Framework Core. Raw SQL, stored procedures, or DB views were not used.
+
+2. Navigation Properties: Object links are modeled via classes (e.g., public User Sender), not isolated IDs (SenderId).
+
+3. Unified Database: All new EF Core models are located in the ChatAndEvents.API.Server project.
+
+4. Cleanup: Any dead legacy code, mocked data for the "other team," or duplicated tables touched by this feature have been purged.
+
+API & Data Access
+5. API-First: Frontend repositories use HttpClient to communicate with the Web API. The frontend does not connect to the database directly.
+
+6. Real Endpoints: Mock functions for cross-team data have been replaced with real API calls.
+
+7. Controller Naming: Any new API Controllers end with the word Controller (e.g., UsersController).
+
+UI & ViewModels (WinUI 3)
+8. MVVM Pattern: The XAML code-behind (.xaml.cs) is clean. Navigation, state, and actions are handled entirely by ViewModels.
+
+9. No Business Logic in UI: Calculations, data shaping, and business rules are handled in the API/Services, not in the frontend UI or Repositories.
+
+10. Unified GUI: This feature operates within the single main application window. It does not open a new standalone desktop window.
+
+📝 Naming Conventions
+11. PascalCase used for Classes, Records, Structs, Public Methods, and Public Properties.
+
+12. camelCase used for local variables and method parameters.
+
+13. _camelCase used for private, readonly backing fields (e.g., _userRepository).
+
+14. I prefix used for all Interfaces (e.g., IEventService).
+
+⚙️ Code Quality & Git
+15. No Junk Files: No IDE-generated files (e.g., .vs, bin, obj) are included in this commit.

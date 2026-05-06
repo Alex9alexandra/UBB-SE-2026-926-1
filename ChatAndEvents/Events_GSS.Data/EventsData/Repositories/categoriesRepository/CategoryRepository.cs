@@ -1,75 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-
-using Microsoft.Data.SqlClient;
-using ChatAndEvents.Data.EventsData.Database;
+﻿using ChatAndEvents.Data.Database;
 using ChatAndEvents.Data.EventsData.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace ChatAndEvents.Data.EventsData.Repositories.categoriesRepository;
 
-/// <summary>
-/// Repository for managing category data operations.
-/// </summary>
 public class CategoryRepository : ICategoryRepository
 {
-    private readonly SqlConnectionFactory connectionFactory;
+    private readonly AppDbContext _db;
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="CategoryRepository"/> class.
-    /// </summary>
-    /// <param name="connectionFactory">The SQL connection factory.</param>
-    public CategoryRepository(SqlConnectionFactory connectionFactory)
+    public CategoryRepository(AppDbContext db)
     {
-        this.connectionFactory = connectionFactory;
+        _db = db;
     }
 
-    /// <summary>
-    /// Gets all categories asynchronously.
-    /// </summary>
-    /// <returns>A list of all categories.</returns>
     public async Task<List<Category>> GetAllAsync()
     {
-        var categories = new List<Category>();
-        using var connection = this.connectionFactory.CreateConnection();
-        await connection.OpenAsync();
-
-        var selectCategoriesCommand = new SqlCommand("SELECT CategoryId, Title FROM Categories", connection);
-        using var dataReader = await selectCategoriesCommand.ExecuteReaderAsync();
-        while (await dataReader.ReadAsync())
-        {
-            categories.Add(new Category
-            {
-                CategoryId = (int)dataReader["CategoryId"],
-                Title = (string)dataReader["Title"],
-            });
-        }
-
-        return categories;
+        return await _db.Set<Category>().ToListAsync();
     }
 
-    /// <summary>
-    /// Gets a category by its identifier asynchronously.
-    /// </summary>
-    /// <param name="categoryId">The category identifier.</param>
-    /// <returns>The category if found; otherwise, null.</returns>
     public async Task<Category?> GetByIdAsync(int categoryId)
     {
-        using var connection = this.connectionFactory.CreateConnection();
-        await connection.OpenAsync();
-
-        var selectCategoryCommand = new SqlCommand("SELECT CategoryId, Title FROM Categories WHERE CategoryId = @CategoryId", connection);
-        selectCategoryCommand.Parameters.AddWithValue("@CategoryId", categoryId);
-
-        using var dataReader = await selectCategoryCommand.ExecuteReaderAsync();
-        if (await dataReader.ReadAsync())
-        {
-            return new Category
-            {
-                CategoryId = (int)dataReader["CategoryId"],
-                Title = (string)dataReader["Title"],
-            };
-        }
-
-        return null;
+        return await _db.Set<Category>().FirstOrDefaultAsync(c => c.CategoryId == categoryId);
     }
 }
