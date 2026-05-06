@@ -1,6 +1,7 @@
 ﻿using ChatAndEvents.Data.ChatData.domain;
 using ChatAndEvents.Data.Database.Configurations;
 using ChatAndEvents.Data.EventsData.Models;
+using Events_GSS.Data.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace ChatAndEvents.Data.Database;
@@ -29,6 +30,8 @@ public class AppDbContext : DbContext
     public DbSet<QuestMemory> QuestMemories { get; set; }
     public DbSet<Announcement> Announcements { get; set; }
     public DbSet<AnnouncementReaction> AnnouncementReactions { get; set; }
+    public DbSet<Notification> Notifications { get; set; }
+    public DbSet<Discussion> Discussions { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -47,5 +50,7 @@ public class AppDbContext : DbContext
         modelBuilder.ApplyConfiguration(new UserReputationScoreConfiguration());
         modelBuilder.ApplyConfiguration(new AnnouncementReadReceiptConfiguration());
         modelBuilder.ApplyConfiguration(new QuestMemoryConfiguration());
+        modelBuilder.ApplyConfiguration(new NotificationConfiguration());
+        modelBuilder.ApplyConfiguration(new DiscussionConfiguration());
     }
 }
