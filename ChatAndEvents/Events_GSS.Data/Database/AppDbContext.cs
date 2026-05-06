@@ -78,5 +78,16 @@ public class AppDbContext : DbContext
         new ChatAndEvents.Data.EventsData.Models.Category { CategoryId = 7, Title = "TECH" },
         new ChatAndEvents.Data.EventsData.Models.Category { CategoryId = 8, Title = "FUN" }
         );
+
+        modelBuilder.Entity<Achievement>().HasData(
+            new Achievement { AchievementId = 1, Name = "First Steps", Description = "Attend your first event.", IsUnlocked = false },
+            new Achievement { AchievementId = 2, Name = "Proper Host", Description = "Create 3 events.", IsUnlocked = false },
+            new Achievement { AchievementId = 3, Name = "Quest Solver", Description = "Approve 25 quest submissions.", IsUnlocked = false },
+            new Achievement { AchievementId = 4, Name = "Memory Keeper", Description = "Add 50 memories with photos.", IsUnlocked = false },
+            new Achievement { AchievementId = 5, Name = "Social Butterfly", Description = "Send 100 discussion messages.", IsUnlocked = false },
+            new Achievement { AchievementId = 6, Name = "Event Veteran", Description = "Attend 10 events.", IsUnlocked = false },
+            new Achievement { AchievementId = 7, Name = "Perfectionist", Description = "Complete every quest in an event.", IsUnlocked = false }
+        );
+
     }
 }
