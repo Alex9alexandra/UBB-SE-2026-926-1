@@ -1,179 +1,104 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using ChatAndEvents.Data.ChatData.domain;
 using ChatAndEvents.Data.ChatData.interfaces.Repositories;
-using Microsoft.Data.SqlClient;
+using ChatAndEvents.Data.Database;
+using Microsoft.EntityFrameworkCore;
 
 namespace ChatAndEvents.Data.ChatData.repositories
 {
     public class ConversationRepository : IConversationRepository
     {
-        private readonly DatabaseManager _db;
+        private readonly AppDbContext _db;
 
-        public ConversationRepository(DatabaseManager db)
+        public ConversationRepository(AppDbContext db)
         {
-            _db = db;
+            _db = db ?? throw new ArgumentNullException(nameof(db));
         }
 
         public async Task<Conversation?> GetByIdAsync(Guid id)
         {
-            await using var connection = new SqlConnection(_db.ConnectionString);
-            await connection.OpenAsync();
-
-            const string sql = "SELECT TOP 1 * FROM Conversations WHERE Id = @id";
-            await using var command = new SqlCommand(sql, connection);
-            command.Parameters.AddWithValue("@id", id);
-
-            await using var reader = await command.ExecuteReaderAsync();
-            if (!await reader.ReadAsync())
-            {
-                return null;
-            }
-
-            return MapConversation(reader);
+            return await _db.Conversations.FirstOrDefaultAsync(conversation => conversation.Id == id);
         }
 
         public async Task<List<Conversation>> GetAllForUserAsync(Guid userId)
         {
-            var conversations = new List<Conversation>();
-
-            await using var connection = new SqlConnection(_db.ConnectionString);
-            await connection.OpenAsync();
-
-            const string sql = @"
-SELECT c.*
-FROM Conversations c
-INNER JOIN Participants p ON p.ConversationId = c.Id
-WHERE p.UserId = @userId;";
-
-            await using var command = new SqlCommand(sql, connection);
-            command.Parameters.AddWithValue("@userId", userId);
-
-            await using var reader = await command.ExecuteReaderAsync();
-            while (await reader.ReadAsync())
-            {
-                conversations.Add(MapConversation(reader));
-            }
-
-            return conversations;
+            return await (from conversation in _db.Conversations
+                          join participant in _db.Participants on conversation.Id equals participant.ConversationId
+                          where participant.UserId == userId
+                          select conversation)
+                .Distinct()
+                .ToListAsync();
         }
 
         public async Task<Conversation?> GetDmBetweenAsync(Guid userId1, Guid userId2)
         {
-            await using var connection = new SqlConnection(_db.ConnectionString);
-            await connection.OpenAsync();
-
-            const string sql = @"
-SELECT TOP 1 c.*
-FROM Conversations c
-WHERE c.Type = @dmType
-  AND (
-    SELECT COUNT(DISTINCT p.UserId)
-    FROM Participants p
-    WHERE p.ConversationId = c.Id AND p.UserId IN (@userId1, @userId2)
-  ) = 2;";
-
-            await using var command = new SqlCommand(sql, connection);
-            command.Parameters.AddWithValue("@dmType", (int)ConversationType.Dm);
-            command.Parameters.AddWithValue("@userId1", userId1);
-            command.Parameters.AddWithValue("@userId2", userId2);
-
-            await using var reader = await command.ExecuteReaderAsync();
-            if (!await reader.ReadAsync())
-            {
-                return null;
-            }
-
-            return MapConversation(reader);
+            return await _db.Conversations
+                .Where(conversation => conversation.Type == ConversationType.Dm)
+                .Where(conversation =>
+                    _db.Participants
+                        .Where(participant =>
+                            participant.ConversationId == conversation.Id &&
+                            (participant.UserId == userId1 || participant.UserId == userId2))
+                        .Select(participant => participant.UserId)
+                        .Distinct()
+                        .Count() == 2)
+                .FirstOrDefaultAsync();
         }
 
         public async Task CreateAsync(Conversation c)
         {
-            await using var connection = new SqlConnection(_db.ConnectionString);
-            await connection.OpenAsync();
-
-            const string sql = @"
-INSERT INTO Conversations (Id, Type, Title, IconUrl, CreatedBy, PinnedMessageId)
-VALUES (@Id, @Type, @Title, @IconUrl, @CreatedBy, @PinnedMessageId);";
-
-            await using var command = new SqlCommand(sql, connection);
-            command.Parameters.AddWithValue("@Id", c.Id);
-            command.Parameters.AddWithValue("@Type", (int)c.Type);
-            command.Parameters.AddWithValue("@Title", (object?)c.Title ?? DBNull.Value);
-            command.Parameters.AddWithValue("@IconUrl", (object?)c.IconUrl ?? DBNull.Value);
-            command.Parameters.AddWithValue("@CreatedBy", c.CreatedBy);
-            command.Parameters.AddWithValue("@PinnedMessageId", (object?)c.PinnedMessageId ?? DBNull.Value);
-
-            await command.ExecuteNonQueryAsync();
+            _db.Conversations.Add(c);
+            await _db.SaveChangesAsync();
         }
 
         public async Task UpdateAsync(Conversation c)
         {
-            await using var connection = new SqlConnection(_db.ConnectionString);
-            await connection.OpenAsync();
+            var conversation = await _db.Conversations.FindAsync(c.Id);
+            if (conversation == null)
+            {
+                return;
+            }
 
-            const string sql = @"
-UPDATE Conversations
-SET Title = @Title, IconUrl = @IconUrl
-WHERE Id = @Id;";
-
-            await using var command = new SqlCommand(sql, connection);
-            command.Parameters.AddWithValue("@Title", (object?)c.Title ?? DBNull.Value);
-            command.Parameters.AddWithValue("@IconUrl", (object?)c.IconUrl ?? DBNull.Value);
-            command.Parameters.AddWithValue("@Id", c.Id);
-
-            await command.ExecuteNonQueryAsync();
+            conversation.Title = c.Title;
+            conversation.IconUrl = c.IconUrl;
+            await _db.SaveChangesAsync();
         }
 
         public async Task SetPinnedMessageAsync(Guid conversationId, Guid? messageId)
         {
-            await using var connection = new SqlConnection(_db.ConnectionString);
-            await connection.OpenAsync();
+            var conversation = await _db.Conversations.FindAsync(conversationId);
+            if (conversation == null)
+            {
+                return;
+            }
 
-            const string sql = @"
-UPDATE Conversations
-SET PinnedMessageId = @MessageId
-WHERE Id = @Id;";
-
-            await using var command = new SqlCommand(sql, connection);
-            command.Parameters.AddWithValue("@MessageId", (object?)messageId ?? DBNull.Value);
-            command.Parameters.AddWithValue("@Id", conversationId);
-
-            await command.ExecuteNonQueryAsync();
+            conversation.PinnedMessageId = messageId;
+            await _db.SaveChangesAsync();
         }
 
         public async Task DeleteAsync(Guid conversationId)
         {
-            await using var connection = new SqlConnection(_db.ConnectionString);
-            await connection.OpenAsync();
+            var messages = await _db.Messages
+                .Where(message => message.ConversationId == conversationId)
+                .ToListAsync();
 
-            const string sql = "DELETE FROM Conversations WHERE Id = @Id;";
+            var participants = await _db.Participants
+                .Where(participant => participant.ConversationId == conversationId)
+                .ToListAsync();
 
-            await using var command = new SqlCommand(sql, connection);
-            command.Parameters.AddWithValue("@Id", conversationId);
-
-            await command.ExecuteNonQueryAsync();
-        }
-
-        private static Conversation MapConversation(SqlDataReader reader)
-        {
-            var idOrdinal = reader.GetOrdinal("Id");
-            var typeOrdinal = reader.GetOrdinal("Type");
-            var titleOrdinal = reader.GetOrdinal("Title");
-            var iconUrlOrdinal = reader.GetOrdinal("IconUrl");
-            var createdByOrdinal = reader.GetOrdinal("CreatedBy");
-            var pinnedMessageIdOrdinal = reader.GetOrdinal("PinnedMessageId");
-
-            return new Conversation
+            var conversation = await _db.Conversations.FindAsync(conversationId);
+            if (conversation == null)
             {
-                Id = reader.GetGuid(idOrdinal),
-                Type = (ConversationType)reader.GetByte(typeOrdinal),
-                Title = reader.IsDBNull(titleOrdinal) ? null : reader.GetString(titleOrdinal),
-                IconUrl = reader.IsDBNull(iconUrlOrdinal) ? null : reader.GetString(iconUrlOrdinal),
-                CreatedBy = reader.GetGuid(createdByOrdinal),
-                PinnedMessageId = reader.IsDBNull(pinnedMessageIdOrdinal) ? null : reader.GetGuid(pinnedMessageIdOrdinal),
-            };
+                return;
+            }
+
+            _db.Messages.RemoveRange(messages);
+            _db.Participants.RemoveRange(participants);
+            _db.Conversations.Remove(conversation);
+            await _db.SaveChangesAsync();
         }
     }
 }
