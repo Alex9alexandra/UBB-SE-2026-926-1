@@ -17,19 +17,19 @@ public class ChatUserService : IUserService
     private readonly IUserRepository chatUserRepo;
     private readonly IReputationRepository reputationRepo;
     private readonly IAttendedEventService attendedEventService;
-    private readonly AppDbContext _db;
+    private readonly IDbContextFactory<AppDbContext> _dbFactory; 
     private Guid currentUserId;
 
     public ChatUserService(
         IUserRepository chatUserRepo,
         IReputationRepository reputationRepo,
         IAttendedEventService attendedEventService,
-        AppDbContext db)
+        IDbContextFactory<AppDbContext> dbFactory) 
     {
         this.chatUserRepo = chatUserRepo;
         this.reputationRepo = reputationRepo;
         this.attendedEventService = attendedEventService;
-        this._db = db;
+        _dbFactory = dbFactory;
     }
 
     public void SetCurrentUserId(Guid userId)
@@ -41,7 +41,8 @@ public class ChatUserService : IUserService
     {
         var reputationScore = await reputationRepo.GetReputationScoreAsync(currentUserId);
 
-        var eventsUser = await _db.Set<ChatAndEvents.Data.EventsData.Models.User>()
+        await using var db = await _dbFactory.CreateDbContextAsync(); 
+        var eventsUser = await db.Set<ChatAndEvents.Data.EventsData.Models.User>()
             .FirstOrDefaultAsync(u => u.UserId == currentUserId);
 
         if (eventsUser == null) throw new Exception("User not found");
@@ -56,9 +57,9 @@ public class ChatUserService : IUserService
     {
         var reputationScore = await reputationRepo.GetReputationScoreAsync(userId);
 
-        var eventsUser = await _db.Set<ChatAndEvents.Data.EventsData.Models.User>()
+        await using var db = await _dbFactory.CreateDbContextAsync(); 
+        var eventsUser = await db.Set<ChatAndEvents.Data.EventsData.Models.User>()
             .FirstOrDefaultAsync(u => u.UserId == userId);
-
 
         if (eventsUser == null) return null;
 

@@ -25,19 +25,21 @@ public sealed partial class EventDetailPage : Page
     public EventDetailPage(EventDetailViewModel viewModel)
     {
         this.InitializeComponent();
-        
+
         this.ViewModel = viewModel;
         this.currentEvent = viewModel.SelectedEvent;
 
         // Bypass OnNavigatedTo and load the tabs immediately
-        _= SetupPageData();
+        _ = SetupPageData();
     }
 
     private async Task SetupPageData()
     {
+        // 1. Header Info
         this.EventNameText.Text = currentEvent.Name;
         this.EventInfoText.Text = $"{currentEvent.StartDateTime:MMM dd, yyyy HH:mm} • {currentEvent.Location}";
 
+        // 2. User Authentication & Roles
         var userService = App.Services.GetRequiredService<IUserService>();
         var currentUser = await userService.GetCurrentUser();
         Guid userId = currentUser.UserId;
@@ -48,31 +50,46 @@ public sealed partial class EventDetailPage : Page
             this.StatisticsButton.Visibility = Visibility.Visible;
         }
 
+        // 3. Announcements Tab
         var announcementService = App.Services.GetRequiredService<IAnnouncementService>();
         var announcementViewModel = new AnnouncementViewModel(currentEvent, announcementService, userId, isAdmin);
         this.AnnouncementTab.ViewModel = announcementViewModel;
         _ = announcementViewModel.InitializeAsync();
 
+        // 4. Discussions Tab
         var discussionService = App.Services.GetRequiredService<IDiscussionService>();
         var discussionViewModel = new DiscussionViewModel(currentEvent, discussionService, userId, isAdmin);
         this.DiscussionTab.ViewModel = discussionViewModel;
         _ = discussionViewModel.InitializeAsync();
 
-        this.QuestAdminTab.ViewModel = new QuestApprovalViewModel(new QuestAdminViewModel(currentEvent));
-        this.QuestUserTab.ViewModel = new QuestUserViewModel(currentEvent);
+        // 5. Quests Tab [FIXED]
+        var questAdminVm = new QuestApprovalViewModel(new QuestAdminViewModel(currentEvent));
+        var questUserVm = new QuestUserViewModel(currentEvent);
+
+        this.QuestAdminTab.ViewModel = questAdminVm;
+        this.QuestUserTab.ViewModel = questUserVm;
+
         if (isAdmin)
         {
-            this.QuestAdminTab.Visibility = Visibility.Visible;
+            // Targeting the Container Border, not just the child control!
+            this.QuestAdminTabContainer.Visibility = Visibility.Visible;
             this.QuestUserTab.Visibility = Visibility.Collapsed;
         }
+        else
+        {
+            this.QuestAdminTabContainer.Visibility = Visibility.Collapsed;
+            this.QuestUserTab.Visibility = Visibility.Visible;
+        }
 
+        // 6. Memories Tab
         var memoryService = App.Services.GetRequiredService<IMemoryService>();
         var memoryViewModel = new MemoryViewModel(memoryService);
         this.MemoryTab.ViewModel = memoryViewModel;
         _ = memoryViewModel.InitializeAsync(currentEvent, currentUser);
 
+        // 7. Enrollment Status
         this.attendedEventService = App.Services.GetRequiredService<IAttendedEventService>();
-        
+
         // Use the ! to guarantee to the compiler that currentEvent is not null
         _ = this.LoadEnrollmentStatusAsync(currentEvent!, userId);
     }
