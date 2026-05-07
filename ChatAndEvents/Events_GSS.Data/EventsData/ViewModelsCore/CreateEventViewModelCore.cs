@@ -16,13 +16,13 @@ namespace ChatAndEvents.Data.EventsData.ViewModelsCore
     /// </summary>
     public sealed class CreateEventViewModelCore
     {
-        private readonly IUserService userService;
-        private readonly IEventService eventService;
-        private readonly IQuestService questService;
-        private readonly IAttendedEventService attendedEventService;
+        private readonly IUserService _userService;
+        private readonly IEventService _eventService;
+        private readonly IQuestService _questService;
+        private readonly IAttendedEventService _attendedEventService;
 
-        private readonly List<Quest> availableQuests = new ();
-        private readonly List<Quest> selectedQuests = new ();
+        private readonly List<Quest> _availableQuests = new ();
+        private readonly List<Quest> _selectedQuests = new ();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CreateEventViewModelCore"/> class.
@@ -37,10 +37,10 @@ namespace ChatAndEvents.Data.EventsData.ViewModelsCore
             IQuestService questService,
             IAttendedEventService attendedEventService)
         {
-            this.userService = userService;
-            this.eventService = eventService;
-            this.questService = questService;
-            this.attendedEventService = attendedEventService;
+            this._userService = userService;
+            this._eventService = eventService;
+            this._questService = questService;
+            this._attendedEventService = attendedEventService;
         }
 
         /// <summary>
@@ -126,12 +126,12 @@ namespace ChatAndEvents.Data.EventsData.ViewModelsCore
         /// <summary>
         /// Gets the available quests.
         /// </summary>
-        public IReadOnlyList<Quest> AvailableQuests => this.availableQuests;
+        public IReadOnlyList<Quest> AvailableQuests => this._availableQuests;
 
         /// <summary>
         /// Gets the selected quests.
         /// </summary>
-        public IReadOnlyList<Quest> SelectedQuests => this.selectedQuests;
+        public IReadOnlyList<Quest> SelectedQuests => this._selectedQuests;
 
         /// <summary>
         /// Gets the custom quest name.
@@ -386,7 +386,7 @@ namespace ChatAndEvents.Data.EventsData.ViewModelsCore
                 Difficulty = 3,
             };
 
-            this.selectedQuests.Add(quest);
+            this._selectedQuests.Add(quest);
             this.CustomQuestName = string.Empty;
             this.CustomQuestDescription = string.Empty;
 
@@ -399,13 +399,13 @@ namespace ChatAndEvents.Data.EventsData.ViewModelsCore
         /// <param name="quest">The quest to toggle.</param>
         public void ToggleQuestSelection(Quest quest)
         {
-            if (this.selectedQuests.Contains(quest))
+            if (this._selectedQuests.Contains(quest))
             {
-                this.selectedQuests.Remove(quest);
+                this._selectedQuests.Remove(quest);
             }
             else
             {
-                this.selectedQuests.Add(quest);
+                this._selectedQuests.Add(quest);
             }
 
             this.StateChanged?.Invoke();
@@ -417,9 +417,9 @@ namespace ChatAndEvents.Data.EventsData.ViewModelsCore
         /// <param name="quest">The quest to remove.</param>
         public void RemoveQuest(Quest quest)
         {
-            if (this.selectedQuests.Contains(quest))
+            if (this._selectedQuests.Contains(quest))
             {
-                this.selectedQuests.Remove(quest);
+                this._selectedQuests.Remove(quest);
                 this.StateChanged?.Invoke();
             }
         }
@@ -429,7 +429,7 @@ namespace ChatAndEvents.Data.EventsData.ViewModelsCore
         /// </summary>
         /// <param name="quest">The quest to check.</param>
         /// <returns>True if the quest is selected; otherwise, false.</returns>
-        public bool IsQuestSelected(Quest quest) => this.selectedQuests.Contains(quest);
+        public bool IsQuestSelected(Quest quest) => this._selectedQuests.Contains(quest);
 
         /// <summary>
         /// Builds the event creation DTO.
@@ -450,8 +450,8 @@ namespace ChatAndEvents.Data.EventsData.ViewModelsCore
                 MaximumPeople = maxPeople,
                 EventBannerPath = this.EventBannerPath,
                 Category = this.SelectedCategory,
-                Admin = await this.userService.GetCurrentUser(),
-                SelectedQuests = new List<Quest>(this.selectedQuests),
+                Admin = await this._userService.GetCurrentUser(),
+                SelectedQuests = new List<Quest>(this._selectedQuests),
             };
         }
 
@@ -507,10 +507,10 @@ namespace ChatAndEvents.Data.EventsData.ViewModelsCore
         /// <returns>A task representing the asynchronous operation.</returns>
         public async Task LoadPresetQuestsAsync()
         {
-            var quests = await this.questService.GetPresetQuestsAsync();
+            var quests = await this._questService.GetPresetQuestsAsync();
 
-            this.availableQuests.Clear();
-            this.availableQuests.AddRange(quests);
+            this._availableQuests.Clear();
+            this._availableQuests.AddRange(quests);
 
             this.StateChanged?.Invoke();
         }
@@ -537,14 +537,14 @@ namespace ChatAndEvents.Data.EventsData.ViewModelsCore
                 Admin = dto.Admin!,
             };
 
-            int newEventId = await this.eventService.CreateEventAsync(eventEntity);
+            int newEventId = await this._eventService.CreateEventAsync(eventEntity);
             eventEntity.EventId = newEventId;
 
-            await this.attendedEventService.AttendEventAsync(newEventId, (await this.userService.GetCurrentUser()).UserId);
+            await this._attendedEventService.AttendEventAsync(newEventId, (await this._userService.GetCurrentUser()).UserId);
 
             foreach (var quest in dto.SelectedQuests)
             {
-                await this.questService.AddQuestAsync(eventEntity, quest);
+                await this._questService.AddQuestAsync(eventEntity, quest);
             }
 
             this.EventCreationDetailsText = this.BuildEventCreationDetailsText(dto);

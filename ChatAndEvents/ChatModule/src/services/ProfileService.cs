@@ -10,32 +10,32 @@ namespace ChatModule.Services
 {
     public class ProfileService : IProfileService
     {
-        private readonly IUserRepository userRepository;
-        private readonly IFriendRepository friendRepository;
+        private readonly IUserRepository _userRepository;
+        private readonly IFriendRepository _friendRepository;
 
         public ProfileService(IUserRepository userRepository, IFriendRepository friendRepository)
         {
-            this.userRepository = userRepository;
-            this.friendRepository = friendRepository;
+            this._userRepository = userRepository;
+            this._friendRepository = friendRepository;
         }
 
         public async Task<User?> GetProfileAsync(Guid targetUserId)
         {
-            return await userRepository.GetByIdAsync(targetUserId);
+            return await _userRepository.GetByIdAsync(targetUserId);
         }
 
         public async Task<List<User>> GetAllUsersAsync(Guid viewerUserId, string? searchQuery)
         {
             var users = string.IsNullOrWhiteSpace(searchQuery)
-                ? await userRepository.GetAllAsync()
-                : await userRepository.SearchByUsernameAsync(searchQuery);
+                ? await _userRepository.GetAllAsync()
+                : await _userRepository.SearchByUsernameAsync(searchQuery);
 
             return users.Where(user => user.Id != viewerUserId).ToList();
         }
 
         public async Task UpdateProfileAsync(Guid userId, string? bio, string? avatarUrl, DateTime? birthday)
         {
-            var user = await userRepository.GetByIdAsync(userId);
+            var user = await _userRepository.GetByIdAsync(userId);
             if (user == null)
             {
                 return;
@@ -56,29 +56,29 @@ namespace ChatModule.Services
                 user.Birthday = birthday;
             }
 
-            await userRepository.UpdateAsync(user);
+            await _userRepository.UpdateAsync(user);
         }
 
         public async Task UpdateStatusAsync(Guid userId, UserStatus status)
         {
-            var user = await userRepository.GetByIdAsync(userId);
+            var user = await _userRepository.GetByIdAsync(userId);
             if (user == null)
             {
                 return;
             }
 
             user.Status = status;
-            await userRepository.UpdateAsync(user);
+            await _userRepository.UpdateAsync(user);
         }
 
         public async Task<List<User>> GetMutualFriendsAsync(Guid userId1, Guid userId2)
         {
-            var mutualFriendIds = await friendRepository.GetMutualFriendIdentifiersAsync(userId1, userId2);
+            var mutualFriendIds = await _friendRepository.GetMutualFriendIdentifiersAsync(userId1, userId2);
             var mutualFriends = new List<User>();
 
             foreach (var mutualFriendId in mutualFriendIds)
             {
-                var user = await userRepository.GetByIdAsync(mutualFriendId);
+                var user = await _userRepository.GetByIdAsync(mutualFriendId);
                 if (user != null)
                 {
                     mutualFriends.Add(user);

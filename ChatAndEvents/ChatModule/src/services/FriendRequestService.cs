@@ -11,10 +11,10 @@ namespace ChatModule.Services
 {
     public class FriendRequestService : IFriendRequestService
     {
-        private readonly IFriendRepository friendRepository;
-        private readonly IUserRepository userRepository;
-        private readonly IConversationRepository conversationRepository;
-        private readonly IParticipantRepository participantRepository;
+        private readonly IFriendRepository _friendRepository;
+        private readonly IUserRepository _userRepository;
+        private readonly IConversationRepository _conversationRepository;
+        private readonly IParticipantRepository _participantRepository;
 
         public FriendRequestService(
             IFriendRepository friendRepository,
@@ -22,10 +22,10 @@ namespace ChatModule.Services
             IConversationRepository conversationRepository,
             IParticipantRepository participantRepository)
         {
-            this.friendRepository = friendRepository;
+            this._friendRepository = friendRepository;
             this.userRepository = userRepository;
-            this.conversationRepository = conversationRepository;
-            this.participantRepository = participantRepository;
+            this._conversationRepository = conversationRepository;
+            this._participantRepository = participantRepository;
         }
 
         public async Task SendFriendRequestAsync(Guid senderUserId, Guid receiverUserId)
@@ -35,19 +35,19 @@ namespace ChatModule.Services
                 throw new InvalidOperationException("You cannot send a friend request to yourself.");
             }
 
-            var areAlreadyFriends = await friendRepository.CheckIfFriendsAsync(senderUserId, receiverUserId);
+            var areAlreadyFriends = await _friendRepository.CheckIfFriendsAsync(senderUserId, receiverUserId);
             if (areAlreadyFriends)
             {
                 throw new InvalidOperationException("Users are already friends.");
             }
 
-            var existingFriendshipRelation = await friendRepository.GetFriendshipAsync(senderUserId, receiverUserId);
+            var existingFriendshipRelation = await _friendRepository.GetFriendshipAsync(senderUserId, receiverUserId);
             if (existingFriendshipRelation != null)
             {
                 if (existingFriendshipRelation.Status == FriendStatus.Blocked)
                 {
-                    await friendRepository.UpdateFriendshipStatusAsync(senderUserId, receiverUserId, FriendStatus.Pending);
-                    await friendRepository.SetMatchStatusAsync(senderUserId, receiverUserId, false);
+                    await _friendRepository.UpdateFriendshipStatusAsync(senderUserId, receiverUserId, FriendStatus.Pending);
+                    await _friendRepository.SetMatchStatusAsync(senderUserId, receiverUserId, false);
                     return;
                 }
 
@@ -64,7 +64,7 @@ namespace ChatModule.Services
                 CreatedAt = DateTime.UtcNow
             };
 
-            await friendRepository.CreateFriendshipAsync(newFriendRequest);
+            await _friendRepository.CreateFriendshipAsync(newFriendRequest);
         }
 
         public async Task<bool> SendFriendRequestByUsernameAsync(Guid senderUserId, string receiverUsername)
@@ -86,9 +86,9 @@ namespace ChatModule.Services
 
         public async Task AcceptFriendRequestAsync(Guid currentUserId, Guid requesterUserId)
         {
-            await friendRepository.UpdateFriendshipStatusAsync(requesterUserId, currentUserId, FriendStatus.Accepted);
+            await _friendRepository.UpdateFriendshipStatusAsync(requesterUserId, currentUserId, FriendStatus.Accepted);
 
-            var existingConversation = await conversationRepository.GetDmBetweenAsync(currentUserId, requesterUserId);
+            var existingConversation = await _conversationRepository.GetDmBetweenAsync(currentUserId, requesterUserId);
             if (existingConversation != null)
             {
                 return;
@@ -104,11 +104,11 @@ namespace ChatModule.Services
                 PinnedMessageId = null
             };
 
-            await conversationRepository.CreateAsync(newConversation);
+            await _conversationRepository.CreateAsync(newConversation);
 
             var currentDataTime = DateTime.UtcNow;
 
-            await participantRepository.CreateAsync(new Participant
+            await _participantRepository.CreateAsync(new Participant
             {
                 Id = Guid.NewGuid(),
                 ConversationId = newConversation.Id,
@@ -120,7 +120,7 @@ namespace ChatModule.Services
                 IsFavourite = false
             });
 
-            await participantRepository.CreateAsync(new Participant
+            await _participantRepository.CreateAsync(new Participant
             {
                 Id = Guid.NewGuid(),
                 ConversationId = newConversation.Id,
@@ -135,19 +135,19 @@ namespace ChatModule.Services
 
         public async Task DeclineFriendRequestAsync(Guid currentUserId, Guid requesterUserId)
         {
-            var friendshipRelation = await friendRepository.GetFriendshipAsync(requesterUserId, currentUserId);
+            var friendshipRelation = await _friendRepository.GetFriendshipAsync(requesterUserId, currentUserId);
 
             if (friendshipRelation == null || friendshipRelation.Status != FriendStatus.Pending)
             {
                 throw new InvalidOperationException("No pending friend request found.");
             }
 
-            await friendRepository.DeleteFriendshipAsync(requesterUserId, currentUserId);
+            await _friendRepository.DeleteFriendshipAsync(requesterUserId, currentUserId);
         }
 
         public async Task<List<User>> GetIncomingRequestsAsync(Guid currentUserId)
         {
-            var pendingRequestList = await friendRepository.GetPendingRequestsForUserAsync(currentUserId);
+            var pendingRequestList = await _friendRepository.GetPendingRequestsForUserAsync(currentUserId);
             var senderUserList = new List<User>();
 
             foreach (var requestRelation in pendingRequestList)
@@ -164,7 +164,7 @@ namespace ChatModule.Services
 
         public async Task<FriendStatus?> GetRelationshipStatusAsync(Guid firstUserId, Guid secondUserId)
         {
-            var friendshipRelation = await friendRepository.GetFriendshipAsync(firstUserId, secondUserId);
+            var friendshipRelation = await _friendRepository.GetFriendshipAsync(firstUserId, secondUserId);
             return friendshipRelation?.Status;
         }
     }

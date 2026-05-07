@@ -14,9 +14,9 @@ using System.Threading.Tasks;
 
 public class ChatUserService : IUserService
 {
-    private readonly IUserRepository chatUserRepo;
-    private readonly IReputationRepository reputationRepo;
-    private readonly IAttendedEventService attendedEventService;
+    private readonly IUserRepository _chatUserRepo;
+    private readonly IReputationRepository _reputationRepo;
+    private readonly IAttendedEventService _attendedEventService;
     private readonly IDbContextFactory<AppDbContext> _dbFactory; 
     private Guid currentUserId;
 
@@ -26,9 +26,9 @@ public class ChatUserService : IUserService
         IAttendedEventService attendedEventService,
         IDbContextFactory<AppDbContext> dbFactory) 
     {
-        this.chatUserRepo = chatUserRepo;
-        this.reputationRepo = reputationRepo;
-        this.attendedEventService = attendedEventService;
+        this._chatUserRepo = chatUserRepo;
+        this._reputationRepo = reputationRepo;
+        this._attendedEventService = attendedEventService;
         _dbFactory = dbFactory;
     }
 
@@ -39,7 +39,7 @@ public class ChatUserService : IUserService
 
     public async Task<ChatAndEvents.Data.EventsData.Models.User> GetCurrentUser()
     {
-        var reputationScore = await reputationRepo.GetReputationScoreAsync(currentUserId);
+        var reputationScore = await _reputationRepo.GetReputationScoreAsync(currentUserId);
 
         await using var db = await _dbFactory.CreateDbContextAsync(); 
         var eventsUser = await db.Set<ChatAndEvents.Data.EventsData.Models.User>()
@@ -55,7 +55,7 @@ public class ChatUserService : IUserService
 
     public async Task<ChatAndEvents.Data.EventsData.Models.User?> GetUserById(Guid userId)
     {
-        var reputationScore = await reputationRepo.GetReputationScoreAsync(userId);
+        var reputationScore = await _reputationRepo.GetReputationScoreAsync(userId);
 
         await using var db = await _dbFactory.CreateDbContextAsync(); 
         var eventsUser = await db.Set<ChatAndEvents.Data.EventsData.Models.User>()
@@ -74,7 +74,7 @@ public class ChatUserService : IUserService
 
     public async Task<bool> IsAttending(Event currentEvent)
     {
-        var attendingEvents = await attendedEventService.GetAttendedEventsAsync(currentUserId);
+        var attendingEvents = await _attendedEventService.GetAttendedEventsAsync(currentUserId);
         return attendingEvents.Any(ae => ae.Event.EventId == currentEvent.EventId);
     }
 

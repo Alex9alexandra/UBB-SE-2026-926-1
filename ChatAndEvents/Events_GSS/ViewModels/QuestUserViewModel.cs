@@ -24,21 +24,21 @@ public enum QuestFilter
 
 public partial class QuestUserViewModel : ObservableObject
 {
-    private readonly IQuestApprovalService questApprovalService;
-    private readonly IUserService userService;
-    private readonly Event currentEvent;
-    private readonly QuestUserCore core;
+    private readonly IQuestApprovalService _questApprovalService;
+    private readonly IUserService _userService;
+    private readonly Event _currentEvent;
+    private readonly QuestUserCore _core;
 
     public QuestUserViewModel(
         Event currentEvent,
         IQuestApprovalService questApprovalService,
         IUserService userService)
     {
-        this.currentEvent = currentEvent;
-        this.questApprovalService = questApprovalService;
-        this.userService = userService;
+        this._currentEvent = currentEvent;
+        this._questApprovalService = questApprovalService;
+        this._userService = userService;
 
-        this.core = new QuestUserCore(questApprovalService);
+        this._core = new QuestUserCore(questApprovalService);
     }
 
     public QuestUserViewModel(Event currentEvent)
@@ -86,7 +86,7 @@ public partial class QuestUserViewModel : ObservableObject
 
     private async Task InitializeAsync()
     {
-        isAttending = await userService.IsAttending(currentEvent);
+        isAttending = await _userService.IsAttending(_currentEvent);
         await LoadQuestsAsync();
     }
 
@@ -100,7 +100,7 @@ public partial class QuestUserViewModel : ObservableObject
 
         try
         {
-            var questResults = await core.GetQuestsAsync(currentEvent, await userService.GetCurrentUser());
+            var questResults = await _core.GetQuestsAsync(_currentEvent, await _userService.GetCurrentUser());
 
             var approvedQuestIds = questResults
                 .Where(questMemory => questMemory.ProofStatus == QuestMemoryStatus.Approved)
@@ -137,10 +137,10 @@ public partial class QuestUserViewModel : ObservableObject
         {
             var proof = new Memory(args.photoPath, args.text, DateTime.UtcNow)
             {
-                Event = currentEvent,
-                Author = await userService.GetCurrentUser()
+                Event = _currentEvent,
+                Author = await _userService.GetCurrentUser()
             };
-            await questApprovalService.SubmitProofAsync(args.quest.Quest, proof);
+            await _questApprovalService.SubmitProofAsync(args.quest.Quest, proof);
             await LoadQuestsAsync();
         }
         catch (Exception exception)
@@ -155,7 +155,7 @@ public partial class QuestUserViewModel : ObservableObject
     {
         try
         {
-            await questApprovalService.DeleteSubmissionAsync(item.QuestMemory, await userService.GetCurrentUser());
+            await _questApprovalService.DeleteSubmissionAsync(item.QuestMemory, await _userService.GetCurrentUser());
             await LoadQuestsAsync();
         }
         catch (Exception exception)

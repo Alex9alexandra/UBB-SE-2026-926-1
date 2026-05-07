@@ -6,7 +6,7 @@ namespace ChatModule.ViewModels;
 
 public class ForgotPasswordViewModel : BaseViewModel
 {
-    private readonly IAuthenticationService authentificationService;
+    private readonly IAuthenticationService _authentificationService;
 
     private string email = string.Empty;
     public string Email
@@ -43,7 +43,7 @@ public class ForgotPasswordViewModel : BaseViewModel
 
     public ForgotPasswordViewModel(IAuthenticationService authentificationService)
     {
-        this.authentificationService = authentificationService ?? throw new ArgumentNullException(nameof(authentificationService));
+        this._authentificationService = authentificationService ?? throw new ArgumentNullException(nameof(authentificationService));
         SubmitCommand = new RelayCommand(SubmitAsync);
         BackToLoginCommand = new RelayCommand(BackToLoginAsync);
     }
@@ -55,7 +55,7 @@ public class ForgotPasswordViewModel : BaseViewModel
 
         try
         {
-            await authentificationService.ChangePasswordAsync(Email, NewPassword);
+            await _authentificationService.ChangePasswordAsync(Email, NewPassword);
             SuccessMessage = "Password updated";
         }
         catch (Exception exception)

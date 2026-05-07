@@ -7,7 +7,7 @@ namespace ChatModule.viewModels;
 
 public class LoginViewModel : BaseViewModel
 {
-    private readonly IAuthenticationService authenticationService;
+    private readonly IAuthenticationService _authenticationService;
 
     private string username = string.Empty;
     public string Username
@@ -47,7 +47,7 @@ public class LoginViewModel : BaseViewModel
 
         public LoginViewModel(IAuthenticationService authenticationService)
         {
-            this.authenticationService = authenticationService ?? throw new ArgumentNullException(nameof(authenticationService));
+            this._authenticationService = authenticationService ?? throw new ArgumentNullException(nameof(authenticationService));
 
             LoginCommand = new RelayCommand(LoginAsync, () => !IsLoading);
             GoToRegisterCommand = new RelayCommand(OnGoToRegister);
@@ -60,7 +60,7 @@ public class LoginViewModel : BaseViewModel
             ErrorMessage = null;
             try
             {
-                var user = await authenticationService.LoginAsync(Username, Password);
+                var user = await _authenticationService.LoginAsync(Username, Password);
                 if (user != null)
                 {
                     if (LoginSucceeded != null)

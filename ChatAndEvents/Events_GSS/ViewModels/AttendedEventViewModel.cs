@@ -24,11 +24,11 @@ namespace Events_GSS.ViewModels
     /// </summary>
     public partial class AttendedEventViewModel : INotifyPropertyChanged
     {
-        private readonly IAttendedEventService attendedEventService;
-        private readonly IUserService userService;
-        private readonly IReputationService reputationService;
-        private readonly IAchievementService achievementService;
-        private readonly IAnnouncementService announcementService;
+        private readonly IAttendedEventService _attendedEventService;
+        private readonly IUserService _userService;
+        private readonly IReputationService _reputationService;
+        private readonly IAchievementService _achievementService;
+        private readonly IAnnouncementService _announcementService;
         private ObservableCollection<AttendedEvent> archivedEvents = new ();
         private ObservableCollection<AttendedEvent> favouriteEvents = new ();
         private ObservableCollection<User> filteredFriends = new ();
@@ -153,7 +153,7 @@ namespace Events_GSS.ViewModels
             {
                 this.friendSearchQuery = value;
                 this.OnPropertyChanged();
-                this.FilteredFriends = new ObservableCollection<User>(this.userService.SearchFriends(this.CurrentUser.UserId, this.friendSearchQuery));
+                this.FilteredFriends = new ObservableCollection<User>(this._userService.SearchFriends(this.CurrentUser.UserId, this.friendSearchQuery));
             }
         }
 
@@ -294,16 +294,16 @@ namespace Events_GSS.ViewModels
         /// <param name="reputationService">The reputation service.</param>
         public AttendedEventViewModel(IAttendedEventService attendedEventService, IUserService userService, IAnnouncementService announcementService, IReputationService reputationService)
         {
-            this.attendedEventService = attendedEventService;
-            this.userService = userService;
-            this.reputationService = reputationService;
+            this._attendedEventService = attendedEventService;
+            this._userService = userService;
+            this._reputationService = reputationService;
 
             this.LoadCommand = new RelayCommandAttEv(async _ => await this.LoadAsync());
             this.LeaveCommand = new RelayCommandAttEv(async p => await this.LeaveAsync(p), p => p is AttendedEvent);
             this.SetArchivedCommand = new RelayCommandAttEv(async p => await this.SetArchivedAsync(p), p => p is AttendedEvent);
             this.SetFavouriteCommand = new RelayCommandAttEv(async p => await this.SetFavouriteAsync(p), p => p is AttendedEvent);
             this.ClearFiltersCommand = new RelayCommandAttEv(_ => this.ClearFilters());
-            this.announcementService = announcementService;
+            this._announcementService = announcementService;
         }
 
         // ─── Load ─────────────────────────────────────────────────────────
@@ -319,12 +319,12 @@ namespace Events_GSS.ViewModels
 
             try
             {
-                this.CurrentUser = await this.userService.GetCurrentUser();
+                this.CurrentUser = await this._userService.GetCurrentUser();
 
-                this.ReputationViewModel = new ReputationViewModel(this.userService, this.reputationService, this.achievementService);
+                this.ReputationViewModel = new ReputationViewModel(this._userService, this._reputationService, this._achievementService);
                 await this.ReputationViewModel.LoadAsync();
 
-                var events = await this.attendedEventService.GetAttendedEventsAsync(this.CurrentUser.UserId);
+                var events = await this._attendedEventService.GetAttendedEventsAsync(this.CurrentUser.UserId);
                 this.allEvents = events;
 
                 // Populate category dropdown from whatever categories exist in the loaded events.
@@ -335,9 +335,9 @@ namespace Events_GSS.ViewModels
                     .ToList();
 
                 this.AvailableCategories = new ObservableCollection<Category>(categories);
-                this.FilteredFriends = new ObservableCollection<User>(this.userService.GetFriends(this.CurrentUser.UserId));
+                this.FilteredFriends = new ObservableCollection<User>(this._userService.GetFriends(this.CurrentUser.UserId));
 
-                var unreadCounts = await this.announcementService.GetUnreadCountsForUserAsync(this.CurrentUser.UserId);
+                var unreadCounts = await this._announcementService.GetUnreadCountsForUserAsync(this.CurrentUser.UserId);
                 foreach (var attendedEvent in this.allEvents)
                 {
                     attendedEvent.UnreadAnnouncementCount = unreadCounts.TryGetValue(attendedEvent.Event.EventId, out var count) ? count : 0;
@@ -362,7 +362,7 @@ namespace Events_GSS.ViewModels
         /// <returns>A task representing the asynchronous operation.</returns>
         public async Task LoadCommonEventsAsync(User friend)
         {
-            var commonEventsList = await this.attendedEventService.GetCommonEventsAsync(this.CurrentUser.UserId, friend.UserId);
+            var commonEventsList = await this._attendedEventService.GetCommonEventsAsync(this.CurrentUser.UserId, friend.UserId);
             this.CommonEvents = new ObservableCollection<AttendedEvent>(commonEventsList);
         }
 
@@ -459,7 +459,7 @@ namespace Events_GSS.ViewModels
 
             try
             {
-                await this.attendedEventService.LeaveEventAsync(attendedEvent.Event.EventId, attendedEvent.User.UserId);
+                await this._attendedEventService.LeaveEventAsync(attendedEvent.Event.EventId, attendedEvent.User.UserId);
                 this.allEvents.Remove(attendedEvent);
                 this.ApplyFiltersAndSort();
             }
@@ -484,7 +484,7 @@ namespace Events_GSS.ViewModels
             try
             {
                 var newValue = !attendedEvent.IsArchived;
-                await this.attendedEventService.SetArchivedAsync(attendedEvent.Event.EventId, attendedEvent.User.UserId, newValue);
+                await this._attendedEventService.SetArchivedAsync(attendedEvent.Event.EventId, attendedEvent.User.UserId, newValue);
                 attendedEvent.IsArchived = newValue;
                 this.ApplyFiltersAndSort();
             }
@@ -509,7 +509,7 @@ namespace Events_GSS.ViewModels
             try
             {
                 var newValue = !attendedEvent.IsFavourite;
-                await this.attendedEventService.SetFavouriteAsync(attendedEvent.Event.EventId, attendedEvent.User.UserId, newValue);
+                await this._attendedEventService.SetFavouriteAsync(attendedEvent.Event.EventId, attendedEvent.User.UserId, newValue);
                 attendedEvent.IsFavourite = newValue;
                 this.ApplyFiltersAndSort();
             }

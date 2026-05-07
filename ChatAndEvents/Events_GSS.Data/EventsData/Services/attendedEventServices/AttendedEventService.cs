@@ -13,8 +13,8 @@ namespace ChatAndEvents.Data.EventsData.Services.attendedEventServices
     /// </summary>
     public class AttendedEventService : IAttendedEventService
     {
-        private readonly IAttendedEventRepository attendedEventRepository;
-        private readonly IReputationService reputationService;
+        private readonly IAttendedEventRepository _attendedEventRepository;
+        private readonly IReputationService _reputationService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AttendedEventService"/> class.
@@ -23,8 +23,8 @@ namespace ChatAndEvents.Data.EventsData.Services.attendedEventServices
         /// <param name="reputationService">The reputation service.</param>
         public AttendedEventService(IAttendedEventRepository attendedEventRepository, IReputationService reputationService)
         {
-            this.attendedEventRepository = attendedEventRepository;
-            this.reputationService = reputationService;
+            this._attendedEventRepository = attendedEventRepository;
+            this._reputationService = reputationService;
         }
 
         /// <summary>
@@ -34,7 +34,7 @@ namespace ChatAndEvents.Data.EventsData.Services.attendedEventServices
         /// <returns>A list of attended events.</returns>
         public async Task<List<AttendedEvent>> GetAttendedEventsAsync(Guid userId)
         {
-            return await this.attendedEventRepository.GetByUserIdAsync(userId);
+            return await this._attendedEventRepository.GetByUserIdAsync(userId);
         }
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace ChatAndEvents.Data.EventsData.Services.attendedEventServices
         /// <returns>A list of attended events matching the archive status.</returns>
         public async Task<List<AttendedEvent>> GetEventsByArchiveStatusAsync(Guid userId, bool isArchived)
         {
-            var attendedEvents = await this.attendedEventRepository.GetByUserIdAsync(userId);
+            var attendedEvents = await this._attendedEventRepository.GetByUserIdAsync(userId);
             return isArchived ? attendedEvents.Where(ae => ae.IsArchived).ToList() : attendedEvents.Where(ae => !ae.IsArchived).ToList();
         }
 
@@ -58,13 +58,13 @@ namespace ChatAndEvents.Data.EventsData.Services.attendedEventServices
         /// <exception cref="InvalidOperationException">Thrown when the user's reputation is too low to attend events.</exception>
         public async Task AttendEventAsync(int eventId, Guid userId)
         {
-            if (!await this.reputationService.CanAttendEventsAsync(userId))
+            if (!await this._reputationService.CanAttendEventsAsync(userId))
             {
                 throw new InvalidOperationException("Your reputation is too low to attend events (at -1000 RP).");
             }
 
             // Check if already enrolled to avoid duplicate entries.
-            var existingAttendedEvent = await this.attendedEventRepository.GetAsync(eventId, userId);
+            var existingAttendedEvent = await this._attendedEventRepository.GetAsync(eventId, userId);
             if (existingAttendedEvent != null)
             {
                 return;
@@ -81,7 +81,7 @@ namespace ChatAndEvents.Data.EventsData.Services.attendedEventServices
                 IsFavourite = false,
             };
 
-            await this.attendedEventRepository.AddAsync(attendedEvent);
+            await this._attendedEventRepository.AddAsync(attendedEvent);
 
             WeakReferenceMessenger.Default.Send(
                 new ReputationMessage(userId, ReputationAction.EventAttended, eventId));
@@ -95,7 +95,7 @@ namespace ChatAndEvents.Data.EventsData.Services.attendedEventServices
         /// <returns>The attended event, or null if not found.</returns>
         public async Task<AttendedEvent?> GetAsync(int eventId, Guid userId)
         {
-            return await this.attendedEventRepository.GetAsync(eventId, userId);
+            return await this._attendedEventRepository.GetAsync(eventId, userId);
         }
 
         /// <summary>
@@ -106,7 +106,7 @@ namespace ChatAndEvents.Data.EventsData.Services.attendedEventServices
         /// <returns>A task representing the asynchronous operation.</returns>
         public async Task LeaveEventAsync(int eventId, Guid userId)
         {
-            await this.attendedEventRepository.DeleteAsync(eventId, userId);
+            await this._attendedEventRepository.DeleteAsync(eventId, userId);
         }
 
         /// <summary>
@@ -118,7 +118,7 @@ namespace ChatAndEvents.Data.EventsData.Services.attendedEventServices
         /// <returns>A task representing the asynchronous operation.</returns>
         public async Task SetArchivedAsync(int eventId, Guid userId, bool isArchived)
         {
-            await this.attendedEventRepository.UpdateIsArchivedAsync(eventId, userId, isArchived);
+            await this._attendedEventRepository.UpdateIsArchivedAsync(eventId, userId, isArchived);
         }
 
         /// <summary>
@@ -130,7 +130,7 @@ namespace ChatAndEvents.Data.EventsData.Services.attendedEventServices
         /// <returns>A task representing the asynchronous operation.</returns>
         public async Task SetFavouriteAsync(int eventId, Guid userId, bool isFavourite)
         {
-            await this.attendedEventRepository.UpdateIsFavouriteAsync(eventId, userId, isFavourite);
+            await this._attendedEventRepository.UpdateIsFavouriteAsync(eventId, userId, isFavourite);
         }
 
         /// <summary>
@@ -141,7 +141,7 @@ namespace ChatAndEvents.Data.EventsData.Services.attendedEventServices
         /// <returns>A list of attended events common to both users.</returns>
         public async Task<List<AttendedEvent>> GetCommonEventsAsync(Guid userId, Guid friendId)
         {
-            return await this.attendedEventRepository.GetCommonEventsAsync(userId, friendId);
+            return await this._attendedEventRepository.GetCommonEventsAsync(userId, friendId);
         }
     }
 }

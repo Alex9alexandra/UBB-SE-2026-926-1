@@ -9,11 +9,11 @@ namespace ChatModule.Services
 {
     public class DirectMessageService : IDirectMessageService
     {
-        private readonly IConversationRepository conversationRepository;
-        private readonly IParticipantRepository participantRepository;
-        private readonly IMessageRepository messageRepository;
-        private readonly BlockService blockService;
-        private readonly IUserRepository userRepository;
+        private readonly IConversationRepository _conversationRepository;
+        private readonly IParticipantRepository _participantRepository;
+        private readonly IMessageRepository _messageRepository;
+        private readonly BlockService _blockService;
+        private readonly IUserRepository _userRepository;
 
         public DirectMessageService(
             IConversationRepository conversationRepository,
@@ -22,16 +22,16 @@ namespace ChatModule.Services
             IUserRepository userRepository,
             IMessageRepository messageRepository)
         {
-            this.conversationRepository = conversationRepository;
-            this.participantRepository = participantRepository;
-            this.userRepository = userRepository;
-            this.messageRepository = messageRepository;
-            blockService = new BlockService(friendRepository, userRepository);
+            this._conversationRepository = conversationRepository;
+            this._participantRepository = participantRepository;
+            this._userRepository = userRepository;
+            this._messageRepository = messageRepository;
+            _blockService = new BlockService(friendRepository, userRepository);
         }
 
         public async Task<Conversation> GetOrCreateAsync(Guid userId1, Guid userId2)
         {
-            var existingDm = await conversationRepository.GetDmBetweenAsync(userId1, userId2);
+            var existingDm = await _conversationRepository.GetDmBetweenAsync(userId1, userId2);
             if (existingDm != null)
             {
                 return existingDm;
@@ -47,10 +47,10 @@ namespace ChatModule.Services
                 PinnedMessageId = null
             };
 
-            await conversationRepository.CreateAsync(conversation);
+            await _conversationRepository.CreateAsync(conversation);
 
             var now = DateTime.UtcNow;
-            await participantRepository.CreateAsync(new Participant
+            await _participantRepository.CreateAsync(new Participant
             {
                 Id = Guid.NewGuid(),
                 ConversationId = conversation.Id,
@@ -62,7 +62,7 @@ namespace ChatModule.Services
                 IsFavourite = false
             });
 
-            await participantRepository.CreateAsync(new Participant
+            await _participantRepository.CreateAsync(new Participant
             {
                 Id = Guid.NewGuid(),
                 ConversationId = conversation.Id,
@@ -79,7 +79,7 @@ namespace ChatModule.Services
 
         public async Task<Participant?> GetOtherParticipantAsync(Guid conversationId, Guid currentUserId)
         {
-            var participants = await participantRepository.GetAllForConversationAsync(conversationId);
+            var participants = await _participantRepository.GetAllForConversationAsync(conversationId);
             return participants.FirstOrDefault(participant => participant.UserId != currentUserId);
         }
 
@@ -91,8 +91,8 @@ namespace ChatModule.Services
                 return false;
             }
 
-            var blockedByViewer = await blockService.IsBlockedAsync(viewerUserId, otherParticipant.UserId);
-            var blockedByOther = await blockService.IsBlockedAsync(otherParticipant.UserId, viewerUserId);
+            var blockedByViewer = await _blockService.IsBlockedAsync(viewerUserId, otherParticipant.UserId);
+            var blockedByOther = await _blockService.IsBlockedAsync(otherParticipant.UserId, viewerUserId);
 
             return blockedByViewer || blockedByOther;
         }
@@ -105,18 +105,18 @@ namespace ChatModule.Services
                 return null;
             }
 
-            return await userRepository.GetByIdAsync(otherParticipant.UserId);
+            return await _userRepository.GetByIdAsync(otherParticipant.UserId);
         }
 
         public async Task<(Message Pinned, Message Notice)> PinMessageAsync(Guid conversationId, Guid requesterId, Guid messageId, DateTime expiresAt)
         {
-            var participants = await participantRepository.GetAllForConversationAsync(conversationId);
+            var participants = await _participantRepository.GetAllForConversationAsync(conversationId);
             if (!participants.Any(participant => participant.UserId == requesterId))
             {
                 throw new InvalidOperationException("You are not a participant in this conversation.");
             }
 
-            var message = await messageRepository.GetByIdAsync(messageId)
+            var message = await _messageRepository.GetByIdAsync(messageId)
                 ?? throw new InvalidOperationException("Message not found.");
 
             if (message.ConversationId != conversationId)
@@ -125,17 +125,17 @@ namespace ChatModule.Services
             }
 
             // Clear PinExpiresAt on any previously pinned message
-            var conversation = await conversationRepository.GetByIdAsync(conversationId);
+            var conversation = await _conversationRepository.GetByIdAsync(conversationId);
             if (conversation?.PinnedMessageId != null && conversation.PinnedMessageId != messageId)
             {
-                await messageRepository.SetPinExpiresAtAsync(conversation.PinnedMessageId.Value, null);
+                await _messageRepository.SetPinExpiresAtAsync(conversation.PinnedMessageId.Value, null);
             }
 
-            await conversationRepository.SetPinnedMessageAsync(conversationId, messageId);
-            await messageRepository.SetPinExpiresAtAsync(messageId, expiresAt);
+            await _conversationRepository.SetPinnedMessageAsync(conversationId, messageId);
+            await _messageRepository.SetPinExpiresAtAsync(messageId, expiresAt);
             message.PinExpiresAt = expiresAt;
 
-            var user = await userRepository.GetByIdAsync(requesterId);
+            var user = await _userRepository.GetByIdAsync(requesterId);
             var username = user?.Username ?? "Someone";
             var notice = await WriteSystemMessageAsync(conversationId, $"{username} pinned a message.");
 
@@ -144,29 +144,29 @@ namespace ChatModule.Services
 
         public async Task<Message> UnpinMessageAsync(Guid conversationId, Guid requesterId)
         {
-            var participants = await participantRepository.GetAllForConversationAsync(conversationId);
+            var participants = await _participantRepository.GetAllForConversationAsync(conversationId);
             if (!participants.Any(p => p.UserId == requesterId))
             {
                 throw new InvalidOperationException("You are not a participant in this conversation.");
             }
 
-            var conversation = await conversationRepository.GetByIdAsync(conversationId);
+            var conversation = await _conversationRepository.GetByIdAsync(conversationId);
             if (conversation?.PinnedMessageId != null)
             {
-                await messageRepository.SetPinExpiresAtAsync(conversation.PinnedMessageId.Value, null);
+                await _messageRepository.SetPinExpiresAtAsync(conversation.PinnedMessageId.Value, null);
             }
 
-            await conversationRepository.SetPinnedMessageAsync(conversationId, null);
+            await _conversationRepository.SetPinnedMessageAsync(conversationId, null);
 
-            var user = await userRepository.GetByIdAsync(requesterId);
+            var user = await _userRepository.GetByIdAsync(requesterId);
             var username = user?.Username ?? "Someone";
             return await WriteSystemMessageAsync(conversationId, $"{username} unpinned a message.");
         }
 
         public async Task ClearExpiredPinAsync(Guid conversationId, Guid pinnedMessageId)
         {
-            await messageRepository.SetPinExpiresAtAsync(pinnedMessageId, null);
-            await conversationRepository.SetPinnedMessageAsync(conversationId, null);
+            await _messageRepository.SetPinExpiresAtAsync(pinnedMessageId, null);
+            await _conversationRepository.SetPinnedMessageAsync(conversationId, null);
         }
 
         private async Task<Message> WriteSystemMessageAsync(Guid conversationId, string text)
@@ -184,7 +184,7 @@ namespace ChatModule.Services
                 MessageType = MessageType.System,
                 ParentMessageId = null
             };
-            await messageRepository.CreateAsync(notice);
+            await _messageRepository.CreateAsync(notice);
             return notice;
         }
     }

@@ -15,7 +15,7 @@ namespace ChatModule.src.views
         private const byte HighlightGreen = 76;
         private const byte HighlightBlue = 196;
 
-        private static readonly Regex MentionPattern = new Regex(MentionRegexPattern, RegexOptions.Compiled);
+        private static readonly Regex _MentionPattern = new Regex(MentionRegexPattern, RegexOptions.Compiled);
 
         public static readonly DependencyProperty TextProperty = DependencyProperty.RegisterAttached(
             "Text",
@@ -44,7 +44,7 @@ namespace ChatModule.src.views
             textBlock.Text = text;
             textBlock.TextHighlighters.Clear();
 
-            var matches = MentionPattern.Matches(text);
+            var matches = _MentionPattern.Matches(text);
             if (matches.Count == 0)
             {
                 return;

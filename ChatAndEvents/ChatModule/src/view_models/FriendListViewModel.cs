@@ -10,10 +10,10 @@ namespace ChatModule.src.view_models
 {
     public class FriendListViewModel : BaseViewModel
     {
-        private readonly IFriendListService friendListService;
-        private readonly IFriendRequestService friendRequestService;
-        private IDirectMessageService? directMessageService;
-        private readonly Guid currentUserId;
+        private readonly IFriendListService _friendListService;
+        private readonly IFriendRequestService _friendRequestService;
+        private IDirectMessageService? _directMessageService;
+        private readonly Guid _currentUserId;
 
         public ObservableCollection<User> Friends { get; } = new ();
         public ObservableCollection<FriendListItemViewModel> FriendItemViewModels { get; } = new ();
@@ -66,9 +66,9 @@ namespace ChatModule.src.view_models
             IFriendRequestService friendRequestService,
             Guid currentUserId)
         {
-            this.friendListService = friendListService ?? throw new ArgumentNullException(nameof(friendListService));
-            this.friendRequestService = friendRequestService ?? throw new ArgumentNullException(nameof(friendRequestService));
-            this.currentUserId = currentUserId;
+            this._friendListService = friendListService ?? throw new ArgumentNullException(nameof(friendListService));
+            this._friendRequestService = friendRequestService ?? throw new ArgumentNullException(nameof(friendRequestService));
+            this._currentUserId = currentUserId;
 
             FriendItemViewModels.CollectionChanged += (sender, eventArgs) =>
             {
@@ -92,12 +92,12 @@ namespace ChatModule.src.view_models
             Guid currentUserId)
             : this(friendListService, friendRequestService, currentUserId)
         {
-            this.directMessageService = directMessageService ?? throw new ArgumentNullException(nameof(directMessageService));
+            this._directMessageService = directMessageService ?? throw new ArgumentNullException(nameof(directMessageService));
         }
 
         public void SetDirectMessageService(IDirectMessageService directMessageService)
         {
-            this.directMessageService = directMessageService ?? throw new ArgumentNullException(nameof(directMessageService));
+            this._directMessageService = directMessageService ?? throw new ArgumentNullException(nameof(directMessageService));
         }
 
         private async Task LoadFriendsAsync()
@@ -105,7 +105,7 @@ namespace ChatModule.src.view_models
             IsLoading = true;
             try
             {
-                var friendsList = await friendListService.GetFriendsAsync(currentUserId);
+                var friendsList = await _friendListService.GetFriendsAsync(_currentUserId);
                 Friends.Clear();
                 FriendItemViewModels.Clear();
                 foreach (var friend in friendsList)
@@ -127,12 +127,12 @@ namespace ChatModule.src.view_models
                 return;
             }
 
-            if (directMessageService == null)
+            if (_directMessageService == null)
             {
                 return;
             }
 
-            var activeConversation = await directMessageService.GetOrCreateAsync(currentUserId, targetUserId);
+            var activeConversation = await _directMessageService.GetOrCreateAsync(_currentUserId, targetUserId);
             NavigateToChatRequested?.Invoke(activeConversation.Id);
         }
 
@@ -154,7 +154,7 @@ namespace ChatModule.src.view_models
                 return;
             }
 
-            await friendListService.RemoveFriendAsync(currentUserId, targetUserId);
+            await _friendListService.RemoveFriendAsync(_currentUserId, targetUserId);
             await LoadFriendsAsync();
         }
 
@@ -170,7 +170,7 @@ namespace ChatModule.src.view_models
 
             try
             {
-                var isRequestSent = await friendRequestService.SendFriendRequestByUsernameAsync(currentUserId, FriendUsernameInput);
+                var isRequestSent = await _friendRequestService.SendFriendRequestByUsernameAsync(_currentUserId, FriendUsernameInput);
                 if (!isRequestSent)
                 {
                     FriendActionMessage = "User not found.";

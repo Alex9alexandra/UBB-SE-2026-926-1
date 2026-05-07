@@ -10,7 +10,7 @@ namespace ChatModule.src.view_models
 {
     public class MemberPanelViewModel : BaseViewModel
     {
-        private static readonly TimeSpan DefaultTimeoutDuration = TimeSpan.FromMinutes(10);
+        private static readonly TimeSpan _DefaultTimeoutDuration = TimeSpan.FromMinutes(10);
 
         private readonly IMemberPanelService _memberPanelService;
         private readonly IModerationService _moderationService;
@@ -389,7 +389,7 @@ namespace ChatModule.src.view_models
                 return await RequestTimeoutDurationAsync();
             }
 
-            return DefaultTimeoutDuration;
+            return _DefaultTimeoutDuration;
         }
     }
     

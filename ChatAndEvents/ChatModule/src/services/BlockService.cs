@@ -10,18 +10,18 @@ namespace ChatModule.Services
 {
     public class BlockService : IBlockService
     {
-        private readonly IFriendRepository friendRepository;
-        private readonly IUserRepository userRepository;
+        private readonly IFriendRepository _friendRepository;
+        private readonly IUserRepository _userRepository;
 
         public BlockService(IFriendRepository friendRepository, IUserRepository userRepository)
         {
-            this.friendRepository = friendRepository ?? throw new ArgumentNullException(nameof(friendRepository));
-            this.userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+            this._friendRepository = friendRepository ?? throw new ArgumentNullException(nameof(friendRepository));
+            this._userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
         }
 
         public async Task BlockUserAsync(Guid blockerUserId, Guid targetUserId)
         {
-            var friendshipRelation = await friendRepository.GetFriendshipAsync(blockerUserId, targetUserId);
+            var friendshipRelation = await _friendRepository.GetFriendshipAsync(blockerUserId, targetUserId);
             if (friendshipRelation == null)
             {
                 var newBlockedRelation = new Friend
@@ -34,26 +34,26 @@ namespace ChatModule.Services
                     CreatedAt = DateTime.UtcNow
                 };
 
-                await friendRepository.CreateFriendshipAsync(newBlockedRelation);
+                await _friendRepository.CreateFriendshipAsync(newBlockedRelation);
 
                 return;
             }
 
             if (friendshipRelation.Status == FriendStatus.Accepted)
             {
-                await friendRepository.SetMatchStatusAsync(blockerUserId, targetUserId, true);
+                await _friendRepository.SetMatchStatusAsync(blockerUserId, targetUserId, true);
             }
             else if (friendshipRelation.Status == FriendStatus.Pending)
             {
-                await friendRepository.SetMatchStatusAsync(blockerUserId, targetUserId, false);
+                await _friendRepository.SetMatchStatusAsync(blockerUserId, targetUserId, false);
             }
 
-            await friendRepository.UpdateFriendshipStatusAsync(blockerUserId, targetUserId, FriendStatus.Blocked);
+            await _friendRepository.UpdateFriendshipStatusAsync(blockerUserId, targetUserId, FriendStatus.Blocked);
         }
 
         public async Task UnblockUserAsync(Guid blockerUserId, Guid targetUserId)
         {
-            var friendshipRelation = await friendRepository.GetFriendshipAsync(blockerUserId, targetUserId);
+            var friendshipRelation = await _friendRepository.GetFriendshipAsync(blockerUserId, targetUserId);
             if (friendshipRelation == null)
             {
                 return;
@@ -62,17 +62,17 @@ namespace ChatModule.Services
             if (friendshipRelation.Status == FriendStatus.Blocked)
             {
                 var restoredFriendStatus = friendshipRelation.IsMatch ? FriendStatus.Accepted : FriendStatus.Pending;
-                await friendRepository.UpdateFriendshipStatusAsync(blockerUserId, targetUserId, restoredFriendStatus);
+                await _friendRepository.UpdateFriendshipStatusAsync(blockerUserId, targetUserId, restoredFriendStatus);
                 return;
             }
 
-            await friendRepository.DeleteFriendshipAsync(blockerUserId, targetUserId);
+            await _friendRepository.DeleteFriendshipAsync(blockerUserId, targetUserId);
         }
 
         public async Task<List<User>> GetBlockedUsersAsync(Guid targetUserId)
         {
             var blockedUserList = new List<User>();
-            var allFriendshipRelations = await friendRepository.GetAllFriendshipsForUserAsync(targetUserId);
+            var allFriendshipRelations = await _friendRepository.GetAllFriendshipsForUserAsync(targetUserId);
 
             foreach (var friendshipRelation in allFriendshipRelations)
             {
@@ -82,7 +82,7 @@ namespace ChatModule.Services
                 }
 
                 var otherUserIdentifier = friendshipRelation.UserId1 == targetUserId ? friendshipRelation.UserId2 : friendshipRelation.UserId1;
-                var userObject = await userRepository.GetByIdAsync(otherUserIdentifier);
+                var userObject = await _userRepository.GetByIdAsync(otherUserIdentifier);
 
                 if (userObject != null)
                 {
@@ -95,13 +95,13 @@ namespace ChatModule.Services
 
         public async Task<bool> IsBlockedAsync(Guid blockerId, Guid targetId)
         {
-            var relation = await friendRepository.GetFriendshipAsync(blockerId, targetId);
+            var relation = await _friendRepository.GetFriendshipAsync(blockerId, targetId);
             return relation != null && relation.Status == FriendStatus.Blocked;
         }
 
         public async Task<bool> CheckIfBlockedAsync(Guid blockerUserId, Guid targetUserId)
         {
-            var friendshipRelation = await friendRepository.GetFriendshipAsync(blockerUserId, targetUserId);
+            var friendshipRelation = await _friendRepository.GetFriendshipAsync(blockerUserId, targetUserId);
             return friendshipRelation != null && friendshipRelation.Status == FriendStatus.Blocked;
         }
     }

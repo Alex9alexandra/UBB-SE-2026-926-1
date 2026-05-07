@@ -13,11 +13,11 @@ namespace ChatModule.Services
         private const int MaximumUsernameLength = 16;
         private const int MinimumPasswordLength = 8;
         private const int MaximumPasswordLength = 32;
-        private readonly IUserRepository userRepository;
+        private readonly IUserRepository _userRepository;
 
         public AuthenticationService(IUserRepository userRepository)
         {
-            this.userRepository = userRepository;
+            this._userRepository = userRepository;
         }
         private string HashPassword(string password)
         {
@@ -36,7 +36,7 @@ namespace ChatModule.Services
                 return null;
             }
 
-            var user = await userRepository.GetByUsernameAsync(username);
+            var user = await _userRepository.GetByUsernameAsync(username);
             if (user == null)
             {
                 return null;
@@ -50,7 +50,7 @@ namespace ChatModule.Services
             if (user.Status == UserStatus.Online)
             {
                 user.Status = UserStatus.Online;
-                await userRepository.UpdateAsync(user);
+                await _userRepository.UpdateAsync(user);
             }
 
             return user;
@@ -66,12 +66,12 @@ namespace ChatModule.Services
         {
             ValidateRegistrationInput(username, email, password, phone, birthday);
 
-            if (await userRepository.GetByUsernameAsync(username) != null)
+            if (await _userRepository.GetByUsernameAsync(username) != null)
             {
                 throw new InvalidOperationException("Username is already taken.");
             }
 
-            if (await userRepository.GetByEmailAsync(email) != null)
+            if (await _userRepository.GetByEmailAsync(email) != null)
             {
                 throw new InvalidOperationException("Email is already taken.");
             }
@@ -90,7 +90,7 @@ namespace ChatModule.Services
                 Status = UserStatus.Online
             };
 
-            await userRepository.CreateAsync(user);
+            await _userRepository.CreateAsync(user);
 
             return user;
         }
@@ -107,14 +107,14 @@ namespace ChatModule.Services
                 throw new InvalidOperationException("Password must be 8-32 chars and include uppercase, number, and special character.");
             }
 
-            var user = await userRepository.GetByEmailAsync(email);
+            var user = await _userRepository.GetByEmailAsync(email);
             if (user == null)
             {
                 throw new InvalidOperationException("User not found.");
             }
 
             var passwordHash = HashPassword(newPassword);
-            await userRepository.UpdatePasswordAsync(user.Id, passwordHash);
+            await _userRepository.UpdatePasswordAsync(user.Id, passwordHash);
         }
 
         private static void ValidateRegistrationInput(string username, string email, string password, string phone, DateTime? birthday)

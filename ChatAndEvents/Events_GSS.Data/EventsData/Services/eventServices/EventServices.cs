@@ -13,9 +13,9 @@ using ChatAndEvents.Data.EventsData.Messaging;
 /// </summary>
 public class EventService : IEventService
 {
-    private readonly IEventRepository eventRepository;
+    private readonly IEventRepository _eventRepository;
 
-    private readonly IReputationService reputationService;
+    private readonly IReputationService _reputationService;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="EventService"/> class.
@@ -24,8 +24,8 @@ public class EventService : IEventService
     /// <param name="reputationService">The reputation service.</param>
     public EventService(IEventRepository eventRepository, IReputationService reputationService)
     {
-        this.eventRepository = eventRepository;
-        this.reputationService = reputationService;
+        this._eventRepository = eventRepository;
+        this._reputationService = reputationService;
     }
 
     /// <summary>
@@ -33,7 +33,7 @@ public class EventService : IEventService
     /// </summary>
     /// <returns>A list of public active events.</returns>
     public async Task<List<Event>> GetAllPublicActiveEventsAsync()
-        => await this.eventRepository.GetAllPublicActiveAsync();
+        => await this._eventRepository.GetAllPublicActiveAsync();
 
     /// <summary>
     /// Gets an event by its identifier.
@@ -41,7 +41,7 @@ public class EventService : IEventService
     /// <param name="eventId">The event identifier.</param>
     /// <returns>The event if found; otherwise, null.</returns>
     public async Task<Event?> GetEventByIdAsync(int eventId)
-        => await this.eventRepository.GetByIdAsync(eventId);
+        => await this._eventRepository.GetByIdAsync(eventId);
 
     /// <summary>
     /// Creates a new event.
@@ -51,12 +51,12 @@ public class EventService : IEventService
     /// <exception cref="InvalidOperationException">Thrown when the user's reputation is too low to create events.</exception>
     public async Task<int> CreateEventAsync(Event eventEntity)
     {
-        if (!await this.reputationService.CanCreateEventsAsync(eventEntity.Admin.UserId))
+        if (!await this._reputationService.CanCreateEventsAsync(eventEntity.Admin.UserId))
         {
             throw new InvalidOperationException("Your reputation is too low to create events (below -700 RP).");
         }
 
-        int eventId = await this.eventRepository.AddAsync(eventEntity);
+        int eventId = await this._eventRepository.AddAsync(eventEntity);
         WeakReferenceMessenger.Default.Send(
             new ReputationMessage(eventEntity.Admin.UserId, ReputationAction.EventCreated));
         return eventId;
@@ -68,7 +68,7 @@ public class EventService : IEventService
     /// <param name="eventEntity">The event to update.</param>
     /// <returns>A task representing the asynchronous operation.</returns>
     public async Task UpdateEventAsync(Event eventEntity)
-        => await this.eventRepository.UpdateAsync(eventEntity);
+        => await this._eventRepository.UpdateAsync(eventEntity);
 
     /// <summary>
     /// Deletes an event by its identifier.
@@ -77,8 +77,8 @@ public class EventService : IEventService
     /// <returns>A task representing the asynchronous operation.</returns>
     public async Task DeleteEventAsync(int eventId)
     {
-        var @event = await this.eventRepository.GetByIdAsync(eventId);
-        await this.eventRepository.DeleteAsync(eventId);
+        var @event = await this._eventRepository.GetByIdAsync(eventId);
+        await this._eventRepository.DeleteAsync(eventId);
         if (@event?.Admin != null)
         {
             WeakReferenceMessenger.Default.Send(
@@ -93,7 +93,7 @@ public class EventService : IEventService
     /// <returns>A list of events matching the category.</returns>
     public async Task<List<Event>> FilterByCategoryAsync(string category)
     {
-        var events = await this.eventRepository.GetAllPublicActiveAsync();
+        var events = await this._eventRepository.GetAllPublicActiveAsync();
         return events.Where(@event => @event.Category != null &&
             @event.Category.Title.Equals(category, StringComparison.OrdinalIgnoreCase)).ToList();
     }
@@ -105,7 +105,7 @@ public class EventService : IEventService
     /// <returns>A list of events matching the location.</returns>
     public async Task<List<Event>> FilterByLocationAsync(string location)
     {
-        var events = await this.eventRepository.GetAllPublicActiveAsync();
+        var events = await this._eventRepository.GetAllPublicActiveAsync();
         return events.Where(@event => @event.Name.Contains(location, StringComparison.OrdinalIgnoreCase)).ToList();
     }
 
@@ -116,7 +116,7 @@ public class EventService : IEventService
     /// <returns>A list of events on the specified date.</returns>
     public async Task<List<Event>> FilterByDateAsync(DateTime date)
     {
-        var events = await this.eventRepository.GetAllPublicActiveAsync();
+        var events = await this._eventRepository.GetAllPublicActiveAsync();
         return events.Where(@event => @event.StartDateTime.Date == date.Date).ToList();
     }
 
@@ -128,7 +128,7 @@ public class EventService : IEventService
     /// <returns>A list of events within the specified date range.</returns>
     public async Task<List<Event>> FilterByDateRangeAsync(DateTime from, DateTime to)
     {
-        var events = await this.eventRepository.GetAllPublicActiveAsync();
+        var events = await this._eventRepository.GetAllPublicActiveAsync();
         return events.Where(@event => @event.StartDateTime.Date >= from.Date &&
             @event.StartDateTime.Date <= to.Date).ToList();
     }
@@ -140,7 +140,7 @@ public class EventService : IEventService
     /// <returns>A list of events matching the title.</returns>
     public async Task<List<Event>> SearchByTitleAsync(string title)
     {
-        var events = await this.eventRepository.GetAllPublicActiveAsync();
+        var events = await this._eventRepository.GetAllPublicActiveAsync();
         return events.Where(@event => @event.Name.Contains(title, StringComparison.OrdinalIgnoreCase)).ToList();
     }
 
@@ -150,5 +150,5 @@ public class EventService : IEventService
     /// <param name="adminId">The admin user identifier.</param>
     /// <returns>A list of events administered by the user.</returns>
     public async Task<List<Event>> GetMyEventsAsync(Guid adminId)
-        => await this.eventRepository.GetByAdminIdAsync(adminId);
+        => await this._eventRepository.GetByAdminIdAsync(adminId);
 }
