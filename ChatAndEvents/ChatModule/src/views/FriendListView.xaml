@@ -116,7 +116,7 @@
 
             <ListView
                 x:Name="FriendList"
-                ItemsSource="{Binding FriendItems}"
+                ItemsSource="{Binding FriendItemViewModels}"
                 Background="Transparent"
                 SelectionMode="None"
                 Visibility="{Binding ShowFriendList, Converter={StaticResource BoolToVisibility}}">

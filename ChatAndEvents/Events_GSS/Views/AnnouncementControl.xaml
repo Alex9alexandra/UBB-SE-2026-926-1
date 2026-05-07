@@ -23,7 +23,7 @@
             CornerRadius="4"
             Padding="12,8"
             Margin="8,4"
-            Visibility="{x:Bind ViewModel.HasError, Converter={StaticResource BoolToVisibility}}">
+            Visibility="{x:Bind ViewModel.HasError, Converter={StaticResource BoolToVisibility}, FallbackValue=Collapsed}">
             <TextBlock
                 Text="{x:Bind ViewModel.ErrorMessage, Mode=OneWay}"
                 Foreground="{ThemeResource SystemFillColorCriticalBrush}"

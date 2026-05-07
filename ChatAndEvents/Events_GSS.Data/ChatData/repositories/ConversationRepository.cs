@@ -11,22 +11,24 @@ namespace ChatAndEvents.Data.ChatData.repositories
 {
     public class ConversationRepository : IConversationRepository
     {
-        private readonly AppDbContext _db;
+        private readonly IDbContextFactory<AppDbContext> _contextFactory;
 
-        public ConversationRepository(AppDbContext db)
+        public ConversationRepository(IDbContextFactory<AppDbContext> contextFactory)
         {
-            _db = db ?? throw new ArgumentNullException(nameof(db));
+            _contextFactory = contextFactory;
         }
 
         public async Task<Conversation?> GetByIdAsync(Guid id)
         {
-            return await _db.Conversations.FirstOrDefaultAsync(conversation => conversation.Id == id);
+            using var db = await _contextFactory.CreateDbContextAsync();
+            return await db.Conversations.FirstOrDefaultAsync(conversation => conversation.Id == id);
         }
 
         public async Task<List<Conversation>> GetAllForUserAsync(Guid userId)
         {
-            return await (from conversation in _db.Conversations
-                          join participant in _db.Participants on conversation.Id equals participant.ConversationId
+            using var db = await _contextFactory.CreateDbContextAsync();
+            return await (from conversation in db.Conversations
+                          join participant in db.Participants on conversation.Id equals participant.ConversationId
                           where participant.UserId == userId
                           select conversation)
                 .Distinct()
@@ -35,10 +37,11 @@ namespace ChatAndEvents.Data.ChatData.repositories
 
         public async Task<Conversation?> GetDmBetweenAsync(Guid userId1, Guid userId2)
         {
-            return await _db.Conversations
+            using var db = await _contextFactory.CreateDbContextAsync();
+            return await db.Conversations
                 .Where(conversation => conversation.Type == ConversationType.Dm)
                 .Where(conversation =>
-                    _db.Participants
+                    db.Participants
                         .Where(participant =>
                             participant.ConversationId == conversation.Id &&
                             (participant.UserId == userId1 || participant.UserId == userId2))
@@ -50,13 +53,15 @@ namespace ChatAndEvents.Data.ChatData.repositories
 
         public async Task CreateAsync(Conversation c)
         {
-            _db.Conversations.Add(c);
-            await _db.SaveChangesAsync();
+            using var db = await _contextFactory.CreateDbContextAsync();
+            db.Conversations.Add(c);
+            await db.SaveChangesAsync();
         }
 
         public async Task UpdateAsync(Conversation c)
         {
-            var conversation = await _db.Conversations.FindAsync(c.Id);
+            using var db = await _contextFactory.CreateDbContextAsync();
+            var conversation = await db.Conversations.FindAsync(c.Id);
             if (conversation == null)
             {
                 return;
@@ -64,41 +69,43 @@ namespace ChatAndEvents.Data.ChatData.repositories
 
             conversation.Title = c.Title;
             conversation.IconUrl = c.IconUrl;
-            await _db.SaveChangesAsync();
+            await db.SaveChangesAsync();
         }
 
         public async Task SetPinnedMessageAsync(Guid conversationId, Guid? messageId)
         {
-            var conversation = await _db.Conversations.FindAsync(conversationId);
+            using var db = await _contextFactory.CreateDbContextAsync();
+            var conversation = await db.Conversations.FindAsync(conversationId);
             if (conversation == null)
             {
                 return;
             }
 
             conversation.PinnedMessageId = messageId;
-            await _db.SaveChangesAsync();
+            await db.SaveChangesAsync();
         }
 
         public async Task DeleteAsync(Guid conversationId)
         {
-            var messages = await _db.Messages
+            using var db = await _contextFactory.CreateDbContextAsync();
+            var messages = await db.Messages
                 .Where(message => message.ConversationId == conversationId)
                 .ToListAsync();
 
-            var participants = await _db.Participants
+            var participants = await db.Participants
                 .Where(participant => participant.ConversationId == conversationId)
                 .ToListAsync();
 
-            var conversation = await _db.Conversations.FindAsync(conversationId);
+            var conversation = await db.Conversations.FindAsync(conversationId);
             if (conversation == null)
             {
                 return;
             }
 
-            _db.Messages.RemoveRange(messages);
-            _db.Participants.RemoveRange(participants);
-            _db.Conversations.Remove(conversation);
-            await _db.SaveChangesAsync();
+            db.Messages.RemoveRange(messages);
+            db.Participants.RemoveRange(participants);
+            db.Conversations.Remove(conversation);
+            await db.SaveChangesAsync();
         }
     }
 }

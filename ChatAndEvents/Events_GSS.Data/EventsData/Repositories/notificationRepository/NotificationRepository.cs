@@ -13,17 +13,16 @@ using Microsoft.EntityFrameworkCore;
 /// </summary>
 public class NotificationRepository : INotificationRepository
 {
-    private readonly AppDbContext _db;
+    private readonly IDbContextFactory<AppDbContext> _contextFactory;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="NotificationRepository"/> class with the specified SQL connection factory. The connection factory is used to create database connections for executing SQL commands related to notifications.
     /// </summary>
     /// <param name="db">The application database context.</param>
-    public NotificationRepository(AppDbContext db)
+    public NotificationRepository(IDbContextFactory<AppDbContext> contextFactory)
     {
-        _db = db ?? throw new ArgumentNullException(nameof(db));
+        _contextFactory = contextFactory;
     }
-
     /// <summary>
     /// Asynchronously adds a new notification to the data source. This method takes the user ID, title, description, and creation timestamp as parameters to create a new notification entry in the database. The method executes an SQL INSERT command to add the notification to the Notifications table, allowing for non-blocking execution when adding notifications to the system.
     /// </summary>
@@ -34,7 +33,8 @@ public class NotificationRepository : INotificationRepository
     /// <returns>A task that represents the asynchronous operation.</returns>
     public async Task AddAsync(Guid userId, string title, string description, DateTime createdAt)
     {
-        _db.Notifications.Add(new Notification
+        using var db = await _contextFactory.CreateDbContextAsync();
+        db.Notifications.Add(new Notification
         {
             UserId = userId,
             Title = title,
@@ -42,7 +42,7 @@ public class NotificationRepository : INotificationRepository
             CreatedAt = createdAt,
         });
 
-        await _db.SaveChangesAsync();
+        await db.SaveChangesAsync();
     }
 
     /// <summary>
@@ -52,7 +52,8 @@ public class NotificationRepository : INotificationRepository
     /// <returns>A task that represents the asynchronous operation, containing a list of notifications for the specified user.</returns>
     public async Task<List<Notification>> GetByUserIdAsync(Guid userId)
     {
-        return await _db.Notifications
+        using var db = await _contextFactory.CreateDbContextAsync();
+        return await db.Notifications
             .Include(n => n.User)
             .ThenInclude(u => u.ReputationScore)
             .Where(n => n.UserId == userId)
@@ -67,13 +68,14 @@ public class NotificationRepository : INotificationRepository
     /// <returns>A task that represents the asynchronous operation.</returns>
     public async Task DeleteAsync(int notificationId)
     {
-        var notification = await _db.Notifications.FindAsync(notificationId);
+        using var db = await _contextFactory.CreateDbContextAsync();
+        var notification = await db.Notifications.FindAsync(notificationId);
         if (notification == null)
         {
             return;
         }
 
-        _db.Notifications.Remove(notification);
-        await _db.SaveChangesAsync();
+        db.Notifications.Remove(notification);
+        await db.SaveChangesAsync();
     }
 }

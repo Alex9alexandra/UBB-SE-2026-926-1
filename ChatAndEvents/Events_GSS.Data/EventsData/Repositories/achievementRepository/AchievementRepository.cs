@@ -10,30 +10,33 @@ using Microsoft.EntityFrameworkCore;
 
 public class AchievementRepository : IAchievementRepository
 {
-    private readonly AppDbContext _db;
-    
-    public AchievementRepository(AppDbContext db)
+    private readonly IDbContextFactory<AppDbContext> _contextFactory;
+
+    public AchievementRepository(IDbContextFactory<AppDbContext> contextFactory)
     {
-        _db = db;
+        _contextFactory = contextFactory;
     }
     
     public async Task<int> GetAttendedEventsCountAsync(Guid userId)
     {
-        return await _db.AttendedEvents
+        using var db = await _contextFactory.CreateDbContextAsync();
+        return await db.AttendedEvents
             .AsNoTracking()
             .CountAsync(ae => ae.UserId == userId);
     }
     
     public async Task<int> GetCreatedEventsCountAsync(Guid userId)
     {
-        return await _db.Events
+        using var db = await _contextFactory.CreateDbContextAsync();
+        return await db.Events
             .AsNoTracking()
             .CountAsync(e => e.AdminId == userId);
     }
     
     public async Task<int> GetApprovedQuestsCountAsync(Guid userId)
     {
-        return await _db.QuestMemories
+        using var db = await _contextFactory.CreateDbContextAsync();
+        return await db.QuestMemories
             .AsNoTracking()
             .Where(qm => qm.Proof.AuthorId == userId && qm.ProofStatus == QuestMemoryStatus.Approved)
             .CountAsync();
@@ -41,21 +44,25 @@ public class AchievementRepository : IAchievementRepository
     
     public async Task<int> GetMemoriesWithPhotosCountAsync(Guid userId)
     {
-        return await _db.Memories
+        using var db = await _contextFactory.CreateDbContextAsync();
+        return await db.Memories
             .AsNoTracking()
             .CountAsync(m => m.AuthorId == userId && m.PhotoPath != null);
     }
     
     public async Task<int> GetMessagesCountAsync(Guid userId)
     {
-        return await _db.DiscussionMessages
+        using var db = await _contextFactory.CreateDbContextAsync();
+        return await db.DiscussionMessages
             .AsNoTracking()
             .CountAsync(dm => dm.Author!.UserId == userId);
     }
     
     public async Task<bool> HasPerfectEventAsync(Guid userId)
     {
-        var attendedEventIds = await _db.AttendedEvents
+        using var db = await _contextFactory.CreateDbContextAsync();
+
+        var attendedEventIds = await db.AttendedEvents
             .AsNoTracking()
             .Where(ae => ae.UserId == userId)
             .Select(ae => ae.EventId)
@@ -63,7 +70,7 @@ public class AchievementRepository : IAchievementRepository
         
         foreach (var eventId in attendedEventIds)
         {
-            var quests = await _db.Quests
+            var quests = await db.Quests
                 .AsNoTracking()
                 .Where(q => q.EventId == eventId)
                 .ToListAsync();
@@ -74,7 +81,7 @@ public class AchievementRepository : IAchievementRepository
             var allQuestsApproved = true;
             foreach (var quest in quests)
             {
-                var hasApprovedMemory = await _db.QuestMemories
+                var hasApprovedMemory = await db.QuestMemories
                     .AsNoTracking()
                     .AnyAsync(qm => qm.QuestId == quest.Id && 
                                     qm.Proof.AuthorId == userId && 
@@ -96,14 +103,16 @@ public class AchievementRepository : IAchievementRepository
     
     public async Task<List<Achievement>> GetAllAchievementsAsync()
     {
-        return await _db.Achievements
+        using var db = await _contextFactory.CreateDbContextAsync();
+        return await db.Achievements
             .AsNoTracking()
             .ToListAsync();
     }
     
     public async Task<bool> IsAlreadyUnlockedAsync(Guid userId, int achievementId)
     {
-        var achievement = await _db.Achievements
+        using var db = await _contextFactory.CreateDbContextAsync();
+        var achievement = await db.Achievements
             .AsNoTracking()
             .FirstOrDefaultAsync(a => a.AchievementId == achievementId && a.IsUnlocked);
 
@@ -112,12 +121,13 @@ public class AchievementRepository : IAchievementRepository
     
     public async Task UnlockAchievementAsync(Guid userId, int achievementId)
     {
-        var achievement = await _db.Achievements.FindAsync(achievementId);
+        using var db = await _contextFactory.CreateDbContextAsync();
+        var achievement = await db.Achievements.FindAsync(achievementId);
         if (achievement != null)
         {
             achievement.IsUnlocked = true;
-            _db.Achievements.Update(achievement);
-            await _db.SaveChangesAsync();
+            db.Achievements.Update(achievement);
+            await db.SaveChangesAsync();
         }
     }
 }

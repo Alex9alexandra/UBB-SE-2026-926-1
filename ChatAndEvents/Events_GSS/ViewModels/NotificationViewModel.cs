@@ -15,6 +15,7 @@ namespace Events_GSS.ViewModels
     {
         private readonly INotificationService _notificationService;
         private readonly IUserService _userService;
+        public string ErrorMessage { get; set; } = string.Empty;
 
         private bool _isLoading;
         public bool IsLoading

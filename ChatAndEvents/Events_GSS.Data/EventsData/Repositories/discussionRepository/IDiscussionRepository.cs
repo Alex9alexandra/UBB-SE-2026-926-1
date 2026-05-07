@@ -1,9 +1,11 @@
-﻿using System;
+﻿using ChatAndEvents.Data.ChatData.domain;
+using ChatAndEvents.Data.EventsData.Models;
+using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
-using ChatAndEvents.Data.EventsData.Models;
 
 namespace ChatAndEvents.Data.EventsData.Repositories.discussionRepository;
 
@@ -12,7 +14,7 @@ public interface IDiscussionRepository
     // ── Messages ──────────────────────────────────────────────
     Task<List<DiscussionMessage>> GetByEventAsync(int eventId, Guid currentUserId);
     Task<DiscussionMessage?> GetByIdAsync(int messageId);
-    Task<int> AddAsync(DiscussionMessage message);
+    Task<int> AddAsync(DiscussionMessage message , int eventId, Guid userId, int? replyToId);
     Task DetachRepliesAsync(int messageId);
     Task DeleteAsync(int messageId);
     Task<DateTime?> GetLastUserMessageDateAsync(int eventId, Guid userId);
@@ -40,6 +42,6 @@ public interface IDiscussionRepository
     // <summary>
     // Used for the @mention lookup when posting messages. Returns all users who have participated in the discussion (posted a message or reaction).
     // </summary>
-    Task<List<User>> GetEventParticipantsAsync(int eventId);
+    Task<List<ChatAndEvents.Data.EventsData.Models.User>> GetEventParticipantsAsync(int eventId);
 }
 

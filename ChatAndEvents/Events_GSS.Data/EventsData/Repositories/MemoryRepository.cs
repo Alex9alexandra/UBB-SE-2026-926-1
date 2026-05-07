@@ -14,16 +14,17 @@ namespace ChatAndEvents.Data.EventsData.Repositories
 
     public class MemoryRepository : IMemoryRepository
     {
-        private readonly AppDbContext _db;
+        private readonly IDbContextFactory<AppDbContext> _contextFactory;
 
-        public MemoryRepository(AppDbContext _db)
+        public MemoryRepository(IDbContextFactory<AppDbContext> contextFactory)
         {
-            this._db = _db;
+            this._contextFactory = contextFactory;
         }
 
         public async Task<List<Memory>> GetByEventAsync(int eventId)
         {
-            return await _db.Memories
+            using var db = await _contextFactory.CreateDbContextAsync();
+            return await db.Memories
                 .AsNoTracking()
                 .Include(memory => memory.Event)
                     .ThenInclude(@event => @event.Admin)
@@ -48,33 +49,35 @@ namespace ChatAndEvents.Data.EventsData.Repositories
                 EventId = memory.Event.EventId,
                 AuthorId = memory.Author.UserId,
             };
-
-            _db.Memories.Add(memoryEntity);
-            await _db.SaveChangesAsync();
+            using var db = await _contextFactory.CreateDbContextAsync();
+            db.Memories.Add(memoryEntity);
+            await db.SaveChangesAsync();
             memory.MemoryId = memoryEntity.MemoryId;
             return memoryEntity.MemoryId;
         }
 
         public async Task DeleteAsync(int memoryId)
         {
-            var memory = await _db.Memories.FindAsync(memoryId);
+            using var db = await _contextFactory.CreateDbContextAsync();
+            var memory = await db.Memories.FindAsync(memoryId);
             if (memory == null)
             {
                 return;
             }
 
-            _db.Memories.Remove(memory);
-            await _db.SaveChangesAsync();
+            db.Memories.Remove(memory);
+            await db.SaveChangesAsync();
         }
 
         public async Task AddLikeAsync(int memoryId, Guid userId)
         {
-            if (await _db.Memories.FindAsync(memoryId) == null)
+            using var db = await _contextFactory.CreateDbContextAsync();
+            if (await db.Memories.FindAsync(memoryId) == null)
             {
                 throw new InvalidOperationException("Memory not found.");
             }
 
-            if (await _db.Users.FindAsync(userId) == null)
+            if (await db.Users.FindAsync(userId) == null)
             {
                 throw new InvalidOperationException("User not found.");
             }
@@ -85,25 +88,27 @@ namespace ChatAndEvents.Data.EventsData.Repositories
                 UserId = userId,
             };
 
-            _db.MemoryLikes.Add(memoryLike);
-            await _db.SaveChangesAsync();
+            db.MemoryLikes.Add(memoryLike);
+            await db.SaveChangesAsync();
         }
 
         public async Task RemoveLikeAsync(int memoryId, Guid userId)
         {
-            var memoryLike = await _db.MemoryLikes.FindAsync(memoryId, userId);
+            using var db = await _contextFactory.CreateDbContextAsync();
+            var memoryLike = await db.MemoryLikes.FindAsync(memoryId, userId);
             if (memoryLike == null)
             {
                 return;
             }
 
-            _db.MemoryLikes.Remove(memoryLike);
-            await _db.SaveChangesAsync();
+            db.MemoryLikes.Remove(memoryLike);
+            await db.SaveChangesAsync();
         }
 
         public async Task<List<Guid>> GetLikesAsync(int memoryId)
         {
-            return await _db.MemoryLikes
+            using var db = await _contextFactory.CreateDbContextAsync();
+            return await db.MemoryLikes
                 .AsNoTracking()
                 .Where(memoryLike => memoryLike.MemoryId == memoryId)
                 .Select(memoryLike => memoryLike.UserId)
@@ -112,7 +117,8 @@ namespace ChatAndEvents.Data.EventsData.Repositories
 
         public async Task<Memory?> GetByIdAsync(int memoryId)
         {
-            return await _db.Memories
+            using var db = await _contextFactory.CreateDbContextAsync();
+            return await db.Memories
                 .AsNoTracking()
                 .Include(memory => memory.Event)
                     .ThenInclude(@event => @event.Admin)

@@ -6,20 +6,22 @@ namespace ChatAndEvents.Data.EventsData.Repositories.categoriesRepository;
 
 public class CategoryRepository : ICategoryRepository
 {
-    private readonly AppDbContext _db;
+    private readonly IDbContextFactory<AppDbContext> _contextFactory;
 
-    public CategoryRepository(AppDbContext db)
+    public CategoryRepository(IDbContextFactory<AppDbContext> contextFactory)
     {
-        _db = db;
+        _contextFactory = contextFactory;
     }
 
     public async Task<List<Category>> GetAllAsync()
     {
-        return await _db.Set<Category>().ToListAsync();
+        using var db = await _contextFactory.CreateDbContextAsync();
+        return await db.Set<Category>().ToListAsync();
     }
 
     public async Task<Category?> GetByIdAsync(int categoryId)
     {
-        return await _db.Set<Category>().FirstOrDefaultAsync(c => c.CategoryId == categoryId);
+        using var db = await _contextFactory.CreateDbContextAsync();
+        return await db.Set<Category>().FirstOrDefaultAsync(c => c.CategoryId == categoryId);
     }
 }

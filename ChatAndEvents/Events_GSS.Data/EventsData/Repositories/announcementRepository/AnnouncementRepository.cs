@@ -14,15 +14,16 @@ using Microsoft.Data.SqlClient;
 
 public class AnnouncementRepository : IAnnouncementRepository
 {
-    private readonly AppDbContext _db;
+    private readonly IDbContextFactory<AppDbContext> _contextFactory;
 
-    public AnnouncementRepository(AppDbContext db)
+    public AnnouncementRepository(IDbContextFactory<AppDbContext> contextFactory)
     {
-        this._db = db;
+        _contextFactory = contextFactory;
     }
 
     public async Task<int> AddAnnouncementAsync(Announcement announcement, int eventId, Guid userId)
     {
+        using var db = await _contextFactory.CreateDbContextAsync();
         if (announcement == null)
         {
             throw new ArgumentNullException(nameof(announcement));
@@ -36,24 +37,26 @@ public class AnnouncementRepository : IAnnouncementRepository
         announcement.EventId = eventId;
         announcement.AuthorId = userId;
 
-        _db.Announcements.Add(announcement);
-        await _db.SaveChangesAsync();
+        db.Announcements.Add(announcement);
+        await db.SaveChangesAsync();
         return announcement.AnnouncementId;
     }
 
     public async Task DeleteAnnouncementAsync(int selectedEvent)
     {
-        var announcement = _db.Announcements.Find(selectedEvent);
+        using var db = await _contextFactory.CreateDbContextAsync();
+        var announcement = db.Announcements.Find(selectedEvent);
         if (announcement != null)
         {
-            _db.Announcements.Remove(announcement);
-            await _db.SaveChangesAsync();
+            db.Announcements.Remove(announcement);
+            await db.SaveChangesAsync();
         }
     }
 
     public async Task<List<User>> GetAllParticipantsAsync(int eventId)
     {
-        return await _db.AttendedEvents
+        using var db = await _contextFactory.CreateDbContextAsync();
+        return await db.AttendedEvents
             .Where(ae => ae.EventId == eventId)
             .Select(ae => ae.User)
             .ToListAsync();
@@ -61,7 +64,8 @@ public class AnnouncementRepository : IAnnouncementRepository
 
     public async Task<Announcement?> GetAnnouncementByIdAsync(int announcementId)
     {
-        return await _db.Announcements
+        using var db = await _contextFactory.CreateDbContextAsync();
+        return await db.Announcements
             .Include(a => a.Event)
             .Include(a => a.Author)
             .FirstOrDefaultAsync(a => a.AnnouncementId == announcementId);
@@ -69,7 +73,8 @@ public class AnnouncementRepository : IAnnouncementRepository
 
     public async Task<List<Announcement>> GetAnnouncementsByEventAsync(int eventId, Guid userId)
     {
-        return await _db.Announcements
+        using var db = await _contextFactory.CreateDbContextAsync();
+        return await db.Announcements
             .Include(a => a.Event)
             .Include(a => a.Author)
             .Where(a => a.EventId == eventId)
@@ -80,7 +85,8 @@ public class AnnouncementRepository : IAnnouncementRepository
 
     public async Task<List<(int AnnouncementId, AnnouncementReaction Reaction)>> GetReactionsAsync(List<int> announcementIds)
     {
-        var reactions = await _db.AnnouncementReactions
+        using var db = await _contextFactory.CreateDbContextAsync();
+        var reactions = await db.AnnouncementReactions
             .Include(ar => ar.Author)
             .Where(ar => announcementIds.Contains(ar.AnnouncementId))
             .ToListAsync(); 
@@ -91,23 +97,26 @@ public class AnnouncementRepository : IAnnouncementRepository
 
     public async Task<List<AnnouncementReadReceipt>> GetReadReceiptsAsync(int announcementId)
     {
-        return await _db.AnnouncementReadReceipts
+        using var db = await _contextFactory.CreateDbContextAsync();
+        return await db.AnnouncementReadReceipts
             .Where(arr => arr.AnnouncementId == announcementId)
             .ToListAsync();
     }
 
     public async Task<int> GetTotalParticipantsAsync(int eventId)
     {
-        return await _db.AttendedEvents
+        using var db = await _contextFactory.CreateDbContextAsync();
+        return await db.AttendedEvents
             .Where(ae => ae.EventId == eventId)
             .CountAsync();
     }
 
     public async Task<Dictionary<int, int>> GetUnreadCountsForUserAsync(Guid userId)
     {
-        return await _db.Announcements
-            .Where(a => _db.AttendedEvents.Any(ae => ae.UserId == userId && ae.EventId == a.EventId))
-            .Where(a => !_db.AnnouncementReadReceipts.Any(r => r.AnnouncementId == a.AnnouncementId && r.UserId == userId))
+        using var db = await _contextFactory.CreateDbContextAsync();
+        return await db.Announcements
+            .Where(a => db.AttendedEvents.Any(ae => ae.UserId == userId && ae.EventId == a.EventId))
+            .Where(a => !db.AnnouncementReadReceipts.Any(r => r.AnnouncementId == a.AnnouncementId && r.UserId == userId))
             .GroupBy(a => a.EventId)
             .Select(g => new { EventId = g.Key, UnreadCount = g.Count() })
             .ToDictionaryAsync(x => x.EventId, x => x.UnreadCount);
@@ -115,7 +124,8 @@ public class AnnouncementRepository : IAnnouncementRepository
 
     public async Task<string?> GetUserReactionAsync(int announcementId, Guid userId)
     {
-        return await _db.AnnouncementReactions
+        using var db = await _contextFactory.CreateDbContextAsync();
+        return await db.AnnouncementReactions
             .Where(ar => ar.AnnouncementId == announcementId && ar.AuthorId == userId)
             .Select(ar => ar.Emoji)
             .FirstOrDefaultAsync();
@@ -123,19 +133,21 @@ public class AnnouncementRepository : IAnnouncementRepository
 
     public async Task<bool> HasUserReadAsync(int announcementId, Guid userId)
     {
-        return await _db.AnnouncementReadReceipts
+        using var db = await _contextFactory.CreateDbContextAsync();
+        return await db.AnnouncementReadReceipts
             .AnyAsync(r => r.AnnouncementId == announcementId && r.UserId == userId);
     }
 
     public async Task InsertReactionAsync(int announcementId, Guid userId, string emoji)
     {
-        var announcement = await _db.Announcements.FindAsync(announcementId);
+        using var db = await _contextFactory.CreateDbContextAsync();
+        var announcement = await db.Announcements.FindAsync(announcementId);
         if (announcement == null)
         {
             throw new InvalidOperationException("Announcement not found");
         }
 
-        var user = await _db.Users.FindAsync(userId);
+        var user = await db.Users.FindAsync(userId);
         if (user == null)
         {
             throw new InvalidOperationException("User not found");
@@ -149,19 +161,20 @@ public class AnnouncementRepository : IAnnouncementRepository
             Emoji = emoji
         };
 
-        _db.AnnouncementReactions.Add(announcementReaction);
-        await _db.SaveChangesAsync();
+        db.AnnouncementReactions.Add(announcementReaction);
+        await db.SaveChangesAsync();
     }
 
     public async Task InsertReadReceiptAsync(int announcementId, Guid userId)
     {
-        var announcement = await _db.Announcements.FindAsync(announcementId);
+        using var db = await _contextFactory.CreateDbContextAsync();
+        var announcement = await db.Announcements.FindAsync(announcementId);
         if (announcement == null)
         {
             throw new InvalidOperationException("Announcement not found");
         }
 
-        var user = await _db.Users.FindAsync(userId);
+        var user = await db.Users.FindAsync(userId);
         if (user == null)
         {
             throw new InvalidOperationException("User not found");
@@ -175,62 +188,66 @@ public class AnnouncementRepository : IAnnouncementRepository
             ReadAt = DateTime.UtcNow,
         };
 
-        _db.AnnouncementReadReceipts.Add(readReceipt);
-        await _db.SaveChangesAsync();
+        db.AnnouncementReadReceipts.Add(readReceipt);
+        await db.SaveChangesAsync();
     }
 
     public async Task PinAsync(int announcementId)
     {
-        var announcement = await _db.Announcements.FindAsync(announcementId);
+        using var db = await _contextFactory.CreateDbContextAsync();
+        var announcement = await db.Announcements.FindAsync(announcementId);
         if (announcement == null)
         {
             throw new InvalidOperationException("Announcement not found");
         }
         announcement.IsPinned = true;
-        await _db.SaveChangesAsync();
-
+        await db.SaveChangesAsync();
     }
 
     public async Task RemoveReactionAsync(int announcementId, Guid userId)
     {
-        var announcementReaction=await _db.AnnouncementReactions
+        using var db = await _contextFactory.CreateDbContextAsync();
+        var announcementReaction=await db.AnnouncementReactions
             .Where(ar => ar.AnnouncementId == announcementId && ar.AuthorId == userId)
             .FirstOrDefaultAsync();
         if (announcementReaction != null)
         {
-            _db.AnnouncementReactions.Remove(announcementReaction);
-            await _db.SaveChangesAsync();
+            db.AnnouncementReactions.Remove(announcementReaction);
+            await db.SaveChangesAsync();
         }
     }
 
     public async Task UnpinAnnouncementAsync(int eventId)
     {
-        await _db.Announcements
+        using var db = await _contextFactory.CreateDbContextAsync();
+        await db.Announcements
             .Where(a => a.EventId == eventId && a.IsPinned)
             .ExecuteUpdateAsync(setters => setters.SetProperty(a => a.IsPinned, false));
     }
 
     public async Task UpdateAnnouncementAsync(int announcementId, string newMessage)
     {
-        var announcement = await _db.Announcements.FindAsync(announcementId);
+        using var db = await _contextFactory.CreateDbContextAsync();
+        var announcement = await db.Announcements.FindAsync(announcementId);
         if (announcement == null)
         {
             throw new InvalidOperationException("Announcement not found");
         }
         
         announcement.Message = newMessage;
-        await _db.SaveChangesAsync();
+        await db.SaveChangesAsync();
     }
 
     public async Task UpdateReactionAsync(int announcementId, Guid userId, string emoji)
     {
-        var announcementReaction = await _db.AnnouncementReactions
+        using var db = await _contextFactory.CreateDbContextAsync();
+        var announcementReaction = await db.AnnouncementReactions
             .Where(ar => ar.AnnouncementId == announcementId && ar.AuthorId == userId)
             .FirstOrDefaultAsync();
         if (announcementReaction != null)
         {
             announcementReaction.Emoji = emoji;
-            await _db.SaveChangesAsync();
+            await db.SaveChangesAsync();
         }
     }
 }

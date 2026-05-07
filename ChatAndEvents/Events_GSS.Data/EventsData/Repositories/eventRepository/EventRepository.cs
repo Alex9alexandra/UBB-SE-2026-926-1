@@ -6,16 +6,17 @@ using Microsoft.EntityFrameworkCore;
 
 public class EventRepository : IEventRepository
 {
-    private readonly AppDbContext _db;
+    private readonly IDbContextFactory<AppDbContext> _contextFactory;
 
-    public EventRepository(AppDbContext db)
+    public EventRepository(IDbContextFactory<AppDbContext> contextFactory)
     {
-        _db = db;
+        _contextFactory = contextFactory;
     }
 
     public async Task<List<Event>> GetAllPublicActiveAsync()
     {
-        return await _db.Events
+        using var db = await _contextFactory.CreateDbContextAsync();
+        return await db.Events
             .Include(e => e.Category)
             .Include(e => e.Admin)
             .Where(e => e.IsPublic && e.EndDateTime > DateTime.UtcNow)
@@ -25,7 +26,8 @@ public class EventRepository : IEventRepository
 
     public async Task<Event?> GetByIdAsync(int eventId)
     {
-        return await _db.Events
+        using var db = await _contextFactory.CreateDbContextAsync();
+        return await db.Events
             .Include(e => e.Category)
             .Include(e => e.Admin)
             .FirstOrDefaultAsync(e => e.EventId == eventId);
@@ -38,106 +40,111 @@ public class EventRepository : IEventRepository
 
         eventEntity.EnrolledCount = 0;
 
+        using var db = await _contextFactory.CreateDbContextAsync();
         if (eventEntity.Category != null)
         {
             eventEntity.CategoryId = eventEntity.Category.CategoryId;
-            _db.Entry(eventEntity.Category).State = EntityState.Unchanged;
+            db.Entry(eventEntity.Category).State = EntityState.Unchanged;
         }
 
         if (eventEntity.Admin != null)
         {
             eventEntity.AdminId = eventEntity.Admin.UserId;
-            _db.Entry(eventEntity.Admin).State = EntityState.Unchanged;
+            db.Entry(eventEntity.Admin).State = EntityState.Unchanged;
         }
 
-        _db.Events.Add(eventEntity);
-        await _db.SaveChangesAsync();
+        db.Events.Add(eventEntity);
+        await db.SaveChangesAsync();
         return eventEntity.EventId;
     }
 
     public async Task IncrementEnrolledCountAsync(int eventId)
     {
-        var eventEntity = await _db.Events.FindAsync(eventId);
+        using var db = await _contextFactory.CreateDbContextAsync();
+        var eventEntity = await db.Events.FindAsync(eventId);
         if (eventEntity != null)
         {
             eventEntity.EnrolledCount++;
-            await _db.SaveChangesAsync();
+            await db.SaveChangesAsync();
         }
     }
 
     public async Task DecrementEnrolledCountAsync(int eventId)
     {
-        var eventEntity = await _db.Events.FindAsync(eventId);
+        using var db = await _contextFactory.CreateDbContextAsync();
+        var eventEntity = await db.Events.FindAsync(eventId);
         if (eventEntity != null && eventEntity.EnrolledCount > 0)
         {
             eventEntity.EnrolledCount--;
-            await _db.SaveChangesAsync();
+            await db.SaveChangesAsync();
         }
     }
 
     public async Task UpdateAsync(Event eventEntity)
     {
-        _db.Events.Update(eventEntity);
-        await _db.SaveChangesAsync();
+        using var db = await _contextFactory.CreateDbContextAsync();
+        db.Events.Update(eventEntity);
+        await db.SaveChangesAsync();
     }
 
     public async Task DeleteAsync(int eventId)
     {
         // Handle children manually since we use NoAction on delete
-
-        var announcementIds = await _db.Set<Announcement>()
+        using var db = await _contextFactory.CreateDbContextAsync();
+        var announcementIds = await db.Set<Announcement>()
             .Where(a => a.EventId == eventId)
             .Select(a => a.AnnouncementId)
             .ToListAsync();
 
-        await _db.Set<AnnouncementReadReceipt>()
+        await db.Set<AnnouncementReadReceipt>()
             .Where(r => announcementIds.Contains(r.AnnouncementId))
             .ExecuteDeleteAsync();
 
-        await _db.Set<AnnouncementReaction>()
+        await db.Set<AnnouncementReaction>()
             .Where(r => announcementIds.Contains(r.AnnouncementId))
             .ExecuteDeleteAsync();
 
-        await _db.Set<Announcement>()
+        await db.Set<Announcement>()
             .Where(a => a.EventId == eventId)
             .ExecuteDeleteAsync();
 
-        var memoryIds = await _db.Memories
+        var memoryIds = await db.Memories
             .Where(m => m.EventId == eventId)
             .Select(m => m.MemoryId)
             .ToListAsync();
 
-        await _db.Set<MemoryLike>()
+        await db.Set<MemoryLike>()
             .Where(ml => memoryIds.Contains(ml.MemoryId))
             .ExecuteDeleteAsync();
 
-        await _db.Set<QuestMemory>()
+        await db.Set<QuestMemory>()
             .Where(qm => memoryIds.Contains(qm.MemoryId))
             .ExecuteDeleteAsync();
 
-        await _db.Memories
+        await db.Memories
             .Where(m => m.EventId == eventId)
             .ExecuteDeleteAsync();
 
-        await _db.AttendedEvents
+        await db.AttendedEvents
             .Where(ae => ae.EventId == eventId)
             .ExecuteDeleteAsync();
 
-        await _db.Set<Quest>()
+        await db.Set<Quest>()
             .Where(q => q.EventId == eventId)
             .ExecuteDeleteAsync();
 
-        var eventEntity = await _db.Events.FindAsync(eventId);
+        var eventEntity = await db.Events.FindAsync(eventId);
         if (eventEntity != null)
         {
-            _db.Events.Remove(eventEntity);
-            await _db.SaveChangesAsync();
+            db.Events.Remove(eventEntity);
+            await db.SaveChangesAsync();
         }
     }
 
     public async Task<List<Event>> GetByAdminIdAsync(Guid adminId)
     {
-        return await _db.Events
+        using var db = await _contextFactory.CreateDbContextAsync();
+        return await db.Events
             .Include(e => e.Category)
             .Include(e => e.Admin)
             .Where(e => e.AdminId == adminId)

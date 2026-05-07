@@ -45,13 +45,18 @@ namespace ChatModule
                  ConfigurationManager.ConnectionStrings["ChatAndEventsDB"]?.ConnectionString
                  ?? "Data Source=.\\SQLEXPRESS;Initial Catalog=ChatAndEventsDB;Integrated Security=True;Encrypt=True;TrustServerCertificate=True;";
 
-            var options = new DbContextOptionsBuilder<AppDbContext>()
-                .UseSqlServer(connectionString)
-                .Options;
 
-            var db = new AppDbContext(options);
-            var userRepo = new UserRepository(db);  
-            var authService = new AuthenticationService(userRepo);
+            var services = new ServiceCollection();
+
+            services.AddDbContextFactory<AppDbContext>(options =>
+                options.UseSqlServer(connectionString));
+
+            services.AddTransient<IUserRepository, UserRepository>();
+
+            services.AddTransient<AuthenticationService>();
+
+            var provider = services.BuildServiceProvider();
+            var authService = provider.GetRequiredService<AuthenticationService>();
 
             _loginWindow = new LoginWindow(authService);
             _loginWindow.LoginSucceeded += OnLoginSucceededAsync;

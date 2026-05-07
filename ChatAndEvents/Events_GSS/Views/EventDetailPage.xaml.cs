@@ -30,7 +30,7 @@ public sealed partial class EventDetailPage : Page
         this.currentEvent = viewModel.SelectedEvent;
 
         // Bypass OnNavigatedTo and load the tabs immediately
-        _ = SetupPageData();
+        this.Loaded += async (_, _) => await SetupPageData();
     }
 
     private async Task SetupPageData()
