@@ -15,8 +15,8 @@ using System.Diagnostics.CodeAnalysis;
 /// </summary>
 public class AnnouncementService : IAnnouncementService
 {
-    private readonly IAnnouncementRepository announcementRepository;
-    private readonly IEventRepository eventRepository;
+    private readonly IAnnouncementRepository _announcementRepository;
+    private readonly IEventRepository _eventRepository;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="AnnouncementService"/> class.
@@ -27,8 +27,8 @@ public class AnnouncementService : IAnnouncementService
         IAnnouncementRepository announcementRepository,
         IEventRepository eventRepository)
     {
-        this.announcementRepository = announcementRepository ?? throw new ArgumentNullException(nameof(announcementRepository));
-        this.eventRepository = eventRepository ?? throw new ArgumentNullException(nameof(eventRepository));
+        this._announcementRepository = announcementRepository ?? throw new ArgumentNullException(nameof(announcementRepository));
+        this._eventRepository = eventRepository ?? throw new ArgumentNullException(nameof(eventRepository));
     }
 
     /// <summary>
@@ -39,9 +39,9 @@ public class AnnouncementService : IAnnouncementService
     /// <returns>A <see cref="Task"/> representing all announcements for the specified event and user.</returns>
     public async Task<List<Announcement>> GetAnnouncementsAsync(int eventId, Guid userId)
     {
-        var announcements = await this.announcementRepository.GetAnnouncementsByEventAsync(eventId, userId);
+        var announcements = await this._announcementRepository.GetAnnouncementsByEventAsync(eventId, userId);
 
-        var reactions = await this.announcementRepository.GetReactionsAsync(
+        var reactions = await this._announcementRepository.GetReactionsAsync(
             announcements.Select(a => a.Id).ToList());
 
         this.AttachReactions(announcements, reactions);
@@ -69,7 +69,7 @@ public class AnnouncementService : IAnnouncementService
         }
 
         var announcement = new Announcement(0, announcementMessage.Trim(), DateTime.UtcNow);
-        await this.announcementRepository.AddAnnouncementAsync(announcement, eventId, userId);
+        await this._announcementRepository.AddAnnouncementAsync(announcement, eventId, userId);
     }
 
     /// <summary>
@@ -92,14 +92,14 @@ public class AnnouncementService : IAnnouncementService
             throw new ArgumentException("Announcement message cannot be empty.");
         }
 
-        var existingAnnouncement = await this.announcementRepository.GetAnnouncementByIdAsync(announcementId);
+        var existingAnnouncement = await this._announcementRepository.GetAnnouncementByIdAsync(announcementId);
 
         if (existingAnnouncement is null)
         {
             throw new KeyNotFoundException($"Announcement with ID {announcementId} does not exist.");
         }
 
-        await this.announcementRepository.UpdateAnnouncementAsync(announcementId, newAnnouncementMessage.Trim());
+        await this._announcementRepository.UpdateAnnouncementAsync(announcementId, newAnnouncementMessage.Trim());
     }
 
     /// <summary>
@@ -115,13 +115,13 @@ public class AnnouncementService : IAnnouncementService
     {
         await this.EnsureAdminAsync(eventId, userId);
 
-        var existingAnnouncement = await this.announcementRepository.GetAnnouncementByIdAsync(announcementId);
+        var existingAnnouncement = await this._announcementRepository.GetAnnouncementByIdAsync(announcementId);
         if (existingAnnouncement is null)
         {
             throw new KeyNotFoundException($"Announcement with ID {announcementId} does not exist.");
         }
 
-        await this.announcementRepository.DeleteAnnouncementAsync(announcementId);
+        await this._announcementRepository.DeleteAnnouncementAsync(announcementId);
     }
 
     /// <summary>
@@ -139,10 +139,10 @@ public class AnnouncementService : IAnnouncementService
         await this.EnsureAdminAsync(eventId, userId);
 
         // business rule: only one pinned per event
-        await this.announcementRepository.UnpinAnnouncementAsync(eventId);
+        await this._announcementRepository.UnpinAnnouncementAsync(eventId);
 
         // pin selected announcement
-        await this.announcementRepository.PinAsync(announcementId);
+        await this._announcementRepository.PinAsync(announcementId);
     }
 
     /// <summary>
@@ -155,14 +155,14 @@ public class AnnouncementService : IAnnouncementService
     /// was newly marked as read for the user; otherwise, <see langword="false"/> if it was already marked as read.</returns>
     public async Task<bool> MarkAsReadAsync(int announcementId, Guid userId)
     {
-        var alreadyRead = await this.announcementRepository.HasUserReadAsync(announcementId, userId);
+        var alreadyRead = await this._announcementRepository.HasUserReadAsync(announcementId, userId);
 
         if (alreadyRead)
         {
             return false;
         }
 
-        await this.announcementRepository.InsertReadReceiptAsync(announcementId, userId);
+        await this._announcementRepository.InsertReadReceiptAsync(announcementId, userId);
         return true;
     }
 
@@ -184,8 +184,8 @@ public class AnnouncementService : IAnnouncementService
     {
         await this.EnsureAdminAsync(eventId, userId);
 
-        var readers = await this.announcementRepository.GetReadReceiptsAsync(announcementId);
-        var totalParticipants = await this.announcementRepository.GetTotalParticipantsAsync(eventId);
+        var readers = await this._announcementRepository.GetReadReceiptsAsync(announcementId);
+        var totalParticipants = await this._announcementRepository.GetTotalParticipantsAsync(eventId);
 
         return (readers, totalParticipants);
     }
@@ -203,21 +203,21 @@ public class AnnouncementService : IAnnouncementService
     /// <returns>A task that represents the asynchronous operation.</returns>
     public async Task AddOrUpdateReactAsync(int announcementId, Guid userId, string emoji)
     {
-        var existingEmoji = await this.announcementRepository.GetUserReactionAsync(announcementId, userId);
+        var existingEmoji = await this._announcementRepository.GetUserReactionAsync(announcementId, userId);
 
         if (existingEmoji == null)
         {
-            await this.announcementRepository.InsertReactionAsync(announcementId, userId, emoji);
+            await this._announcementRepository.InsertReactionAsync(announcementId, userId, emoji);
             return;
         }
 
         if (existingEmoji == emoji)
         {
-            await this.announcementRepository.RemoveReactionAsync(announcementId, userId);
+            await this._announcementRepository.RemoveReactionAsync(announcementId, userId);
             return;
         }
 
-        await this.announcementRepository.UpdateReactionAsync(announcementId, userId, emoji);
+        await this._announcementRepository.UpdateReactionAsync(announcementId, userId, emoji);
     }
 
     /// <summary>
@@ -228,7 +228,7 @@ public class AnnouncementService : IAnnouncementService
     /// <returns>A task that represents the asynchronous remove operation.</returns>
     public async Task RemoveReactionAsync(int announcementId, Guid userId)
     {
-        await this.announcementRepository.RemoveReactionAsync(announcementId, userId);
+        await this._announcementRepository.RemoveReactionAsync(announcementId, userId);
     }
 
     /// <summary>
@@ -240,7 +240,7 @@ public class AnnouncementService : IAnnouncementService
     /// be empty.</returns>
     public async Task<Dictionary<int, int>> GetUnreadCountsForUserAsync(Guid userId)
     {
-        return await this.announcementRepository.GetUnreadCountsForUserAsync(userId);
+        return await this._announcementRepository.GetUnreadCountsForUserAsync(userId);
     }
 
     /// <summary>
@@ -252,7 +252,7 @@ public class AnnouncementService : IAnnouncementService
     [ExcludeFromCodeCoverage]
     public async Task<List<User>> GetAllParticipantsAsync(int eventId)
     {
-        return await this.announcementRepository.GetAllParticipantsAsync(eventId);
+        return await this._announcementRepository.GetAllParticipantsAsync(eventId);
     }
 
     /// <summary>
@@ -267,11 +267,11 @@ public class AnnouncementService : IAnnouncementService
     /// <returns>A task that represents the asynchronous toggle operation.</returns>
     public async Task ToggleReactionAsync(int announcementId, Guid userId, string emoji)
     {
-        var existingEmoji = await this.announcementRepository.GetUserReactionAsync(announcementId, userId);
+        var existingEmoji = await this._announcementRepository.GetUserReactionAsync(announcementId, userId);
 
         if (existingEmoji == emoji)
         {
-            await this.announcementRepository.RemoveReactionAsync(announcementId, userId);
+            await this._announcementRepository.RemoveReactionAsync(announcementId, userId);
         }
         else
         {
@@ -309,8 +309,8 @@ public class AnnouncementService : IAnnouncementService
     /// the announcement.</returns>
     public async Task<List<User>> GetNonReadersAsync(int announcementId, int eventId)
     {
-        var readers = await this.announcementRepository.GetReadReceiptsAsync(announcementId);
-        var participants = await this.announcementRepository.GetAllParticipantsAsync(eventId);
+        var readers = await this._announcementRepository.GetReadReceiptsAsync(announcementId);
+        var participants = await this._announcementRepository.GetAllParticipantsAsync(eventId);
 
         var readerIds = readers
             .Select(reader => reader.User.Id)
@@ -360,7 +360,7 @@ public class AnnouncementService : IAnnouncementService
     /// <exception cref="UnauthorizedAccessException">Thrown if the user is not the administrator of the specified event.</exception>
     private async Task EnsureAdminAsync(int eventId, Guid   userId)
     {
-        var selectedEvent = await this.eventRepository.GetByIdAsync(eventId);
+        var selectedEvent = await this._eventRepository.GetByIdAsync(eventId);
         if (selectedEvent is null)
         {
             throw new ArgumentException($"Event with ID {eventId} does not exist.");

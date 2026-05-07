@@ -19,14 +19,14 @@ using System.Linq;
 /// </summary>
 public partial class AnnouncementItemViewModel : ObservableObject
 {
-    private readonly AnnouncementItemViewModelCore announcementItemViewModelCore;
+    private readonly AnnouncementItemViewModelCore _announcementItemViewModelCore;
 
     public AnnouncementItemViewModel(
         Announcement announcementModel,
         Guid currentUserId,
         bool isAdmin)
     {
-        announcementItemViewModelCore = new AnnouncementItemViewModelCore(announcementModel, currentUserId);
+        _announcementItemViewModelCore = new AnnouncementItemViewModelCore(announcementModel, currentUserId);
 
         Model = announcementModel;
         _isCurrentUserAdmin = isAdmin;
@@ -35,13 +35,13 @@ public partial class AnnouncementItemViewModel : ObservableObject
 
     public Announcement Model { get; }
 
-    public string PreviewText => announcementItemViewModelCore.PreviewText;
+    public string PreviewText => _announcementItemViewModelCore.PreviewText;
 
-    public bool HasFullContent => announcementItemViewModelCore.HasFullContent;
+    public bool HasFullContent => _announcementItemViewModelCore.HasFullContent;
 
-    public List<ReactionGroup> ReactionGroups => announcementItemViewModelCore.ReactionGroups;
+    public List<ReactionGroup> ReactionGroups => _announcementItemViewModelCore.ReactionGroups;
 
-    public string? CurrentUserEmoji => announcementItemViewModelCore.CurrentUserEmoji;
+    public string? CurrentUserEmoji => _announcementItemViewModelCore.CurrentUserEmoji;
 
     // UI stuff stays here
     [ObservableProperty] private bool _isExpanded;

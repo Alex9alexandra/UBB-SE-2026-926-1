@@ -11,7 +11,7 @@ namespace ChatAndEvents.Data.EventsData.Services.categoryServices;
 /// </summary>
 public class CategoryServices : ICategoryServices
 {
-    private readonly ICategoryRepository categoryRepository;
+    private readonly ICategoryRepository _categoryRepository;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="CategoryServices"/> class.
@@ -19,7 +19,7 @@ public class CategoryServices : ICategoryServices
     /// <param name="categoryRepository">The category repository.</param>
     public CategoryServices(ICategoryRepository categoryRepository)
     {
-        this.categoryRepository = categoryRepository;
+        this._categoryRepository = categoryRepository;
     }
 
     /// <summary>
@@ -28,7 +28,7 @@ public class CategoryServices : ICategoryServices
     /// <returns>A list of all categories.</returns>
     public async Task<List<Category>> GetAllCategoriesAsync()
     {
-        return await this.categoryRepository.GetAllAsync();
+        return await this._categoryRepository.GetAllAsync();
     }
 
     /// <summary>
@@ -38,6 +38,6 @@ public class CategoryServices : ICategoryServices
     /// <returns>The category if found; otherwise, null.</returns>
     public async Task<Category?> GetCategoryByIdAsync(int categoryId)
     {
-        return await this.categoryRepository.GetByIdAsync(categoryId);
+        return await this._categoryRepository.GetByIdAsync(categoryId);
     }
 }

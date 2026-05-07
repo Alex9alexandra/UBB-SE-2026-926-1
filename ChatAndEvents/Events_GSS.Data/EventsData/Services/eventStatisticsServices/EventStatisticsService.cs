@@ -12,7 +12,7 @@ using ChatAndEvents.Data.EventsData.Repositories.eventStatisticsRepository;
 /// </summary>
 public class EventStatisticsService : IEventStatisticsService
 {
-    private readonly IEventStatisticsRepository repository;
+    private readonly IEventStatisticsRepository _repository;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="EventStatisticsService"/> class with the specified event statistics repository. The repository is used to retrieve data related to event statistics, allowing the service to perform calculations and provide insights based on the retrieved data.
@@ -20,7 +20,7 @@ public class EventStatisticsService : IEventStatisticsService
     /// <param name="repository">The event statistics repository used to access event-related data.</param>
     public EventStatisticsService(IEventStatisticsRepository repository)
     {
-        this.repository = repository;
+        this._repository = repository;
     }
 
     /// <summary>
@@ -30,7 +30,7 @@ public class EventStatisticsService : IEventStatisticsService
     /// <returns>A task that represents the asynchronous operation, containing the participant overview for the specified event.</returns>
     public async Task<ParticipantOverview> GetParticipantOverviewAsync(int eventId)
     {
-        var result = await this.repository.GetParticipantOverviewAsync(eventId);
+        var result = await this._repository.GetParticipantOverviewAsync(eventId);
 
         if (result.TotalParticipants > 0)
         {
@@ -53,7 +53,7 @@ public class EventStatisticsService : IEventStatisticsService
     /// <returns>A task that represents the asynchronous operation, containing the engagement breakdown for the specified event.</returns>
     public async Task<EngagementBreakdown> GetEngagementBreakdownAsync(int eventId)
     {
-        var result = await this.repository.GetEngagementBreakdownAsync(eventId);
+        var result = await this._repository.GetEngagementBreakdownAsync(eventId);
         if (result == null)
         {
             return null;
@@ -85,7 +85,7 @@ public class EventStatisticsService : IEventStatisticsService
     /// <returns>A task that represents the asynchronous operation, containing the leaderboard for the specified event.</returns>
     public Task<List<LeaderboardEntry>> GetLeaderboardAsync(int eventId)
     {
-        return this.repository.GetLeaderboardAsync(eventId);
+        return this._repository.GetLeaderboardAsync(eventId);
     }
 
     /// <summary>
@@ -95,6 +95,6 @@ public class EventStatisticsService : IEventStatisticsService
     /// <returns>A task that represents the asynchronous operation, containing the quest analytics for the specified event.</returns>
     public Task<List<QuestAnalyticsEntry>> GetQuestAnalyticsAsync(int eventId)
     {
-        return this.repository.GetQuestAnalyticsAsync(eventId);
+        return this._repository.GetQuestAnalyticsAsync(eventId);
     }
 }

@@ -15,7 +15,7 @@ using ChatAndEvents.Data.EventsData.Repositories.notificationRepository;
 /// </summary>
 public class NotificationService : INotificationService
 {
-    private readonly INotificationRepository notificationRepository;
+    private readonly INotificationRepository _notificationRepository;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="NotificationService"/> class with the specified notification repository. The repository is injected into the service, allowing for dependency inversion and enabling the service to interact with the data access layer for managing notifications. This constructor sets up the necessary dependencies for the service to function properly, ensuring that it can perform its operations related to notifications effectively.
@@ -23,7 +23,7 @@ public class NotificationService : INotificationService
     /// <param name="notificationRepository">The notification repository to be used by the service.</param>
     public NotificationService(INotificationRepository notificationRepository)
     {
-        this.notificationRepository = notificationRepository;
+        this._notificationRepository = notificationRepository;
     }
 
     /// <summary>
@@ -35,7 +35,7 @@ public class NotificationService : INotificationService
     /// <returns>A task that represents the asynchronous operation of sending the notification.</returns>
     public async Task NotifyAsync(Guid userId, string title, string description)
     {
-        await this.notificationRepository.AddAsync(
+        await this._notificationRepository.AddAsync(
             userId,
             title,
             description,
@@ -49,7 +49,7 @@ public class NotificationService : INotificationService
     /// <returns>A task that represents the asynchronous operation, containing a list of notifications for the specified user.</returns>
     public async Task<List<Notification>> GetNotificationsAsync(Guid userId)
     {
-        return await this.notificationRepository.GetByUserIdAsync(userId);
+        return await this._notificationRepository.GetByUserIdAsync(userId);
     }
 
     /// <summary>
@@ -59,6 +59,6 @@ public class NotificationService : INotificationService
     /// <returns>A task that represents the asynchronous operation of deleting the notification.</returns>
     public async Task DeleteAsync(int notificationId)
     {
-        await this.notificationRepository.DeleteAsync(notificationId);
+        await this._notificationRepository.DeleteAsync(notificationId);
     }
 }

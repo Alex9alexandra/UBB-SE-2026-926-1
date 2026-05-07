@@ -20,7 +20,7 @@ namespace Events_GSS.ViewModels;
 /// </summary>
 public partial class CreateEventViewModel : ObservableObject
 {
-    private readonly CreateEventViewModelCore viewModelCore;
+    private readonly CreateEventViewModelCore _viewModelCore;
 
     // prevents Core->VM sync from re-triggering VM->Core setters (stack overflow)
     private bool isSyncingFromCore;
@@ -38,10 +38,10 @@ public partial class CreateEventViewModel : ObservableObject
         IQuestService questService,
         IAttendedEventService attendedEventService)
     {
-        this.viewModelCore = new CreateEventViewModelCore(userService, eventService, questService, attendedEventService);
+        this._viewModelCore = new CreateEventViewModelCore(userService, eventService, questService, attendedEventService);
 
         // keep listening for non-create actions (like step changes, quest loads, etc.)
-        this.viewModelCore.StateChanged += this.OnViewModelCoreStateChanged;
+        this._viewModelCore.StateChanged += this.OnViewModelCoreStateChanged;
 
         this.SyncCollectionsFromCore();
     }
@@ -228,120 +228,120 @@ public partial class CreateEventViewModel : ObservableObject
     partial void OnEventNameChanged(string value)
     {
         if (this.isSyncingFromCore) return;
-        this.viewModelCore.SetEventName(value);
+        this._viewModelCore.SetEventName(value);
     }
 
     partial void OnLocationChanged(string value)
     {
         if (this.isSyncingFromCore) return;
-        this.viewModelCore.SetLocation(value);
+        this._viewModelCore.SetLocation(value);
     }
 
     partial void OnStartDateChanged(DateTimeOffset value)
     {
         if (this.isSyncingFromCore) return;
-        this.viewModelCore.SetStartDate(value);
+        this._viewModelCore.SetStartDate(value);
     }
 
     partial void OnStartTimeChanged(TimeSpan value)
     {
         if (this.isSyncingFromCore) return;
-        this.viewModelCore.SetStartTime(value);
+        this._viewModelCore.SetStartTime(value);
     }
 
     partial void OnEndDateChanged(DateTimeOffset value)
     {
         if (this.isSyncingFromCore) return;
-        this.viewModelCore.SetEndDate(value);
+        this._viewModelCore.SetEndDate(value);
     }
 
     partial void OnEndTimeChanged(TimeSpan value)
     {
         if (this.isSyncingFromCore) return;
-        this.viewModelCore.SetEndTime(value);
+        this._viewModelCore.SetEndTime(value);
     }
 
     partial void OnIsPublicChanged(bool value)
     {
         if (this.isSyncingFromCore) return;
-        this.viewModelCore.SetIsPublic(value);
+        this._viewModelCore.SetIsPublic(value);
     }
 
     partial void OnDescriptionChanged(string value)
     {
         if (this.isSyncingFromCore) return;
-        this.viewModelCore.SetDescription(value);
+        this._viewModelCore.SetDescription(value);
     }
 
     partial void OnMaximumPeopleTextChanged(string value)
     {
         if (this.isSyncingFromCore) return;
-        this.viewModelCore.SetMaximumPeopleText(value);
+        this._viewModelCore.SetMaximumPeopleText(value);
     }
 
     partial void OnEventBannerPathChanged(string? value)
     {
         if (this.isSyncingFromCore) return;
-        this.viewModelCore.SetEventBannerPath(value);
+        this._viewModelCore.SetEventBannerPath(value);
     }
 
     partial void OnSelectedCategoryChanged(Category? value)
     {
         if (this.isSyncingFromCore) return;
-        this.viewModelCore.SetSelectedCategory(value);
+        this._viewModelCore.SetSelectedCategory(value);
     }
 
     partial void OnCustomQuestNameChanged(string value)
     {
         if (this.isSyncingFromCore) return;
-        this.viewModelCore.SetCustomQuestName(value);
+        this._viewModelCore.SetCustomQuestName(value);
     }
 
     partial void OnCustomQuestDescriptionChanged(string value)
     {
         if (this.isSyncingFromCore) return;
-        this.viewModelCore.SetCustomQuestDescription(value);
+        this._viewModelCore.SetCustomQuestDescription(value);
     }
 
     // Commands
     [RelayCommand(CanExecute = nameof(CanGoToStep2))]
-    private void GoToStep2() => this.viewModelCore.GoToStep2();
+    private void GoToStep2() => this._viewModelCore.GoToStep2();
 
-    private bool CanGoToStep2() => this.viewModelCore.CanGoToStep2;
-
-    [RelayCommand]
-    private void GoToStep3() => this.viewModelCore.GoToStep3();
+    private bool CanGoToStep2() => this._viewModelCore.CanGoToStep2;
 
     [RelayCommand]
-    private void GoBackToStep1() => this.viewModelCore.GoBackToStep1();
+    private void GoToStep3() => this._viewModelCore.GoToStep3();
 
     [RelayCommand]
-    private void GoBackToStep2() => this.viewModelCore.GoBackToStep2();
+    private void GoBackToStep1() => this._viewModelCore.GoBackToStep1();
+
+    [RelayCommand]
+    private void GoBackToStep2() => this._viewModelCore.GoBackToStep2();
 
     [RelayCommand]
     private void Cancel()
     {
-        this.EventCreationDetailsText = this.viewModelCore.BuildEventCreationDetailsText(null);
+        this.EventCreationDetailsText = this._viewModelCore.BuildEventCreationDetailsText(null);
         this.CloseRequested?.Invoke(null);
     }
 
     [RelayCommand(CanExecute = nameof(CanAddCustomQuest))]
-    private void AddCustomQuest() => this.viewModelCore.AddCustomQuest();
+    private void AddCustomQuest() => this._viewModelCore.AddCustomQuest();
 
-    private bool CanAddCustomQuest() => this.viewModelCore.CanAddCustomQuest;
-
-    [RelayCommand]
-    private void ToggleQuestSelection(Quest quest) => this.viewModelCore.ToggleQuestSelection(quest);
+    private bool CanAddCustomQuest() => this._viewModelCore.CanAddCustomQuest;
 
     [RelayCommand]
-    private void RemoveQuest(Quest quest) => this.viewModelCore.RemoveQuest(quest);
+    private void ToggleQuestSelection(Quest quest) => this._viewModelCore.ToggleQuestSelection(quest);
+
+    [RelayCommand]
+    private void RemoveQuest(Quest quest) => this._viewModelCore.RemoveQuest(quest);
 
     // CHANGED: CreateEventViewModelCore.CreateEventAsync returns dto; VM sets text then closes
     [RelayCommand]
     private async Task CreateEvent()
     {
-        CreateEventDto dto = await this.viewModelCore.CreateEventAsync();
-        this.EventCreationDetailsText = this.viewModelCore.EventCreationDetailsText;
+        CreateEventDto dto = await this._viewModelCore.CreateEventAsync();
+        this.EventCreationDetailsText = this._viewModelCore.EventCreationDetailsText;
         this.CloseRequested?.Invoke(dto);
     }
 
@@ -349,7 +349,7 @@ public partial class CreateEventViewModel : ObservableObject
     /// Builds the event DTO from current form data.
     /// </summary>
     /// <returns>A <see cref="CreateEventDto"/> containing the event data.</returns>
-    public async Task<CreateEventDto> BuildDto() => await this.viewModelCore.BuildDto();
+    public async Task<CreateEventDto> BuildDto() => await this._viewModelCore.BuildDto();
 
     /// <summary>
     /// Builds a text summary of the event creation details.
@@ -357,14 +357,14 @@ public partial class CreateEventViewModel : ObservableObject
     /// <param name="createEventDto">The event DTO to build details from.</param>
     /// <returns>A string containing the event creation details.</returns>
     public string BuildEventCreationDetailsText(CreateEventDto? createEventDto) =>
-        this.viewModelCore.BuildEventCreationDetailsText(createEventDto);
+        this._viewModelCore.BuildEventCreationDetailsText(createEventDto);
 
     /// <summary>
     /// Loads the preset quests asynchronously.
     /// </summary>
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
     public async Task LoadPresetQuestsAsync() =>
-        await this.viewModelCore.LoadPresetQuestsAsync();
+        await this._viewModelCore.LoadPresetQuestsAsync();
 
     /// <summary>
     /// Loads the preset quests asynchronously using the specified quest service.
@@ -372,14 +372,14 @@ public partial class CreateEventViewModel : ObservableObject
     /// <param name="_">The quest service (unused, kept for backward compatibility).</param>
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
     public async Task LoadPresetQuestsAsync(IQuestService _) =>
-        await this.viewModelCore.LoadPresetQuestsAsync();
+        await this._viewModelCore.LoadPresetQuestsAsync();
 
     /// <summary>
     /// Determines whether the specified quest is selected.
     /// </summary>
     /// <param name="quest">The quest to check.</param>
     /// <returns><c>true</c> if the quest is selected; otherwise, <c>false</c>.</returns>
-    public bool IsQuestSelected(Quest quest) => this.viewModelCore.IsQuestSelected(quest);
+    public bool IsQuestSelected(Quest quest) => this._viewModelCore.IsQuestSelected(quest);
 
     private void OnViewModelCoreStateChanged()
     {
@@ -392,11 +392,11 @@ public partial class CreateEventViewModel : ObservableObject
         try
         {
             // don't sync EventCreationDetailsText here; VM controls it for popup timing
-            this.currentStep = this.viewModelCore.CurrentStep;
-            this.errorMessage = this.viewModelCore.ErrorMessage;
+            this.currentStep = this._viewModelCore.CurrentStep;
+            this.errorMessage = this._viewModelCore.ErrorMessage;
 
-            this.customQuestName = this.viewModelCore.CustomQuestName;
-            this.customQuestDescription = this.viewModelCore.CustomQuestDescription;
+            this.customQuestName = this._viewModelCore.CustomQuestName;
+            this.customQuestDescription = this._viewModelCore.CustomQuestDescription;
 
             this.SyncCollectionsFromCore();
 
@@ -414,13 +414,13 @@ public partial class CreateEventViewModel : ObservableObject
     private void SyncCollectionsFromCore()
     {
         this.AvailableQuests.Clear();
-        foreach (var quest in this.viewModelCore.AvailableQuests)
+        foreach (var quest in this._viewModelCore.AvailableQuests)
         {
             this.AvailableQuests.Add(quest);
         }
 
         this.SelectedQuests.Clear();
-        foreach (var quest in this.viewModelCore.SelectedQuests)
+        foreach (var quest in this._viewModelCore.SelectedQuests)
         {
             this.SelectedQuests.Add(quest);
         }

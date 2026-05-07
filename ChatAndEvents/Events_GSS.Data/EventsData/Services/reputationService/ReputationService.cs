@@ -19,7 +19,7 @@ using ChatAndEvents.Data.EventsData.Repositories.achievementRepository;
 /// </summary>
 public class ReputationService : IReputationService
 {
-    private static readonly Dictionary<ReputationAction, int> ReputationDeltasMap = new ()
+    private static readonly Dictionary<ReputationAction, int> _ReputationDeltasMap = new ()
     {
         { ReputationAction.EventCreated, ReputationDeltas.EventCreated },
         { ReputationAction.EventCancelled, ReputationDeltas.EventCancelled },
@@ -32,10 +32,10 @@ public class ReputationService : IReputationService
         { ReputationAction.QuestDenied, ReputationDeltas.QuestDenied },
     };
 
-    private readonly IReputationRepository reputationRepository;
-    private readonly IAttendedEventRepository attendedEventRepository;
-    private readonly IEventRepository eventRepository;
-    private readonly IAchievementService achievementService;
+    private readonly IReputationRepository _reputationRepository;
+    private readonly IAttendedEventRepository _attendedEventRepository;
+    private readonly IEventRepository _eventRepository;
+    private readonly IAchievementService _achievementService;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="ReputationService"/> class with the specified repositories and services. The constructor sets up the necessary dependencies for managing user reputation, including the reputation repository for handling reputation data, the attended event repository and event repository for managing event-related reputation changes, and the achievement service for checking and awarding achievements based on reputation changes. Additionally, the constructor registers a message handler for reputation change messages using the CommunityToolkit.Mvvm.Messaging library, allowing the service to respond to reputation changes triggered by various user actions within the platform.
@@ -50,10 +50,10 @@ public class ReputationService : IReputationService
         IEventRepository eventRepository,
         IAchievementService achievementService)
     {
-        this.reputationRepository = reputationRepository;
-        this.attendedEventRepository = attendedEventRepository;
-        this.eventRepository = eventRepository;
-        this.achievementService = achievementService;
+        this._reputationRepository = reputationRepository;
+        this._attendedEventRepository = attendedEventRepository;
+        this._eventRepository = eventRepository;
+        this._achievementService = achievementService;
 
         WeakReferenceMessenger.Default.Register<ReputationMessage>(this, (_, msg) =>
         {
@@ -68,7 +68,7 @@ public class ReputationService : IReputationService
     /// <returns>A task that represents the asynchronous operation. The task result contains the reputation points of the specified user.</returns>
     public async Task<UserReputationScore> GetReputationScoreAsync(Guid userId)
     {
-        return await this.reputationRepository.GetReputationScoreAsync(userId);
+        return await this._reputationRepository.GetReputationScoreAsync(userId);
     }
 
     /// <inheritdoc/>
@@ -96,7 +96,7 @@ public class ReputationService : IReputationService
     /// <returns>A task that represents the asynchronous operation. The task result contains a list of achievements for the specified user.</returns>
     public async Task<List<Achievement>> GetAchievementsAsync(Guid userId)
     {
-        return await this.achievementService.GetUserAchievementsAsync(userId);
+        return await this._achievementService.GetUserAchievementsAsync(userId);
     }
 
     /// <summary>
@@ -154,13 +154,13 @@ public class ReputationService : IReputationService
             if (message.Value == ReputationAction.EventAttended)
             {
                 await this.HandleEventAttendedAsync(message.EventId!.Value);
-                await this.achievementService.CheckAndAwardAchievementsAsync(message.UserId);
+                await this._achievementService.CheckAndAwardAchievementsAsync(message.UserId);
                 return;
             }
 
-            if (ReputationDeltasMap.TryGetValue(message.Value, out int delta))
+            if (_ReputationDeltasMap.TryGetValue(message.Value, out int delta))
             {
-                var currentScore = await this.reputationRepository.GetReputationScoreAsync(message.UserId);
+                var currentScore = await this._reputationRepository.GetReputationScoreAsync(message.UserId);
                 var current = currentScore.ReputationPoints;
 
                 var newReputation = Math.Max(
@@ -169,13 +169,13 @@ public class ReputationService : IReputationService
 
                 var newTier = this.CalculateTier(newReputation);
 
-                await this.reputationRepository.SetReputationAsync(new UserReputationScore
+                await this._reputationRepository.SetReputationAsync(new UserReputationScore
                 {
                     UserId = message.UserId,
                     ReputationPoints = newReputation,
                     Tier = newTier,
                 });
-                await this.achievementService.CheckAndAwardAchievementsAsync(message.UserId);
+                await this._achievementService.CheckAndAwardAchievementsAsync(message.UserId);
             }
         }
         catch (Exception exception)
@@ -186,13 +186,13 @@ public class ReputationService : IReputationService
 
     private async Task HandleEventAttendedAsync(int eventId)
     {
-        var attendeeCount = await this.attendedEventRepository.GetAttendeeCountAsync(eventId);
+        var attendeeCount = await this._attendedEventRepository.GetAttendeeCountAsync(eventId);
         if (attendeeCount == 10)
         {
-            var ev = await this.eventRepository.GetByIdAsync(eventId);
+            var ev = await this._eventRepository.GetByIdAsync(eventId);
             if (ev?.Admin != null)
             {
-                var currentScore = await this.reputationRepository.GetReputationScoreAsync(ev.Admin.UserId);
+                var currentScore = await this._reputationRepository.GetReputationScoreAsync(ev.Admin.UserId);
                 var current = currentScore.ReputationPoints;
 
                 var newReputation = Math.Max(
@@ -201,7 +201,7 @@ public class ReputationService : IReputationService
 
                 var newTier = this.CalculateTier(newReputation);
 
-                await this.reputationRepository.SetReputationAsync(new UserReputationScore
+                await this._reputationRepository.SetReputationAsync(new UserReputationScore
                 {
                     UserId = ev.Admin.UserId,
                     ReputationPoints = newReputation,

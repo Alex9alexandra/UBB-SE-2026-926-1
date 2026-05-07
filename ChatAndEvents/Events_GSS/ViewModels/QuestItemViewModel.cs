@@ -5,13 +5,13 @@ namespace Events_GSS.ViewModels;
 
 public partial class QuestItemViewModel : ObservableObject
 {
-    private readonly bool isAttending;
+    private readonly bool _isAttending;
 
     public QuestItemViewModel(QuestMemory questMemory, bool isLocked, bool isAttending)
     {
         QuestMemory = questMemory;
         IsLocked = isLocked;
-        this.isAttending = isAttending;
+        this._isAttending = isAttending;
     }
 
     public QuestMemory QuestMemory { get; }
@@ -41,7 +41,7 @@ public partial class QuestItemViewModel : ObservableObject
         _ => string.Empty
     };
 
-    public bool CanSubmit => isAttending && !IsLocked && Status is QuestMemoryStatus.Incomplete or QuestMemoryStatus.Rejected;
+    public bool CanSubmit => _isAttending && !IsLocked && Status is QuestMemoryStatus.Incomplete or QuestMemoryStatus.Rejected;
 
-    public bool CanDelete => isAttending && Status is QuestMemoryStatus.Submitted or QuestMemoryStatus.Approved or QuestMemoryStatus.Rejected;
+    public bool CanDelete => _isAttending && Status is QuestMemoryStatus.Submitted or QuestMemoryStatus.Approved or QuestMemoryStatus.Rejected;
 }

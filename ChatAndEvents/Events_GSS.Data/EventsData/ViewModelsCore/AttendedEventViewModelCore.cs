@@ -14,9 +14,9 @@ namespace ChatAndEvents.Data.EventsData.ViewModelsCore
     /// </summary>
     public sealed class AttendedEventViewModelCore
     {
-        private readonly IAttendedEventService attendedEventService;
-        private readonly IUserService userService;
-        private readonly IAnnouncementService announcementService;
+        private readonly IAttendedEventService _attendedEventService;
+        private readonly IUserService _userService;
+        private readonly IAnnouncementService _announcementService;
 
         private List<AttendedEvent> allEvents = new ();
 
@@ -31,9 +31,9 @@ namespace ChatAndEvents.Data.EventsData.ViewModelsCore
             IUserService userService,
             IAnnouncementService announcementService)
         {
-            this.attendedEventService = attendedEventService;
-            this.userService = userService;
-            this.announcementService = announcementService;
+            this._attendedEventService = attendedEventService;
+            this._userService = userService;
+            this._announcementService = announcementService;
         }
 
         /// <summary>
@@ -164,9 +164,9 @@ namespace ChatAndEvents.Data.EventsData.ViewModelsCore
 
             try
             {
-                this.CurrentUser = await this.userService.GetCurrentUser();
+                this.CurrentUser = await this._userService.GetCurrentUser();
 
-                this.allEvents = await this.attendedEventService.GetAttendedEventsAsync(this.CurrentUser.UserId);
+                this.allEvents = await this._attendedEventService.GetAttendedEventsAsync(this.CurrentUser.UserId);
 
                 this.AvailableCategories = this.allEvents
                     .Where(attendedEvent => attendedEvent.Event.Category != null)
@@ -175,9 +175,9 @@ namespace ChatAndEvents.Data.EventsData.ViewModelsCore
                     .Select(groupingByCategory => groupingByCategory.First())
                     .ToList();
 
-                this.FilteredFriends = this.userService.GetFriends(this.CurrentUser.UserId);
+                this.FilteredFriends = this._userService.GetFriends(this.CurrentUser.UserId);
 
-                var unreadCounts = await this.announcementService.GetUnreadCountsForUserAsync(this.CurrentUser.UserId);
+                var unreadCounts = await this._announcementService.GetUnreadCountsForUserAsync(this.CurrentUser.UserId);
                 foreach (var attendedEvent in this.allEvents)
                 {
                     attendedEvent.UnreadAnnouncementCount =
@@ -209,7 +209,7 @@ namespace ChatAndEvents.Data.EventsData.ViewModelsCore
                 throw new InvalidOperationException("CurrentUser is not loaded. Call LoadAsync first.");
             }
 
-            this.CommonEvents = await this.attendedEventService.GetCommonEventsAsync(this.CurrentUser.UserId, friend.UserId);
+            this.CommonEvents = await this._attendedEventService.GetCommonEventsAsync(this.CurrentUser.UserId, friend.UserId);
             this.StateChanged?.Invoke();
         }
 
@@ -263,7 +263,7 @@ namespace ChatAndEvents.Data.EventsData.ViewModelsCore
         {
             try
             {
-                await this.attendedEventService.LeaveEventAsync(attendedEvent.Event.EventId, attendedEvent.User.UserId);
+                await this._attendedEventService.LeaveEventAsync(attendedEvent.Event.EventId, attendedEvent.User.UserId);
                 this.allEvents.Remove(attendedEvent);
                 this.ApplyFiltersAndSort();
             }
@@ -284,7 +284,7 @@ namespace ChatAndEvents.Data.EventsData.ViewModelsCore
             try
             {
                 var newValue = !attendedEvent.IsArchived;
-                await this.attendedEventService.SetArchivedAsync(attendedEvent.Event.EventId, attendedEvent.User.UserId, newValue);
+                await this._attendedEventService.SetArchivedAsync(attendedEvent.Event.EventId, attendedEvent.User.UserId, newValue);
                 attendedEvent.IsArchived = newValue;
                 this.ApplyFiltersAndSort();
             }
@@ -305,7 +305,7 @@ namespace ChatAndEvents.Data.EventsData.ViewModelsCore
             try
             {
                 var newValue = !attendedEvent.IsFavourite;
-                await this.attendedEventService.SetFavouriteAsync(attendedEvent.Event.EventId, attendedEvent.User.UserId, newValue);
+                await this._attendedEventService.SetFavouriteAsync(attendedEvent.Event.EventId, attendedEvent.User.UserId, newValue);
                 attendedEvent.IsFavourite = newValue;
                 this.ApplyFiltersAndSort();
             }

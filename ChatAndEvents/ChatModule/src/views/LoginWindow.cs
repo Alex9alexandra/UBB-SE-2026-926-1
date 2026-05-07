@@ -15,10 +15,10 @@ namespace ChatModule.src.views
 {
     public sealed class LoginWindow : Window
     {
-        private readonly AuthenticationService authenticationService;
-        private readonly TextBlock errorText;
-        private readonly ProgressRing loadingRing;
-        private readonly Button loginButton;
+        private readonly AuthenticationService _authenticationService;
+        private readonly TextBlock _errorText;
+        private readonly ProgressRing _loadingRing;
+        private readonly Button _loginButton;
 
         public LoginViewModel ViewModel { get; }
 
@@ -26,8 +26,8 @@ namespace ChatModule.src.views
 
         public LoginWindow(AuthenticationService authenticationService)
         {
-            this.authenticationService = authenticationService;
-            ViewModel = new LoginViewModel(this.authenticationService);
+            this._authenticationService = authenticationService;
+            ViewModel = new LoginViewModel(this._authenticationService);
 
             var root = new Grid
             {
@@ -59,18 +59,18 @@ namespace ChatModule.src.views
             var passwordBox = new PasswordBox { PlaceholderText = "Password" };
             passwordBox.PasswordChanged += (_, _) => ViewModel.Password = passwordBox.Password;
 
-            loginButton = new Button { Content = "Login", Command = ViewModel.LoginCommand };
+            _loginButton = new Button { Content = "Login", Command = ViewModel.LoginCommand };
             var registerButton = new Button { Content = "Sign Up", Command = ViewModel.GoToRegisterCommand };
             var forgotButton = new Button { Content = "Forgot Password", Command = ViewModel.ForgotPasswordCommand };
 
-            errorText = new TextBlock
+            _errorText = new TextBlock
             {
                 Foreground = new SolidColorBrush(ColorHelper.FromArgb(255, 255, 138, 138)),
                 TextWrapping = TextWrapping.Wrap,
                 Visibility = Visibility.Collapsed
             };
 
-            loadingRing = new ProgressRing
+            _loadingRing = new ProgressRing
             {
                 Width = 30,
                 Height = 30,
@@ -81,11 +81,11 @@ namespace ChatModule.src.views
 
             panel.Children.Add(usernameBox);
             panel.Children.Add(passwordBox);
-            panel.Children.Add(loginButton);
+            panel.Children.Add(_loginButton);
             panel.Children.Add(registerButton);
             panel.Children.Add(forgotButton);
-            panel.Children.Add(errorText);
-            panel.Children.Add(loadingRing);
+            panel.Children.Add(_errorText);
+            panel.Children.Add(_loadingRing);
 
             card.Child = panel;
             root.Children.Add(card);
@@ -115,7 +115,7 @@ namespace ChatModule.src.views
 
         private void OnRegisterRequested()
         {
-            var registerWindow = new RegisterWindow(authenticationService);
+            var registerWindow = new RegisterWindow(_authenticationService);
             registerWindow.ViewModel.RegisterSucceeded += async (userId, username) =>
             {
                 if (LoginSucceeded != null)
@@ -131,7 +131,7 @@ namespace ChatModule.src.views
 
         private void OnForgotPasswordRequested()
         {
-            var forgotPasswordWindow = new ForgotPasswordWindow(authenticationService);
+            var forgotPasswordWindow = new ForgotPasswordWindow(_authenticationService);
             forgotPasswordWindow.ViewModel.NavigateToLoginRequested += () => forgotPasswordWindow.Close();
             forgotPasswordWindow.Activate();
         }
@@ -153,11 +153,11 @@ namespace ChatModule.src.views
 
         private void UpdateUiState()
         {
-            loginButton.IsEnabled = !ViewModel.IsLoading;
-            loadingRing.IsActive = ViewModel.IsLoading;
-            loadingRing.Visibility = ViewModel.IsLoading ? Visibility.Visible : Visibility.Collapsed;
-            errorText.Text = ViewModel.ErrorMessage ?? string.Empty;
-            errorText.Visibility = string.IsNullOrWhiteSpace(ViewModel.ErrorMessage) ? Visibility.Collapsed : Visibility.Visible;
+            _loginButton.IsEnabled = !ViewModel.IsLoading;
+            _loadingRing.IsActive = ViewModel.IsLoading;
+            _loadingRing.Visibility = ViewModel.IsLoading ? Visibility.Visible : Visibility.Collapsed;
+            _errorText.Text = ViewModel.ErrorMessage ?? string.Empty;
+            _errorText.Visibility = string.IsNullOrWhiteSpace(ViewModel.ErrorMessage) ? Visibility.Collapsed : Visibility.Visible;
         }
     }
 }

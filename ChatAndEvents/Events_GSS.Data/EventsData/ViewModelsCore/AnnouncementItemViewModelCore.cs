@@ -11,46 +11,46 @@ using ChatAndEvents.Data.EventsData.Models;
 /// </summary>
 public sealed class AnnouncementItemViewModelCore
 {
-    private readonly Announcement announcementModel;
-    private readonly Guid currentUserId;
+    private readonly Announcement _announcementModel;
+    private readonly Guid _currentUserId;
 
     public AnnouncementItemViewModelCore(Announcement announcementModel, Guid currentUserId)
     {
-        this.announcementModel = announcementModel;
-        this.currentUserId = currentUserId;
+        this._announcementModel = announcementModel;
+        this._currentUserId = currentUserId;
     }
 
     public string PreviewText
     {
         get
         {
-            if (string.IsNullOrWhiteSpace(announcementModel.Message))
+            if (string.IsNullOrWhiteSpace(_announcementModel.Message))
             {
                 return string.Empty;
             }
 
-            var firstLine = announcementModel.Message.Split('\n', 2)[0];
+            var firstLine = _announcementModel.Message.Split('\n', 2)[0];
             return firstLine.Length > 120 ? firstLine[..120] + "…" : firstLine;
         }
     }
 
     public bool HasFullContent =>
-        announcementModel.Message.Contains('\n') || announcementModel.Message.Length > 120;
+        _announcementModel.Message.Contains('\n') || _announcementModel.Message.Length > 120;
 
     public List<ReactionGroup> ReactionGroups =>
-        announcementModel.Reactions
+        _announcementModel.Reactions
             .GroupBy(r => r.Emoji)
             .Select(group => new ReactionGroup
             {
                 Emoji = group.Key,
                 Count = group.Count(),
                 CurrentUserReacted =
-                    group.Any(r => r.Author.Id == currentUserId),
+                    group.Any(r => r.Author.Id == _currentUserId),
             })
             .ToList();
 
     public string? CurrentUserEmoji =>
-        announcementModel.Reactions
-            .FirstOrDefault(r => r.Author.Id == currentUserId)?
+        _announcementModel.Reactions
+            .FirstOrDefault(r => r.Author.Id == _currentUserId)?
             .Emoji;
 }

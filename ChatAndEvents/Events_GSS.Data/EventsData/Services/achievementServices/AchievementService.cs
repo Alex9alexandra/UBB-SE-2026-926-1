@@ -14,7 +14,7 @@ using Microsoft.Data.SqlClient;
 /// </summary>
 public class AchievementService : IAchievementService
 {
-    private readonly IAchievementRepository repository;
+    private readonly IAchievementRepository _repository;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="AchievementService"/> class with the specified achievement repository. The repository is used to access and manage user achievements, allowing the service to check and award achievements based on user activity and milestones. This constructor ensures that the service has the necessary dependencies to perform its functions effectively, enabling it to interact with the underlying data storage for achievements.
@@ -22,7 +22,7 @@ public class AchievementService : IAchievementService
     /// <param name="repository">The achievement repository used to access and manage user achievements.</param>
     public AchievementService(IAchievementRepository repository)
     {
-        this.repository = repository;
+        this._repository = repository;
     }
 
     /// <summary>
@@ -32,13 +32,13 @@ public class AchievementService : IAchievementService
     /// <returns>A task that represents the asynchronous operation, containing the list of achievements for the specified user.</returns>
     public async Task<List<Achievement>> GetUserAchievementsAsync(Guid userId)
     {
-        System.Diagnostics.Debug.WriteLine($"repository null? {this.repository == null}");
+        System.Diagnostics.Debug.WriteLine($"repository null? {this._repository == null}");
 
-        var achievements = await this.repository.GetAllAchievementsAsync();
+        var achievements = await this._repository.GetAllAchievementsAsync();
 
         foreach (var achievement in achievements)
         {
-            achievement.IsUnlocked = await this.repository
+            achievement.IsUnlocked = await this._repository
                 .IsAlreadyUnlockedAsync(userId, achievement.AchievementId);
         }
 
@@ -52,18 +52,18 @@ public class AchievementService : IAchievementService
     /// <returns>A task that represents the asynchronous operation.</returns>
     public async Task CheckAndAwardAchievementsAsync(Guid userId)
     {
-        int attendedEvents = await this.repository.GetAttendedEventsCountAsync(userId);
-        int createdEvents = await this.repository.GetCreatedEventsCountAsync(userId);
-        int approvedQuests = await this.repository.GetApprovedQuestsCountAsync(userId);
-        int memoriesWithPhotos = await this.repository.GetMemoriesWithPhotosCountAsync(userId);
-        int messages = await this.repository.GetMessagesCountAsync(userId);
-        bool hasPerfectEvent = await this.repository.HasPerfectEventAsync(userId);
+        int attendedEvents = await this._repository.GetAttendedEventsCountAsync(userId);
+        int createdEvents = await this._repository.GetCreatedEventsCountAsync(userId);
+        int approvedQuests = await this._repository.GetApprovedQuestsCountAsync(userId);
+        int memoriesWithPhotos = await this._repository.GetMemoriesWithPhotosCountAsync(userId);
+        int messages = await this._repository.GetMessagesCountAsync(userId);
+        bool hasPerfectEvent = await this._repository.HasPerfectEventAsync(userId);
 
-        var achievements = await this.repository.GetAllAchievementsAsync();
+        var achievements = await this._repository.GetAllAchievementsAsync();
 
         foreach (var achievement in achievements)
         {
-            if (await this.repository.IsAlreadyUnlockedAsync(userId, achievement.AchievementId))
+            if (await this._repository.IsAlreadyUnlockedAsync(userId, achievement.AchievementId))
             {
                 continue;
             }
@@ -77,7 +77,7 @@ public class AchievementService : IAchievementService
                 messages,
                 hasPerfectEvent))
             {
-                await this.repository.UnlockAchievementAsync(userId, achievement.AchievementId);
+                await this._repository.UnlockAchievementAsync(userId, achievement.AchievementId);
             }
         }
     }

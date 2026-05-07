@@ -20,12 +20,12 @@ namespace Events_GSS.ViewModels;
 
 public partial class QuestAdminViewModel : ObservableObject
 {
-    private readonly IQuestService questService = App.Services.GetRequiredService<IQuestService>();
-    private readonly Event currentEvent;
+    private readonly IQuestService _questService = App.Services.GetRequiredService<IQuestService>();
+    private readonly Event _currentEvent;
 
     public QuestAdminViewModel(Event forEvent)
     {
-        currentEvent = forEvent;
+        _currentEvent = forEvent;
         Quests = new ObservableCollection<Quest>();
         PresetQuests = new ObservableCollection<Quest>();
 
@@ -102,7 +102,7 @@ public partial class QuestAdminViewModel : ObservableObject
                 PrerequisiteQuest = SelectedPrerequisiteQuest
             };
 
-            var newId = await questService.AddQuestAsync(currentEvent, quest);
+            var newId = await _questService.AddQuestAsync(_currentEvent, quest);
             quest.Id = newId;
             Quests.Add(quest);
 
@@ -139,7 +139,7 @@ public partial class QuestAdminViewModel : ObservableObject
         ErrorMessage = null;
         try
         {
-            var newId = await questService.AddQuestAsync(currentEvent, SelectedPresetQuest);
+            var newId = await _questService.AddQuestAsync(_currentEvent, SelectedPresetQuest);
 
             var addedQuest = new Quest
             {
@@ -177,7 +177,7 @@ public partial class QuestAdminViewModel : ObservableObject
         ErrorMessage = null;
         try
         {
-            await questService.DeleteQuestAsync(SelectedQuest);
+            await _questService.DeleteQuestAsync(SelectedQuest);
             Quests.Remove(SelectedQuest);
         }
         catch (Exception exception)
@@ -200,14 +200,14 @@ public partial class QuestAdminViewModel : ObservableObject
         ErrorMessage = null;
         try
         {
-            var presetQuests = await questService.GetPresetQuestsAsync();
+            var presetQuests = await _questService.GetPresetQuestsAsync();
             PresetQuests.Clear();
             foreach (var presetQuest in presetQuests)
             {
                 PresetQuests.Add(presetQuest);
             }
 
-            var eventQuests = await questService.GetQuestsAsync(currentEvent);
+            var eventQuests = await _questService.GetQuestsAsync(_currentEvent);
             Quests.Clear();
             foreach (var existingQuest in eventQuests)
             {

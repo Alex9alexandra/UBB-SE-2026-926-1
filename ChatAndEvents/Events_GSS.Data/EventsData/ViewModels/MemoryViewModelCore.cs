@@ -19,7 +19,7 @@ namespace ChatAndEvents.Data.EventsData.ViewModels
     /// </summary>
     public class MemoryViewModelCore : INotifyPropertyChanged
     {
-        private readonly IMemoryService memoryService;
+        private readonly IMemoryService _memoryService;
 
         private Event currentEvent = null!;
         private User currentUser = null!;
@@ -39,7 +39,7 @@ namespace ChatAndEvents.Data.EventsData.ViewModels
         /// <param name="memoryService">The memory service.</param>
         public MemoryViewModelCore(IMemoryService memoryService)
         {
-            this.memoryService = memoryService;
+            this._memoryService = memoryService;
 
             this.SortAscendingCommand = new AsyncRelayCommand(() => this.SortInternalAsync(ascending: true));
             this.SortDescendingCommand = new AsyncRelayCommand(() => this.SortInternalAsync(ascending: false));
@@ -173,7 +173,7 @@ namespace ChatAndEvents.Data.EventsData.ViewModels
             this.ErrorMessage = null;
             try
             {
-                await this.memoryService.AddAsync(this.currentEvent, this.currentUser, photoPath, text);
+                await this._memoryService.AddAsync(this.currentEvent, this.currentUser, photoPath, text);
                 await this.LoadMemoriesAsync();
             }
             catch (InvalidOperationException ex) { this.ErrorMessage = ex.Message; }
@@ -191,7 +191,7 @@ namespace ChatAndEvents.Data.EventsData.ViewModels
             this.ErrorMessage = null;
             try
             {
-                await this.memoryService.DeleteAsync(item.Memory, this.currentUser);
+                await this._memoryService.DeleteAsync(item.Memory, this.currentUser);
                 await this.LoadMemoriesAsync();
             }
             catch (UnauthorizedAccessException ex) { this.ErrorMessage = ex.Message; }
@@ -208,7 +208,7 @@ namespace ChatAndEvents.Data.EventsData.ViewModels
             this.ErrorMessage = null;
             try
             {
-                await this.memoryService.ToggleLikeAsync(item.Memory, this.currentUser);
+                await this._memoryService.ToggleLikeAsync(item.Memory, this.currentUser);
                 await this.LoadMemoriesAsync();
             }
             catch (InvalidOperationException ex) { this.ErrorMessage = ex.Message; }
@@ -245,7 +245,7 @@ namespace ChatAndEvents.Data.EventsData.ViewModels
             this.ErrorMessage = null;
             try
             {
-                var photos = await this.memoryService.GetOnlyPhotosAsync(this.currentEvent);
+                var photos = await this._memoryService.GetOnlyPhotosAsync(this.currentEvent);
                 this.GalleryPhotos = new ObservableCollection<string>(photos);
                 this.isGalleryOpen = true;
                 this.NotifyVisibilityChanged();
@@ -269,11 +269,11 @@ namespace ChatAndEvents.Data.EventsData.ViewModels
 
                 if (this.showOnlyMine)
                 {
-                    memoriesList = await this.memoryService.FilterByMyMemoriesAsync(this.currentEvent, this.currentUser);
+                    memoriesList = await this._memoryService.FilterByMyMemoriesAsync(this.currentEvent, this.currentUser);
                 }
                 else
                 {
-                    memoriesList = await this.memoryService.OrderByDateAsync(this.currentEvent, this.currentUser, this.sortAscending);
+                    memoriesList = await this._memoryService.OrderByDateAsync(this.currentEvent, this.currentUser, this.sortAscending);
                 }
 
                 var items = new ObservableCollection<MemoryItemViewModel>();
@@ -281,8 +281,8 @@ namespace ChatAndEvents.Data.EventsData.ViewModels
                 {
                     items.Add(new MemoryItemViewModel(
                         memory,
-                        canDelete: this.memoryService.CanDelete(memory, this.currentUser),
-                        canLike: this.memoryService.CanLike(memory, this.currentUser)));
+                        canDelete: this._memoryService.CanDelete(memory, this.currentUser),
+                        canLike: this._memoryService.CanLike(memory, this.currentUser)));
                 }
 
                 this.Memories = items;

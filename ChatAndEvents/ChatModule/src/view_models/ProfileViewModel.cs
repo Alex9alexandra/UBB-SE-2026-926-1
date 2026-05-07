@@ -7,11 +7,11 @@ using ChatAndEvents.Data.ChatData.services;
 namespace ChatModule.ViewModels;
 public class ProfileViewModel : BaseViewModel
 {
-    private readonly FriendRequestService friendRequestService;
-    private readonly BlockService blockService;
-    private readonly IDirectMessageService directMessageService;
-    private readonly Guid currentUserId;
-    private readonly IProfileService profileService;
+    private readonly FriendRequestService _friendRequestService;
+    private readonly BlockService _blockService;
+    private readonly IDirectMessageService _directMessageService;
+    private readonly Guid _currentUserId;
+    private readonly IProfileService _profileService;
     private bool suppressStatusUpdate;
 
     private User? user;
@@ -164,11 +164,11 @@ public class ProfileViewModel : BaseViewModel
         IProfileService profileService,
         Guid currentUserId)
     {
-        this.friendRequestService = friendRequestService ?? throw new ArgumentNullException(nameof(friendRequestService));
-        this.blockService = blockService ?? throw new ArgumentNullException(nameof(blockService));
-        this.directMessageService = directMessageService ?? throw new ArgumentNullException(nameof(directMessageService));
-        this.currentUserId = currentUserId;
-        this.profileService = profileService ?? throw new ArgumentNullException(nameof(profileService));
+        this._friendRequestService = friendRequestService ?? throw new ArgumentNullException(nameof(friendRequestService));
+        this._blockService = blockService ?? throw new ArgumentNullException(nameof(blockService));
+        this._directMessageService = directMessageService ?? throw new ArgumentNullException(nameof(directMessageService));
+        this._currentUserId = currentUserId;
+        this._profileService = profileService ?? throw new ArgumentNullException(nameof(profileService));
 
         MutualFriends.CollectionChanged += (_, _) =>
         {
@@ -187,8 +187,8 @@ public class ProfileViewModel : BaseViewModel
 
     public async Task LoadAsync(Guid targetUserId)
     {
-        User = await profileService.GetProfileAsync(targetUserId);
-        IsOwnProfile = targetUserId == currentUserId;
+        User = await _profileService.GetProfileAsync(targetUserId);
+        IsOwnProfile = targetUserId == _currentUserId;
 
         suppressStatusUpdate = true;
 
@@ -211,7 +211,7 @@ public class ProfileViewModel : BaseViewModel
 
         if (!IsOwnProfile && User != null)
         {
-            IsBlocked = await blockService.IsBlockedAsync(currentUserId, User.Id);
+            IsBlocked = await _blockService.IsBlockedAsync(_currentUserId, User.Id);
             await RefreshMutualFriendsAsync();
         }
         else
@@ -228,7 +228,7 @@ public class ProfileViewModel : BaseViewModel
             return;
         }
 
-        await profileService.UpdateStatusAsync(User.Id, status);
+        await _profileService.UpdateStatusAsync(User.Id, status);
     }
 
     private async Task SaveProfileAsync()
@@ -238,8 +238,8 @@ public class ProfileViewModel : BaseViewModel
             return;
         }
 
-        await profileService.UpdateProfileAsync(User.Id, EditBio, EditAvatarUrl, EditBirthday);
-        User = await profileService.GetProfileAsync(User.Id);
+        await _profileService.UpdateProfileAsync(User.Id, EditBio, EditAvatarUrl, EditBirthday);
+        User = await _profileService.GetProfileAsync(User.Id);
 
         if (User != null)
         {
@@ -281,7 +281,7 @@ public class ProfileViewModel : BaseViewModel
             return;
         }
 
-        var mutuals = await profileService.GetMutualFriendsAsync(currentUserId, User.Id);
+        var mutuals = await _profileService.GetMutualFriendsAsync(_currentUserId, User.Id);
         foreach (var user in mutuals)
         {
             MutualFriends.Add(user);
@@ -300,13 +300,13 @@ public class ProfileViewModel : BaseViewModel
             return;
         }
 
-        var existingRelationshipStatus = await friendRequestService.GetRelationshipStatusAsync(currentUserId, User.Id);
+        var existingRelationshipStatus = await _friendRequestService.GetRelationshipStatusAsync(_currentUserId, User.Id);
         if (existingRelationshipStatus.HasValue)
         {
             return;
         }
 
-        await friendRequestService.SendFriendRequestAsync(currentUserId, User.Id);
+        await _friendRequestService.SendFriendRequestAsync(_currentUserId, User.Id);
     }
 
     private async Task BlockUserAsync()
@@ -316,7 +316,7 @@ public class ProfileViewModel : BaseViewModel
             return;
         }
 
-        await blockService.BlockUserAsync(currentUserId, User.Id);
+        await _blockService.BlockUserAsync(_currentUserId, User.Id);
         IsBlocked = true;
     }
 
@@ -327,7 +327,7 @@ public class ProfileViewModel : BaseViewModel
             return;
         }
 
-        await blockService.UnblockUserAsync(currentUserId, User.Id);
+        await _blockService.UnblockUserAsync(_currentUserId, User.Id);
         IsBlocked = false;
     }
 
@@ -338,7 +338,7 @@ public class ProfileViewModel : BaseViewModel
             return;
         }
 
-        var conversation = await directMessageService.GetOrCreateAsync(currentUserId, User.Id);
+        var conversation = await _directMessageService.GetOrCreateAsync(_currentUserId, User.Id);
         NavigateToChatRequested?.Invoke(conversation.Id);
     }
 }
