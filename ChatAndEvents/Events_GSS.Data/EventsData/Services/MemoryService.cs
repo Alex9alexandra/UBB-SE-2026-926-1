@@ -90,8 +90,8 @@ namespace ChatAndEvents.Data.EventsData.Services
                 PhotoPath = hasPhoto ? photoPath : null,
                 Text = hasText ? text : null,
                 CreatedAt = DateTime.UtcNow,
-                Event = currentEvent,
-                Author = author
+                EventId = currentEvent.EventId,
+                AuthorId = author.UserId
             };
 
             await memoryRepository.AddAsync(memory);
