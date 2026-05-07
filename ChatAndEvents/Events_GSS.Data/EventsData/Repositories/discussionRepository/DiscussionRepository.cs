@@ -11,16 +11,17 @@ using Microsoft.EntityFrameworkCore;
 
 public class DiscussionRepository : IDiscussionRepository
 {
-    private readonly AppDbContext _db;
+    private readonly IDbContextFactory<AppDbContext> _contextFactory;
 
-    public DiscussionRepository(AppDbContext db)
+    public DiscussionRepository(IDbContextFactory<AppDbContext> contextFactory)
     {
-        _db = db;
+        _contextFactory = contextFactory;
     }
     
     public async Task<List<DiscussionMessage>> GetByEventAsync(int eventId, Guid currentUserId)
     {
-        return await _db.DiscussionMessages
+        using var db = await _contextFactory.CreateDbContextAsync();
+        return await db.DiscussionMessages
             .AsNoTracking()
             .Where(d => d.AssociatedEvent!.EventId == eventId)
             .Include(d => d.Author)
@@ -34,7 +35,8 @@ public class DiscussionRepository : IDiscussionRepository
 
     public async Task<DiscussionMessage?> GetByIdAsync(int messageId)
     {
-        return await _db.DiscussionMessages
+        using var db = await _contextFactory.CreateDbContextAsync();
+        return await db.DiscussionMessages
             .AsNoTracking()
             .Include(d => d.Author)
             .Include(d => d.ReplyTo)
@@ -44,13 +46,25 @@ public class DiscussionRepository : IDiscussionRepository
             .FirstOrDefaultAsync(d => d.Id == messageId);
     }
 
-    public async Task<int> AddAsync(DiscussionMessage message)
+    public async Task<int> AddAsync(DiscussionMessage message, int eventId, Guid userId, int? replyToId)
     {
-        if (message.AssociatedEvent == null || message.Author == null)
-            throw new ArgumentException("Event and Author are required.", nameof(message));
+        using var db = await _contextFactory.CreateDbContextAsync();
 
-        _db.DiscussionMessages.Add(message);
-        await _db.SaveChangesAsync();
+        message.AssociatedEvent = await db.Events.FindAsync(eventId)
+            ?? throw new ArgumentException("Event not found.");
+
+        // Find the user through AttendedEvents which uses EventsData.Models.User
+        message.Author = await db.AttendedEvents
+            .Where(ae => ae.EventId == eventId && ae.User.UserId == userId)
+            .Select(ae => ae.User)
+            .FirstOrDefaultAsync()
+            ?? throw new ArgumentException("User not found as participant.");
+
+        if (replyToId.HasValue)
+            message.ReplyTo = await db.DiscussionMessages.FindAsync(replyToId.Value);
+
+        db.DiscussionMessages.Add(message);
+        await db.SaveChangesAsync();
         return message.Id;
     }
 
@@ -58,21 +72,23 @@ public class DiscussionRepository : IDiscussionRepository
     {
         await DetachRepliesAsync(messageId);
         
-        await _db.DiscussionReactions
+        using var db = await _contextFactory.CreateDbContextAsync();
+        await db.DiscussionReactions
             .Where(r => r.Message!.Id == messageId)
             .ExecuteDeleteAsync();
         
-        var message = await _db.DiscussionMessages.FindAsync(messageId);
+        var message = await db.DiscussionMessages.FindAsync(messageId);
         if (message != null)
         {
-            _db.DiscussionMessages.Remove(message);
-            await _db.SaveChangesAsync();
+            db.DiscussionMessages.Remove(message);
+            await db.SaveChangesAsync();
         }
     }
 
     public async Task<DateTime?> GetLastUserMessageDateAsync(int eventId, Guid userId)
     {
-        return await _db.DiscussionMessages
+        using var db = await _contextFactory.CreateDbContextAsync();
+        return await db.DiscussionMessages
             .AsNoTracking()
             .Where(d => d.AssociatedEvent!.EventId == eventId && d.Author!.UserId == userId)
             .OrderByDescending(d => d.DateCreated)
@@ -82,7 +98,8 @@ public class DiscussionRepository : IDiscussionRepository
 
     public async Task DetachRepliesAsync(int messageId)
     {
-        await _db.DiscussionMessages
+        using var db = await _contextFactory.CreateDbContextAsync();
+        await db.DiscussionMessages
             .Where(d => d.ReplyTo!.Id == messageId)
             .ExecuteUpdateAsync(setters => 
                 setters.SetProperty(d => d.ReplyTo, (DiscussionMessage?)null));
@@ -90,35 +107,35 @@ public class DiscussionRepository : IDiscussionRepository
     
     public async Task AddReactionAsync(int messageId, Guid userId, string emoji)
     {
-        var message = await _db.DiscussionMessages.FindAsync(messageId);
+        using var db = await _contextFactory.CreateDbContextAsync();
+        var message = await db.DiscussionMessages.FindAsync(messageId);
         if (message == null)
             throw new InvalidOperationException("Message not found.");
 
-        var user = new User { UserId = userId };  
-        if (user == null)
-            throw new InvalidOperationException("User not found.");
 
         var reaction = new DiscussionReaction
         {
-            Message = message,
-            Author = user,
+            MessageId = messageId,
+            AuthorId = userId,
             Emoji = emoji
         };
 
-        _db.DiscussionReactions.Add(reaction);
-        await _db.SaveChangesAsync();
+        db.DiscussionReactions.Add(reaction);
+        await db.SaveChangesAsync();
     }
 
     public async Task RemoveReactionAsync(int messageId, Guid userId)
     {
-        await _db.DiscussionReactions
+        using var db = await _contextFactory.CreateDbContextAsync();
+        await db.DiscussionReactions
             .Where(r => r.Message!.Id == messageId && r.Author!.UserId == userId)
             .ExecuteDeleteAsync();
     }
 
     public async Task<DiscussionReaction?> GetReactionAsync(int messageId, Guid userId)
     {
-        return await _db.DiscussionReactions
+        using var db = await _contextFactory.CreateDbContextAsync();
+        return await db.DiscussionReactions
             .AsNoTracking()
             .Include(r => r.Author)
             .Include(r => r.Message)
@@ -127,7 +144,8 @@ public class DiscussionRepository : IDiscussionRepository
 
     public async Task<List<DiscussionReaction>> GetReactionsAsync(int messageId)
     {
-        return await _db.DiscussionReactions
+        using var db = await _contextFactory.CreateDbContextAsync();
+        return await db.DiscussionReactions
             .AsNoTracking()
             .Where(r => r.Message!.Id == messageId)
             .Include(r => r.Author)
@@ -136,7 +154,8 @@ public class DiscussionRepository : IDiscussionRepository
 
     public async Task UpdateReactionAsync(int messageId, Guid userId, string emoji)
     {
-        await _db.DiscussionReactions
+        using var db = await _contextFactory.CreateDbContextAsync();
+        await db.DiscussionReactions
             .Where(r => r.Message!.Id == messageId && r.Author!.UserId == userId)
             .ExecuteUpdateAsync(setters => 
                 setters.SetProperty(r => r.Emoji, emoji));
@@ -144,7 +163,8 @@ public class DiscussionRepository : IDiscussionRepository
     
     public async Task<DiscussionMute?> GetMuteAsync(int eventId, Guid userId)
     {
-        return await _db.DiscussionMutes
+        using var db = await _contextFactory.CreateDbContextAsync();
+        return await db.DiscussionMutes
             .AsNoTracking()
             .Include(m => m.MutedUser)
             .Include(m => m.MutedBy)
@@ -153,7 +173,8 @@ public class DiscussionRepository : IDiscussionRepository
 
     public async Task DeleteExistingMuteAsync(int eventId, Guid userId)
     {
-        await _db.DiscussionMutes
+        using var db = await _contextFactory.CreateDbContextAsync();
+        await db.DiscussionMutes
             .Where(m => m.DiscussionId == eventId && m.UserId == userId)
             .ExecuteDeleteAsync();
     }
@@ -163,30 +184,34 @@ public class DiscussionRepository : IDiscussionRepository
         if (mute.MutedUser == null || mute.MutedBy == null)
             throw new ArgumentException("MutedUser and MutedBy are required.", nameof(mute));
 
-        _db.DiscussionMutes.Add(mute);
-        await _db.SaveChangesAsync();
+        using var db = await _contextFactory.CreateDbContextAsync();
+        db.DiscussionMutes.Add(mute);
+        await db.SaveChangesAsync();
     }
 
     public async Task UnmuteAsync(int eventId, Guid userId)
     {
-        await _db.DiscussionMutes
+        using var db = await _contextFactory.CreateDbContextAsync();
+        await db.DiscussionMutes
             .Where(m => m.DiscussionId == eventId && m.UserId == userId)
             .ExecuteDeleteAsync();
     }
     
     public async Task SetSlowModeAsync(int eventId, int? seconds)
     {
-        var @event = await _db.Events.FindAsync(eventId);
+        using var db = await _contextFactory.CreateDbContextAsync();
+        var @event = await db.Events.FindAsync(eventId);
         if (@event != null)
         {
             @event.SlowModeSeconds = seconds;
-            await _db.SaveChangesAsync();
+            await db.SaveChangesAsync();
         }
     }
     
     public async Task<List<User>> GetEventParticipantsAsync(int eventId)
     {
-        return await _db.AttendedEvents
+        using var db = await _contextFactory.CreateDbContextAsync();
+        return await db.AttendedEvents
             .AsNoTracking()
             .Where(ae => ae.EventId == eventId)
             .Select(ae => ae.User)

@@ -6,16 +6,20 @@ using ChatAndEvents.Data.Database;
 using ChatAndEvents.Data.EventsData.Models;
 using Microsoft.EntityFrameworkCore;
 
+//private readonly IDbContextFactory<AppDbContext> _contextFactory;
+//IDbContextFactory<AppDbContext> contextFactory
+//_contextFactory = contextFactory;
+//using var db = await _contextFactory.CreateDbContextAsync();
 
 public class ReputationRepository : IReputationRepository
 {
-    private readonly AppDbContext _db;
-    
-    public ReputationRepository(AppDbContext db)
+    private readonly IDbContextFactory<AppDbContext> _contextFactory;
+
+    public ReputationRepository(IDbContextFactory<AppDbContext> contextFactory)
     {
-        _db = db;
+        _contextFactory = contextFactory;
     }
-    
+
     public async Task SetReputationAsync(Guid userId, int reputationPoints, string tier)
     {
         await this.SetReputationAsync(new UserReputationScore
@@ -30,27 +34,29 @@ public class ReputationRepository : IReputationRepository
     {
         if (reputationScore == null)
             throw new ArgumentException("Reputation score is required.", nameof(reputationScore));
-        
-        var existingScore = await _db.UserReputationScores
+
+        using var db = await _contextFactory.CreateDbContextAsync();
+        var existingScore = await db.UserReputationScores
             .FirstOrDefaultAsync(u => u.UserId == reputationScore.UserId);
 
         if (existingScore == null)
         {
-            _db.UserReputationScores.Add(reputationScore);
+            db.UserReputationScores.Add(reputationScore);
         }
         else
         {
             existingScore.ReputationPoints = reputationScore.ReputationPoints;
             existingScore.Tier = reputationScore.Tier;
-            _db.UserReputationScores.Update(existingScore);
+            db.UserReputationScores.Update(existingScore);
         }
 
-        await _db.SaveChangesAsync();
+        await db.SaveChangesAsync();
     }
     
     public async Task<UserReputationScore> GetReputationScoreAsync(Guid userId)
     {
-        var reputationScore = await _db.UserReputationScores
+        using var db = await _contextFactory.CreateDbContextAsync();
+        var reputationScore = await db.UserReputationScores
             .AsNoTracking()
             .FirstOrDefaultAsync(u => u.UserId == userId);
         

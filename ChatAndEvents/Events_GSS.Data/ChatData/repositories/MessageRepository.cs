@@ -11,21 +11,23 @@ namespace ChatAndEvents.Data.ChatData.repositories
 {
     public class MessageRepository : IMessageRepository
     {
-        private readonly AppDbContext _db;
+        private readonly IDbContextFactory<AppDbContext> _contextFactory;
 
-        public MessageRepository(AppDbContext db)
+        public MessageRepository(IDbContextFactory<AppDbContext> contextFactory)
         {
-            _db = db ?? throw new ArgumentNullException(nameof(db));
+            _contextFactory = contextFactory;
         }
 
         public async Task<Message?> GetByIdAsync(Guid id)
         {
-            return await _db.Messages.FirstOrDefaultAsync(message => message.Id == id);
+            using var db = await _contextFactory.CreateDbContextAsync();
+            return await db.Messages.FirstOrDefaultAsync(message => message.Id == id);
         }
 
         public async Task<List<Message>> GetAllForConversationAsync(Guid conversationId)
         {
-            return await _db.Messages
+            using var db = await _contextFactory.CreateDbContextAsync();
+            return await db.Messages
                 .Where(message => message.ConversationId == conversationId)
                 .OrderBy(message => message.CreatedAt)
                 .ToListAsync();
@@ -33,7 +35,8 @@ namespace ChatAndEvents.Data.ChatData.repositories
 
         public async Task<List<Message>> GetByConversationAsync(Guid conversationId, int skip, int take)
         {
-            return await _db.Messages
+            using var db = await _contextFactory.CreateDbContextAsync();
+            return await db.Messages
                 .Where(message => message.ConversationId == conversationId && message.MessageType != MessageType.Reaction)
                 .OrderBy(message => message.CreatedAt)
                 .Skip(skip)
@@ -43,44 +46,49 @@ namespace ChatAndEvents.Data.ChatData.repositories
 
         public async Task CreateAsync(Message m)
         {
-            _db.Messages.Add(m);
-            await _db.SaveChangesAsync();
+            using var db = await _contextFactory.CreateDbContextAsync();
+            db.Messages.Add(m);
+            await db.SaveChangesAsync();
         }
 
         public async Task UpdateContentAsync(Guid id, string newContent)
         {
-            var message = await _db.Messages.FindAsync(id);
+            using var db = await _contextFactory.CreateDbContextAsync();
+            var message = await db.Messages.FindAsync(id);
             if (message == null)
             {
                 return;
             }
 
             message.Content = newContent;
-            await _db.SaveChangesAsync();
+            await db.SaveChangesAsync();
         }
 
         public async Task SetPinExpiresAtAsync(Guid id, DateTime? expiresAt)
         {
-            var message = await _db.Messages.FindAsync(id);
+            using var db = await _contextFactory.CreateDbContextAsync();
+            var message = await db.Messages.FindAsync(id);
             if (message == null)
             {
                 return;
             }
 
             message.PinExpiresAt = expiresAt;
-            await _db.SaveChangesAsync();
+            await db.SaveChangesAsync();
         }
 
         public async Task<List<Message>> GetReactionsForMessageAsync(Guid parentMessageId)
         {
-            return await _db.Messages
+            using var db = await _contextFactory.CreateDbContextAsync();
+            return await db.Messages
                 .Where(message => message.MessageType == MessageType.Reaction && message.ParentMessageId == parentMessageId)
                 .ToListAsync();
         }
 
         public async Task<List<Message>> SearchInConversationAsync(Guid conversationId, string query)
         {
-            return await _db.Messages
+            using var db = await _contextFactory.CreateDbContextAsync();
+            return await db.Messages
                 .Where(message => message.ConversationId == conversationId &&
                                   message.Content != null &&
                                   EF.Functions.Like(message.Content, $"%{query}%"))
@@ -90,14 +98,16 @@ namespace ChatAndEvents.Data.ChatData.repositories
 
         public async Task<List<Message>> GetSystemMessagesAsync(Guid conversationId)
         {
-            return await _db.Messages
+            using var db = await _contextFactory.CreateDbContextAsync();
+            return await db.Messages
                 .Where(message => message.ConversationId == conversationId && message.MessageType == MessageType.System)
                 .ToListAsync();
         }
 
         public async Task<Message?> GetLastMessageAsync(Guid conversationId)
         {
-            return await _db.Messages
+            using var db = await _contextFactory.CreateDbContextAsync();
+            return await db.Messages
                 .Where(message => message.ConversationId == conversationId && message.MessageType != MessageType.Reaction)
                 .OrderByDescending(message => message.CreatedAt)
                 .FirstOrDefaultAsync();
@@ -105,13 +115,14 @@ namespace ChatAndEvents.Data.ChatData.repositories
 
         public async Task<int> CountUnreadAsync(Guid conversationId, Guid lastReadMessageId, Guid userId)
         {
-            var lastReadMessage = await _db.Messages.FirstOrDefaultAsync(message => message.Id == lastReadMessageId);
+            using var db = await _contextFactory.CreateDbContextAsync();
+            var lastReadMessage = await db.Messages.FirstOrDefaultAsync(message => message.Id == lastReadMessageId);
             if (lastReadMessage == null)
             {
                 return 0;
             }
 
-            return await _db.Messages.CountAsync(message =>
+            return await db.Messages.CountAsync(message =>
                 message.ConversationId == conversationId &&
                 message.CreatedAt > lastReadMessage.CreatedAt &&
                 message.MessageType != MessageType.Reaction &&
@@ -120,7 +131,8 @@ namespace ChatAndEvents.Data.ChatData.repositories
 
         public async Task<Guid?> GetLatestReadableMessageIdAsync(Guid conversationId, Guid userId)
         {
-            return await _db.Messages
+            using var db = await _contextFactory.CreateDbContextAsync();
+            return await db.Messages
                 .Where(message =>
                     message.ConversationId == conversationId &&
                     message.MessageType != MessageType.Reaction &&
@@ -132,7 +144,8 @@ namespace ChatAndEvents.Data.ChatData.repositories
 
         public async Task<int> CountUnreadFromStartAsync(Guid conversationId, Guid userId)
         {
-            return await _db.Messages.CountAsync(message =>
+            using var db = await _contextFactory.CreateDbContextAsync();
+            return await db.Messages.CountAsync(message =>
                 message.ConversationId == conversationId &&
                 message.MessageType != MessageType.Reaction &&
                 (message.UserId == null || message.UserId != userId));
@@ -140,14 +153,15 @@ namespace ChatAndEvents.Data.ChatData.repositories
 
         public async Task<int> CountReadByAsync(Guid conversationId, Guid messageId)
         {
-            var targetMessage = await _db.Messages.FirstOrDefaultAsync(message => message.Id == messageId);
+            using var db = await _contextFactory.CreateDbContextAsync();
+            var targetMessage = await db.Messages.FirstOrDefaultAsync(message => message.Id == messageId);
             if (targetMessage == null)
             {
                 return 0;
             }
 
-            return await (from participant in _db.Participants
-                          join lastRead in _db.Messages on participant.LastReadMessageId equals lastRead.Id
+            return await (from participant in db.Participants
+                          join lastRead in db.Messages on participant.LastReadMessageId equals lastRead.Id
                           where participant.ConversationId == conversationId &&
                                 lastRead.ConversationId == conversationId &&
                                 lastRead.CreatedAt >= targetMessage.CreatedAt
@@ -156,14 +170,15 @@ namespace ChatAndEvents.Data.ChatData.repositories
 
         public async Task<List<Guid>> GetReadByUserIdsAsync(Guid conversationId, Guid messageId)
         {
-            var targetMessage = await _db.Messages.FirstOrDefaultAsync(message => message.Id == messageId);
+            using var db = await _contextFactory.CreateDbContextAsync();
+            var targetMessage = await db.Messages.FirstOrDefaultAsync(message => message.Id == messageId);
             if (targetMessage == null)
             {
                 return new List<Guid>();
             }
 
-            return await (from participant in _db.Participants
-                          join lastRead in _db.Messages on participant.LastReadMessageId equals lastRead.Id
+            return await (from participant in db.Participants
+                          join lastRead in db.Messages on participant.LastReadMessageId equals lastRead.Id
                           where participant.ConversationId == conversationId &&
                                 lastRead.ConversationId == conversationId &&
                                 lastRead.CreatedAt >= targetMessage.CreatedAt
@@ -173,48 +188,52 @@ namespace ChatAndEvents.Data.ChatData.repositories
 
         public async Task SetEditedAsync(Guid id)
         {
-            var message = await _db.Messages.FindAsync(id);
+            using var db = await _contextFactory.CreateDbContextAsync();
+            var message = await db.Messages.FindAsync(id);
             if (message == null)
             {
                 return;
             }
 
             message.IsEdited = true;
-            await _db.SaveChangesAsync();
+            await db.SaveChangesAsync();
         }
 
         public async Task SoftDeleteAsync(Guid id)
         {
-            var message = await _db.Messages.FindAsync(id);
+            using var db = await _contextFactory.CreateDbContextAsync();
+            var message = await db.Messages.FindAsync(id);
             if (message == null)
             {
                 return;
             }
 
             message.IsDeleted = true;
-            await _db.SaveChangesAsync();
+            await db.SaveChangesAsync();
         }
 
         public async Task UnsoftDeleteAsync(Guid id)
         {
-            var message = await _db.Messages.FindAsync(id);
+            using var db = await _contextFactory.CreateDbContextAsync();
+            var message = await db.Messages.FindAsync(id);
             if (message == null)
             {
                 return;
             }
 
             message.IsDeleted = false;
-            await _db.SaveChangesAsync();
+            await db.SaveChangesAsync();
         }
 
         public async Task DeleteByConversationAsync(Guid conversationId)
         {
-            var messages = await _db.Messages
+            using var db = await _contextFactory.CreateDbContextAsync();
+            var messages = await db.Messages
                 .Where(message => message.ConversationId == conversationId)
                 .ToListAsync();
 
-            _db.Messages.RemoveRange(messages);
-            await _db.SaveChangesAsync();
+            db.Messages.RemoveRange(messages);
+            await db.SaveChangesAsync();
         }
     }
 }

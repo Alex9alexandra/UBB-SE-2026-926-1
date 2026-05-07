@@ -6,27 +6,28 @@ using Microsoft.EntityFrameworkCore;
 
 public class EventStatisticsRepository : IEventStatisticsRepository
 {
-    private readonly AppDbContext _db;
+    private readonly IDbContextFactory<AppDbContext> _contextFactory;
 
-    public EventStatisticsRepository(AppDbContext db)
+    public EventStatisticsRepository(IDbContextFactory<AppDbContext> contextFactory)
     {
-        _db = db;
+        _contextFactory = contextFactory;
     }
 
     public async Task<ParticipantOverview> GetParticipantOverviewAsync(int eventId)
     {
-        var totalParticipants = await _db.AttendedEvents
+        using var db = await _contextFactory.CreateDbContextAsync();
+        var totalParticipants = await db.AttendedEvents
             .CountAsync(ae => ae.EventId == eventId);
 
-        var discussionUsers = _db.Discussions
+        var discussionUsers = db.Discussions
             .Where(d => EF.Property<int>(d, "EventId") == eventId)
             .Select(d => EF.Property<Guid>(d, "CreatorId"));
 
-        var memoryUsers = _db.Memories
+        var memoryUsers = db.Memories
             .Where(m => m.EventId == eventId)
             .Select(m => m.AuthorId);
 
-        var questUsers = _db.QuestMemories
+        var questUsers = db.QuestMemories
             .Where(qm => qm.ForQuest.EventId == eventId)
             .Select(qm => qm.Proof.AuthorId);
 
@@ -45,13 +46,14 @@ public class EventStatisticsRepository : IEventStatisticsRepository
 
     public async Task<EngagementBreakdown> GetEngagementBreakdownAsync(int eventId)
     {
-        var totalMessages = await _db.Discussions
+        using var db = await _contextFactory.CreateDbContextAsync();
+        var totalMessages = await db.Discussions
             .CountAsync(d => EF.Property<int>(d, "EventId") == eventId);
 
-        var totalMemories = await _db.Memories
+        var totalMemories = await db.Memories
             .CountAsync(m => m.EventId == eventId);
 
-        var questSubmissions = _db.QuestMemories
+        var questSubmissions = db.QuestMemories
             .Where(qm => qm.ForQuest.EventId == eventId);
 
         var totalSubmissions = await questSubmissions.CountAsync();
@@ -74,25 +76,26 @@ public class EventStatisticsRepository : IEventStatisticsRepository
 
     public async Task<List<LeaderboardEntry>> GetLeaderboardAsync(int eventId)
     {
-        var participants = await _db.AttendedEvents
+        using var db = await _contextFactory.CreateDbContextAsync();
+        var participants = await db.AttendedEvents
             .Include(ae => ae.User)
             .ThenInclude(u => u.ReputationScore)
             .Where(ae => ae.EventId == eventId)
             .ToListAsync();
 
-        var messageCounts = await _db.Discussions
+        var messageCounts = await db.Discussions
             .Where(d => EF.Property<int>(d, "EventId") == eventId)
             .GroupBy(d => EF.Property<Guid>(d, "CreatorId"))
             .Select(g => new { UserId = g.Key, Count = g.Count() })
             .ToDictionaryAsync(x => x.UserId, x => x.Count);
 
-        var memoryCounts = await _db.Memories
+        var memoryCounts = await db.Memories
             .Where(m => m.EventId == eventId)
             .GroupBy(m => m.AuthorId)
             .Select(g => new { UserId = g.Key, Count = g.Count() })
             .ToDictionaryAsync(x => x.UserId, x => x.Count);
 
-        var questCounts = await _db.QuestMemories
+        var questCounts = await db.QuestMemories
             .Where(qm => qm.ForQuest.EventId == eventId && qm.ProofStatus == QuestMemoryStatus.Approved)
             .GroupBy(qm => qm.Proof.AuthorId)
             .Select(g => new { UserId = g.Key, Count = g.Count() })
@@ -124,12 +127,13 @@ public class EventStatisticsRepository : IEventStatisticsRepository
 
     public async Task<List<QuestAnalyticsEntry>> GetQuestAnalyticsAsync(int eventId)
     {
-        var quests = await _db.Set<Quest>()
+        using var db = await _contextFactory.CreateDbContextAsync();
+        var quests = await db.Set<Quest>()
             .Where(q => q.EventId == eventId)
             .Select(q => new { q.Id, q.Name })
             .ToListAsync();
 
-        var completedCounts = await _db.QuestMemories
+        var completedCounts = await db.QuestMemories
             .Where(qm => qm.ForQuest.EventId == eventId && qm.ProofStatus == QuestMemoryStatus.Approved)
             .GroupBy(qm => qm.QuestId)
             .Select(g => new { QuestId = g.Key, Count = g.Count() })

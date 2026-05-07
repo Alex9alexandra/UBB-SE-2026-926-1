@@ -6,24 +6,26 @@ namespace ChatAndEvents.Data.EventsData.Repositories;
 
 public class QuestRepository : IQuestRepository
 {
-    private readonly AppDbContext _db;
+    private readonly IDbContextFactory<AppDbContext> _contextFactory;
 
-    public QuestRepository(AppDbContext db)
+    public QuestRepository(IDbContextFactory<AppDbContext> contextFactory)
     {
-        _db = db;
+        _contextFactory = contextFactory;
     }
 
     public async Task<int> AddQuestAsync(Event toEvent, Quest quest)
     {
         quest.EventId = toEvent.EventId;
-        _db.Set<Quest>().Add(quest);
-        await _db.SaveChangesAsync();
+        using var db = await _contextFactory.CreateDbContextAsync();
+        db.Set<Quest>().Add(quest);
+        await db.SaveChangesAsync();
         return quest.Id;
     }
 
     public async Task<List<Quest>> GetQuestsAsync(Event fromEvent)
     {
-        return await _db.Set<Quest>()
+        using var db = await _contextFactory.CreateDbContextAsync();
+        return await db.Set<Quest>()
             .Include(q => q.PrerequisiteQuest)
             .Where(q => q.EventId == fromEvent.EventId)
             .ToListAsync();
@@ -31,7 +33,8 @@ public class QuestRepository : IQuestRepository
 
     public async Task<Quest> GetQuestByIdAsync(int questId)
     {
-        return await _db.Set<Quest>()
+        using var db = await _contextFactory.CreateDbContextAsync();
+        return await db.Set<Quest>()
             .Include(q => q.PrerequisiteQuest)
             .FirstOrDefaultAsync(q => q.Id == questId);
     }
@@ -39,15 +42,16 @@ public class QuestRepository : IQuestRepository
     public async Task DeleteQuestAsync(Quest quest)
     {
         // Delete QuestMemories first due to NoAction on delete
-        await _db.Set<QuestMemory>()
+        using var db = await _contextFactory.CreateDbContextAsync();
+        await db.Set<QuestMemory>()
             .Where(qm => qm.QuestId == quest.Id)
             .ExecuteDeleteAsync();
 
-        var questEntity = await _db.Set<Quest>().FindAsync(quest.Id);
+        var questEntity = await db.Set<Quest>().FindAsync(quest.Id);
         if (questEntity != null)
         {
-            _db.Set<Quest>().Remove(questEntity);
-            await _db.SaveChangesAsync();
+            db.Set<Quest>().Remove(questEntity);
+            await db.SaveChangesAsync();
         }
     }
 }

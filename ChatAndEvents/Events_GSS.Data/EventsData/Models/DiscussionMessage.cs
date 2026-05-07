@@ -23,6 +23,7 @@ public class DiscussionMessage
     // Navigation
     public Event? AssociatedEvent { get; set; }
     public User? Author { get; set; }
+
     public DiscussionMessage? ReplyTo { get; set; }
 
     public List<DiscussionReaction> Reactions { get; set; }

@@ -63,7 +63,7 @@
             </PivotItem>
 
             <PivotItem Header="Discussions">
-                <views:DiscussionControl x:Name="DiscussionTab" />
+                <views:DiscussionControl x:Name="DiscussionTab"  />
             </PivotItem>
 
             <PivotItem Header="Quests">

@@ -9,11 +9,11 @@ namespace ChatAndEvents.Data.EventsData.Repositories
 {
     public class AttendedEventRepository : IAttendedEventRepository
     {
-        private readonly AppDbContext _db;
+        private readonly IDbContextFactory<AppDbContext> _contextFactory;
 
-        public AttendedEventRepository(AppDbContext db)
+        public AttendedEventRepository(IDbContextFactory<AppDbContext> contextFactory)
         {
-            this._db = db;
+            this._contextFactory = contextFactory;
         }
 
         public async Task AddAsync(AttendedEvent attendedEventEntity)
@@ -22,43 +22,48 @@ namespace ChatAndEvents.Data.EventsData.Repositories
             {
                 throw new ArgumentException("Event and User are required.", nameof(attendedEventEntity));
             }
-            _db.AttendedEvents.Add(attendedEventEntity);
-            await _db.SaveChangesAsync();
+            using var db = await _contextFactory.CreateDbContextAsync();
+            db.AttendedEvents.Add(attendedEventEntity);
+            await db.SaveChangesAsync();
         }
 
         public async Task DeleteAsync(int eventId, Guid userId)
         {
-            var attendedEvent = await _db.AttendedEvents.FindAsync(eventId, userId);
+            using var db = await _contextFactory.CreateDbContextAsync();
+            var attendedEvent = await db.AttendedEvents.FindAsync(eventId, userId);
             if (attendedEvent != null)
             {
-                _db.AttendedEvents.Remove(attendedEvent);
-                await _db.SaveChangesAsync();
+                db.AttendedEvents.Remove(attendedEvent);
+                await db.SaveChangesAsync();
             }
         }
 
         public async Task UpdateIsArchivedAsync(int eventId, Guid userId, bool isArchived)
         {
-            var attendedEvent = await _db.AttendedEvents.FindAsync(eventId, userId);
+            using var db = await _contextFactory.CreateDbContextAsync();
+            var attendedEvent = await db.AttendedEvents.FindAsync(eventId, userId);
             if (attendedEvent != null)
             {
                 attendedEvent.IsArchived = isArchived;
-                await _db.SaveChangesAsync();
+                await db.SaveChangesAsync();
             }
         }
 
         public async Task UpdateIsFavouriteAsync(int eventId, Guid userId, bool isFavourite)
         {
-            var attendedEvent = await _db.AttendedEvents.FindAsync(eventId, userId);
+            using var db = await _contextFactory.CreateDbContextAsync();
+            var attendedEvent = await db.AttendedEvents.FindAsync(eventId, userId);
             if (attendedEvent != null)
             {
                 attendedEvent.IsFavourite = isFavourite;
-                await _db.SaveChangesAsync();
+                await db.SaveChangesAsync();
             }
         }
 
         public async Task<AttendedEvent?> GetAsync(int eventId, Guid userId)
         {
-            return await _db.AttendedEvents
+            using var db = await _contextFactory.CreateDbContextAsync();
+            return await db.AttendedEvents
                 .Include(e => e.Event)
                 .Include(e => e.User)
                 .FirstOrDefaultAsync(e => e.EventId == eventId && e.UserId == userId);
@@ -66,7 +71,8 @@ namespace ChatAndEvents.Data.EventsData.Repositories
 
         public async Task<List<AttendedEvent>> GetByUserIdAsync(Guid userId)
         {
-            return await _db.AttendedEvents
+            using var db = await _contextFactory.CreateDbContextAsync();
+            return await db.AttendedEvents
                 .Include(e => e.Event)
                 .Include(e => e.User)
                 .Where(e => e.UserId == userId)
@@ -75,13 +81,14 @@ namespace ChatAndEvents.Data.EventsData.Repositories
 
         public async Task<List<AttendedEvent>> GetCommonEventsAsync(Guid userId, Guid friendId)
         {
-            var userEvents = await _db.AttendedEvents
+            using var db = await _contextFactory.CreateDbContextAsync();
+            var userEvents = await db.AttendedEvents
                 .Include(e => e.Event)
                 .Include(e => e.User)
                 .Where(e => e.UserId == userId)
                 .ToListAsync();
 
-            var friendEvents = await _db.AttendedEvents
+            var friendEvents = await db.AttendedEvents
                 .Include(e => e.Event)
                 .Include(e => e.User)
                 .Where(e => e.UserId == friendId)
@@ -92,7 +99,8 @@ namespace ChatAndEvents.Data.EventsData.Repositories
 
         public async Task<int> GetAttendeeCountAsync(int eventId)
         {
-            return await _db.AttendedEvents
+            using var db = await _contextFactory.CreateDbContextAsync();
+            return await db.AttendedEvents
                 .Include(e => e.Event)
                 .Include(e => e.User)
                 .Where(e => e.EventId == eventId)

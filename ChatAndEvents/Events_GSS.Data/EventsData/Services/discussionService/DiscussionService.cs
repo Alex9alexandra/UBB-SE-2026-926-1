@@ -111,15 +111,10 @@ public class DiscussionService : IDiscussionService
         // ── Persist ──────────────────────────────────────────
         var message = new DiscussionMessage(0, text?.Trim(), DateTime.UtcNow)
         {
-            MediaPath = mediaPath,
-            AssociatedEvent = currentEvent,
-            Author = new User { UserId = userId },
-            ReplyTo = replyToId.HasValue
-                ? new DiscussionMessage(replyToId.Value, null, DateTime.MinValue)
-                : null
+            MediaPath = mediaPath
         };
 
-        await repo.AddAsync(message);
+        await repo.AddAsync(message, eventId, userId, replyToId);
 
         WeakReferenceMessenger.Default.Send(
             new ReputationMessage(userId, ReputationAction.DiscussionMessagePosted));
