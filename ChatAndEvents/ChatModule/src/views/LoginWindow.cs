@@ -1,7 +1,7 @@
 using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
-using ChatModule.Services;
+using ChatAndEvents.Data.ChatData.services;
 using ChatModule.viewModels;
 using Microsoft.UI;
 using Microsoft.UI.Text;

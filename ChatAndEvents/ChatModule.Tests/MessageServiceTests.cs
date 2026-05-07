@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
 using ChatAndEvents.Data.ChatData.domain;
-using ChatAndEvents.Data.ChatData.interfaces.Repositories;
+using ChatAndEvents.Data.ChatData.repoInterfaces.Repositories;
 using ChatAndEvents.Data.ChatData.repositories;
-using ChatModule.Services;
+using ChatAndEvents.Data.ChatData.services;
 using Moq;
 using Xunit;
 

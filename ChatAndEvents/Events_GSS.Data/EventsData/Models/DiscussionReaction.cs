@@ -1,6 +1,4 @@
-﻿using ChatAndEvents.Data.EventsData.Models;
-using Events_GSS.Data.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 

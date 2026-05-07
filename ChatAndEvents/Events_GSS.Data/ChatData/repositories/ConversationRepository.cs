@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ChatAndEvents.Data.ChatData.domain;
-using ChatAndEvents.Data.ChatData.interfaces.Repositories;
+using ChatAndEvents.Data.ChatData.repoInterfaces.Repositories;
 using ChatAndEvents.Data.Database;
 using Microsoft.EntityFrameworkCore;
 

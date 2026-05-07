@@ -1,5 +1,5 @@
 using System;
-using ChatModule.Services;
+using ChatAndEvents.Data.ChatData.services;
 using ChatModule.ViewModels;
 using Microsoft.UI.Xaml;
 

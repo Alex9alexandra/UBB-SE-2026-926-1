@@ -1,7 +1,9 @@
 using BCrypt.Net;
 using ChatAndEvents.Data.ChatData.domain;
-using ChatAndEvents.Data.ChatData.interfaces.Repositories;
+using ChatAndEvents.Data.ChatData.repoInterfaces.Repositories;
 using ChatAndEvents.Data.ChatData.repositories;
+using ChatAndEvents.Data.ChatData.serviceInterfaces.Services;
+using ChatAndEvents.Data.ChatData.services;
 using ChatAndEvents.Data.Database;
 // --- MERGED TEAM NAMESPACES ---
 using ChatAndEvents.Data.EventsData.Models;
@@ -26,8 +28,6 @@ using ChatAndEvents.Data.EventsData.Services.Interfaces;
 using ChatAndEvents.Data.EventsData.Services.notificationServices;
 using ChatAndEvents.Data.EventsData.Services.reputationService;
 using ChatAndEvents.Data.EventsData.Services.userServices;
-using ChatModule.Services;
-using ChatModule.src.Interfaces.Services;
 using ChatModule.src.view_models;
 using ChatModule.src.views;
 using ChatModule.ViewModels;

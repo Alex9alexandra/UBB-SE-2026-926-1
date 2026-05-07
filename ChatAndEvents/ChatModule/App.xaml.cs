@@ -1,7 +1,7 @@
 ﻿using ChatAndEvents.Data.ChatData.repositories;
+using ChatAndEvents.Data.ChatData.services;
 using ChatAndEvents.Data.Database;
 using ChatAndEvents.Data.EventsData.Repositories;
-using ChatModule.Services;
 using ChatModule.src.views;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;

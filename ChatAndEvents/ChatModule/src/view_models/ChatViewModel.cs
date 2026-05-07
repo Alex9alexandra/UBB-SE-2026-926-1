@@ -7,8 +7,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using ChatAndEvents.Data.ChatData.domain;
-using ChatAndEvents.Data.ChatData.interfaces.Repositories;
-using ChatModule.Services;
+using ChatAndEvents.Data.ChatData.repoInterfaces.Repositories;
+using ChatAndEvents.Data.ChatData.serviceInterfaces.Services;
+using ChatAndEvents.Data.ChatData.services;
 using ChatModule.ViewModels;
 
 namespace ChatModule.src.view_models

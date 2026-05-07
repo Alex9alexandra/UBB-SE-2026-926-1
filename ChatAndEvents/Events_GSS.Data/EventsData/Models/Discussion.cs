@@ -1,8 +1,5 @@
-﻿namespace Events_GSS.Data.Models;
+﻿namespace ChatAndEvents.Data.EventsData.Models;
 
-using ChatAndEvents.Data.EventsData.Models;
-
-using global::Events_GSS.Data.Models;
 using System;
 using System.Collections.Generic;
 

@@ -1,7 +1,6 @@
 ﻿using ChatAndEvents.Data.ChatData.domain;
 using ChatAndEvents.Data.Database.Configurations;
 using ChatAndEvents.Data.EventsData.Models;
-using Events_GSS.Data.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace ChatAndEvents.Data.Database;

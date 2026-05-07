@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using ChatAndEvents.Data.ChatData.domain;
-using ChatModule.Services;
+using ChatAndEvents.Data.ChatData.services;
 using ChatModule.viewModels;
 using Moq;
 using Xunit;

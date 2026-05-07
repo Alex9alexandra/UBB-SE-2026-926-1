@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using ChatAndEvents.Data.ChatData.domain;
-using ChatModule.src.Interfaces.Services;
+using ChatAndEvents.Data.ChatData.serviceInterfaces.Services;
 using ChatModule.ViewModels;
 
 namespace ChatModule.src.view_models

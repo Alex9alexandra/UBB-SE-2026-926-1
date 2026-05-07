@@ -1,4 +1,4 @@
-using ChatModule.Services;
+using ChatAndEvents.Data.ChatData.services;
 using ChatModule.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;

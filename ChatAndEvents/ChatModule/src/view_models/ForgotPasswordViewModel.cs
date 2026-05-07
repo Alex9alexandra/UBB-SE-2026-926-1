@@ -1,6 +1,6 @@
 using System;
 using System.Threading.Tasks;
-using ChatModule.Services;
+using ChatAndEvents.Data.ChatData.services;
 
 namespace ChatModule.ViewModels;
 

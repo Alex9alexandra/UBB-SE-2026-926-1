@@ -1,7 +1,7 @@
 ﻿using ChatAndEvents.Data.ChatData.domain;
-using ChatModule.Services;
+using ChatAndEvents.Data.ChatData.serviceInterfaces.Services;
+using ChatAndEvents.Data.ChatData.services;
 using ChatModule.src.domain;
-using ChatModule.src.Interfaces.Services;
 using ChatModule.src.view_models;
 using Moq;
 using System;

@@ -2,7 +2,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using ChatAndEvents.Data.ChatData.domain;
-using ChatModule.Services;
+using ChatAndEvents.Data.ChatData.services;
 
 namespace ChatModule.ViewModels;
 public class ProfileViewModel : BaseViewModel
