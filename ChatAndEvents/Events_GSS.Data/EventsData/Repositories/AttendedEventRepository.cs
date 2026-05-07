@@ -18,10 +18,6 @@ namespace ChatAndEvents.Data.EventsData.Repositories
 
         public async Task AddAsync(AttendedEvent attendedEventEntity)
         {
-            if(attendedEventEntity.Event == null || attendedEventEntity.User == null)
-            {
-                throw new ArgumentException("Event and User are required.", nameof(attendedEventEntity));
-            }
             using var db = await _contextFactory.CreateDbContextAsync();
             db.AttendedEvents.Add(attendedEventEntity);
             await db.SaveChangesAsync();

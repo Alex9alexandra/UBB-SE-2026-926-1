@@ -74,8 +74,8 @@ namespace ChatAndEvents.Data.EventsData.Services.attendedEventServices
             // only their IDs matter for the INSERT query.
             var attendedEvent = new AttendedEvent
             {
-                Event = new Event { EventId = eventId },
-                User = new User { UserId = userId },
+                EventId = eventId,
+                UserId = userId,
                 EnrollmentDate = DateTime.UtcNow,
                 IsArchived = false,
                 IsFavourite = false,

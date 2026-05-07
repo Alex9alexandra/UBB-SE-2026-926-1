@@ -55,6 +55,16 @@ public class EventRepository : IEventRepository
 
         db.Events.Add(eventEntity);
         await db.SaveChangesAsync();
+
+        // Auto-enroll the admin as a participant
+        var attendedEvent = new AttendedEvent
+        {
+            EventId = eventEntity.EventId,
+            UserId = (Guid)eventEntity.AdminId
+        };
+        db.AttendedEvents.Add(attendedEvent);
+        await db.SaveChangesAsync();
+
         return eventEntity.EventId;
     }
 

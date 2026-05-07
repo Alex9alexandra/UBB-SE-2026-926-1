@@ -10,8 +10,17 @@
         <Grid
             Grid.Row="0"
             Padding="16,12"
-            Background="{ThemeResource LayerOnMicaBaseAltFillColorDefaultBrush}"
-            ColumnDefinitions="Auto,*">
+            Background="{ThemeResource LayerOnMicaBaseAltFillColorDefaultBrush}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <!-- back button -->
+                <ColumnDefinition Width="*" />
+                <!-- event name -->
+                <ColumnDefinition Width="Auto" />
+                <!-- join/leave -->
+                <ColumnDefinition Width="Auto" />
+                <!-- statistics -->
+            </Grid.ColumnDefinitions>
 
             <Button
                 Grid.Column="0"
@@ -34,18 +43,18 @@
 
             <Button
             x:Name="JoinLeaveButton"
-            Grid.Column="1"
-            HorizontalAlignment="Right"
+            Grid.Column="2"
             VerticalAlignment="Center"
-            Margin="0,0,150,0"
-            Click="OnJoinLeaveClicked" />
+            Margin="0,0,8,0"
+            Content="..."
+            Click="OnJoinLeaveClicked"
+            Background="Red"/>
             
             <Button
                 x:Name="StatisticsButton"
-                Grid.Column="1"
-                HorizontalAlignment="Right"
+                Grid.Column="3"
                 VerticalAlignment="Center"
-                Margin="0,0,16,0"
+                Margin="0,0,0,0"
                 Click="OnStatisticsClicked"
                 Visibility="Collapsed">
                 <StackPanel Orientation="Horizontal" Spacing="6">

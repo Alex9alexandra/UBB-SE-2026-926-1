@@ -92,7 +92,7 @@ public sealed partial class EventDetailPage : Page
         this.attendedEventService = App.Services.GetRequiredService<IAttendedEventService>();
 
         // Use the ! to guarantee to the compiler that currentEvent is not null
-        _ = this.LoadEnrollmentStatusAsync(currentEvent!, userId);
+        await this.LoadEnrollmentStatusAsync(currentEvent!, userId);
     }
 
     private void OnBackClicked(object sender, RoutedEventArgs e)
@@ -144,6 +144,8 @@ public sealed partial class EventDetailPage : Page
         catch (Exception exception)
         {
             System.Diagnostics.Debug.WriteLine($"Join/Leave failed: {exception.Message}");
+            System.Diagnostics.Debug.WriteLine($"Inner: {exception.InnerException?.Message}");
+            System.Diagnostics.Debug.WriteLine($"Full: {exception}");
         }
         finally
         {
