@@ -23,7 +23,7 @@ namespace ChatModule.Services
             IParticipantRepository participantRepository)
         {
             this._friendRepository = friendRepository;
-            this.userRepository = userRepository;
+            this._userRepository = userRepository;
             this._conversationRepository = conversationRepository;
             this._participantRepository = participantRepository;
         }
@@ -74,7 +74,7 @@ namespace ChatModule.Services
                 throw new InvalidOperationException("Please enter a username.");
             }
 
-            var receiverUserObject = await userRepository.GetByUsernameAsync(receiverUsername.Trim());
+            var receiverUserObject = await _userRepository.GetByUsernameAsync(receiverUsername.Trim());
             if (receiverUserObject == null)
             {
                 return false;
@@ -152,7 +152,7 @@ namespace ChatModule.Services
 
             foreach (var requestRelation in pendingRequestList)
             {
-                var senderUserObject = await userRepository.GetByIdAsync(requestRelation.UserId1);
+                var senderUserObject = await _userRepository.GetByIdAsync(requestRelation.UserId1);
                 if (senderUserObject != null)
                 {
                     senderUserList.Add(senderUserObject);
