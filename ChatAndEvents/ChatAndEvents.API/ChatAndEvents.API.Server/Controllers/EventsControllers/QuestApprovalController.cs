@@ -4,6 +4,14 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ChatAndEvents.API.Server.Controllers.Events;
 
+// 1. We create a DTO class to wrap the two objects together.
+// (You can leave this here, or move it to a dedicated 'DTOs' folder later!)
+public class SubmitProofRequest
+{
+    public Quest Quest { get; set; } = null!;
+    public Memory Proof { get; set; } = null!;
+}
+
 [ApiController]
 [Route("api/[controller]")]
 public class QuestApprovalController : ControllerBase
@@ -15,12 +23,12 @@ public class QuestApprovalController : ControllerBase
         _questApprovalService = questApprovalService;
     }
 
+    // 2. We change the endpoint to accept the single wrapper object
     [HttpPost("submit")]
-    public async Task<IActionResult> SubmitProof(
-        [FromBody] Quest quest,
-        [FromBody] Memory proof)
+    public async Task<IActionResult> SubmitProof([FromBody] SubmitProofRequest request)
     {
-        await _questApprovalService.SubmitProofAsync(quest, proof);
+        // 3. Unpack the wrapper and send it to your service as usual
+        await _questApprovalService.SubmitProofAsync(request.Quest, request.Proof);
         return NoContent();
     }
 
