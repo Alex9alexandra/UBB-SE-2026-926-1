@@ -28,7 +28,7 @@
                     Command="{x:Bind ViewModel.OpenGalleryCommand}"/>
 
             <Button Grid.Column="2"
-                    Content="+ Add Memory"
+                    Content="+ Add Photos"
                     Visibility="{x:Bind ViewModel.IsMemoryListVisible, Mode=OneWay}"
                     Click="AddMemoryButton_Click"/>
         </Grid>

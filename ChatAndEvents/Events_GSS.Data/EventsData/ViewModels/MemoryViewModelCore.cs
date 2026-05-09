@@ -8,6 +8,7 @@ namespace ChatAndEvents.Data.EventsData.ViewModels
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.ComponentModel;
+    using System.Linq;
     using System.Runtime.CompilerServices;
     using System.Threading.Tasks;
     using ChatAndEvents.Data.EventsData.Models;
@@ -179,6 +180,37 @@ namespace ChatAndEvents.Data.EventsData.ViewModels
             catch (InvalidOperationException ex) { this.ErrorMessage = ex.Message; }
             catch (UnauthorizedAccessException ex) { this.ErrorMessage = ex.Message; }
             catch (Exception ex) { this.ErrorMessage = $"Could not add memory: {ex.Message}"; }
+        }
+
+        /// <summary>
+        /// Adds one photo-only memory for each selected image.
+        /// </summary>
+        /// <param name="photoPaths">The selected image paths.</param>
+        /// <returns>A task.</returns>
+        public async Task AddPhotoMemoriesAsync(IEnumerable<string> photoPaths)
+        {
+            this.ErrorMessage = null;
+            var paths = photoPaths
+                .Where(path => !string.IsNullOrWhiteSpace(path))
+                .ToList();
+
+            if (paths.Count == 0)
+            {
+                return;
+            }
+
+            try
+            {
+                foreach (var path in paths)
+                {
+                    await this._memoryService.AddAsync(this.currentEvent, this.currentUser, path, null);
+                }
+
+                await this.LoadMemoriesAsync();
+            }
+            catch (InvalidOperationException ex) { this.ErrorMessage = ex.Message; }
+            catch (UnauthorizedAccessException ex) { this.ErrorMessage = ex.Message; }
+            catch (Exception ex) { this.ErrorMessage = $"Could not add memories: {ex.Message}"; }
         }
 
         /// <summary>

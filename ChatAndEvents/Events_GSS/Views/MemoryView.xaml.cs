@@ -5,6 +5,8 @@
 namespace Events_GSS.Views
 {
     using System;
+    using System.Collections.Generic;
+    using System.IO;
     using System.Threading.Tasks;
     using Events_GSS.ViewModels;
 
@@ -13,6 +15,8 @@ namespace Events_GSS.Views
     using Microsoft.UI.Xaml.Controls.Primitives;
     using ChatAndEvents.Data.EventsData.Models;
     using ChatAndEvents.Data.EventsData.ViewModels;
+    using Windows.Storage;
+    using Windows.Storage.Pickers;
 
     /// <summary>
     /// Interaction logic for the Memory View control.
@@ -83,46 +87,50 @@ namespace Events_GSS.Views
 
         private async void AddMemoryButton_Click(object sender, RoutedEventArgs e)
         {
-            var photoPathBox = new TextBox
-            {
-                PlaceholderText = "Photo path (optional, e.g. C:\\Photos\\photo.jpg)",
-                Margin = new Thickness(0, 0, 0, 8),
-            };
-            var textBox = new TextBox
-            {
-                PlaceholderText = "Write something about this memory... (optional)",
-                AcceptsReturn = true,
-                Height = 120,
-                TextWrapping = TextWrapping.Wrap,
-            };
+            var picker = new FileOpenPicker();
+            picker.FileTypeFilter.Add(".jpg");
+            picker.FileTypeFilter.Add(".jpeg");
+            picker.FileTypeFilter.Add(".png");
+            picker.FileTypeFilter.Add(".bmp");
 
-            var panel = new StackPanel { Spacing = 4 };
-            panel.Children.Add(new TextBlock { Text = "Photo path", FontWeight = Microsoft.UI.Text.FontWeights.SemiBold });
-            panel.Children.Add(photoPathBox);
-            panel.Children.Add(new TextBlock { Text = "Text", FontWeight = Microsoft.UI.Text.FontWeights.SemiBold });
-            panel.Children.Add(textBox);
-            panel.Children.Add(new TextBlock
+            var hwnd = App.MainWindowHandle;
+            if (hwnd == IntPtr.Zero)
             {
-                Text = "At least one of photo or text is required.",
-                FontSize = 12,
-                Foreground = (Microsoft.UI.Xaml.Media.Brush)Application.Current.Resources["TextFillColorSecondaryBrush"],
-                Margin = new Thickness(0, 4, 0, 0),
-            });
-
-            var dialog = new ContentDialog
-            {
-                Title = "Add Memory",
-                Content = panel,
-                PrimaryButtonText = "Add",
-                CloseButtonText = "Cancel",
-                XamlRoot = this.XamlRoot,
-            };
-
-            var result = await dialog.ShowAsync();
-            if (result == ContentDialogResult.Primary)
-            {
-                await this.ViewModel.AddMemoryAsync(photoPathBox.Text, textBox.Text);
+                return;
             }
+
+            WinRT.Interop.InitializeWithWindow.Initialize(picker, hwnd);
+
+            var files = await picker.PickMultipleFilesAsync();
+            if (files.Count == 0)
+            {
+                return;
+            }
+
+            var localPaths = new List<string>();
+            foreach (var file in files)
+            {
+                localPaths.Add(await CopyMemoryImageAsync(file));
+            }
+
+            await this.ViewModel.AddPhotoMemoriesAsync(localPaths);
+        }
+
+        private static async Task<string> CopyMemoryImageAsync(StorageFile file)
+        {
+            var extension = Path.GetExtension(file.Name).ToLowerInvariant();
+            var memoryFolder = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "ChatModule",
+                "MemoryImages");
+            Directory.CreateDirectory(memoryFolder);
+
+            var targetPath = Path.Combine(memoryFolder, $"{Guid.NewGuid():N}{extension}");
+            await using var sourceStream = await file.OpenStreamForReadAsync();
+            await using var targetStream = File.Create(targetPath);
+            await sourceStream.CopyToAsync(targetStream);
+
+            return targetPath;
         }
     }
 }
