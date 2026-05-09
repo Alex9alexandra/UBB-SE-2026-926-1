@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Text.Json;
 using System.Threading.Tasks;
 using ChatAndEvents.Data.ChatData.domain;
 using ChatAndEvents.Data.ChatData.serviceInterfaces.Services;
@@ -55,8 +56,11 @@ namespace ChatAndEvents.Data.ChatData.services
 
         public async Task<Guid?> GetLastReadMessageAsync(Guid conversationId, Guid userId)
         {
-            return await _httpClient.GetFromJsonAsync<Guid?>(
+            var response = await _httpClient.GetAsync(
                 $"api/ReadReceipt/{conversationId}/last-read?userId={userId}");
+
+            response.EnsureSuccessStatusCode();
+            return await ReadNullableJsonAsync<Guid>(response);
         }
 
         public async Task<List<Participant>> GetParticipantsAsync(Guid conversationId)
@@ -69,8 +73,11 @@ namespace ChatAndEvents.Data.ChatData.services
 
         public async Task<DateTime?> GetLastReadTimestampAsync(Guid conversationId, Guid userId)
         {
-            return await _httpClient.GetFromJsonAsync<DateTime?>(
+            var response = await _httpClient.GetAsync(
                 $"api/ReadReceipt/{conversationId}/timestamp?userId={userId}");
+
+            response.EnsureSuccessStatusCode();
+            return await ReadNullableJsonAsync<DateTime>(response);
         }
 
         public async Task<List<string>> GetReaderUsernamesAsync(Guid conversationId, Guid messageId, Guid? excludeUserId = null)
@@ -85,6 +92,18 @@ namespace ChatAndEvents.Data.ChatData.services
             var usernames = await _httpClient.GetFromJsonAsync<List<string>>(requestUri);
 
             return usernames ?? new List<string>();
+        }
+
+        private static async Task<T?> ReadNullableJsonAsync<T>(HttpResponseMessage response)
+            where T : struct
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            if (string.IsNullOrWhiteSpace(content) || content.Trim() == "null")
+            {
+                return null;
+            }
+
+            return JsonSerializer.Deserialize<T>(content, new JsonSerializerOptions(JsonSerializerDefaults.Web));
         }
     }
 }

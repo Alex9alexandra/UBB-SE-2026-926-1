@@ -43,6 +43,12 @@ public sealed partial class AnnouncementControl : UserControl
         if (dependencyObject is AnnouncementControl control &&
             arguments.NewValue is AnnouncementViewModel viewModel)
         {
+            control.Bindings.Update();
+            control.EmptyStateText.Visibility =
+                viewModel.Announcements.Count == 0
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
+
             viewModel.Announcements.CollectionChanged += OnAnnouncementsCollectionChanged;
 
             void OnAnnouncementsCollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs events)

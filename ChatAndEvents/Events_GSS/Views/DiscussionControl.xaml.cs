@@ -39,6 +39,9 @@ public sealed partial class DiscussionControl : UserControl
     {
         if (d is DiscussionControl control && e.NewValue is DiscussionViewModel vm)
         {
+            control.Bindings.Update();
+            control.UpdateEmptyState();
+
             vm.Messages.CollectionChanged += (_, _) =>
             {
                 control.UpdateEmptyState();
