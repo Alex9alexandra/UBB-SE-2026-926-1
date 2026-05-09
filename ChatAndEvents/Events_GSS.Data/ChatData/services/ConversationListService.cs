@@ -3,21 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ChatAndEvents.Data.ChatData.domain;
+using ChatAndEvents.Data.ChatData.repoInterfaces.Repositories;
 using ChatAndEvents.Data.ChatData.repositories;
 
 namespace ChatAndEvents.Data.ChatData.services
 {
     public class ConversationListService : IConversationListService
     {
-        private readonly ConversationRepository _conversationRepository;
-        private readonly ParticipantRepository _participantRepository;
-        private readonly MessageRepository _messageRepository;
+        private readonly IConversationRepository _conversationRepository;
+        private readonly IParticipantRepository _participantRepository;
+        private readonly IMessageRepository _messageRepository;
         private readonly IUserRepository _userRepository;
 
         public ConversationListService(
-            ConversationRepository conversationRepository,
-            ParticipantRepository participantRepository,
-            MessageRepository messageRepository,
+            IConversationRepository conversationRepository,
+            IParticipantRepository participantRepository,
+            IMessageRepository messageRepository,
             IUserRepository userRepository)
         {
             _conversationRepository = conversationRepository;

@@ -217,6 +217,7 @@ namespace ChatModule
             services.AddTransient<IReputationRepository, ReputationRepository>();
             services.AddTransient<IAchievementRepository, AchievementRepository>();
             services.AddTransient<IEventStatisticsRepository, EventStatisticsRepository>();
+            services.AddSingleton(new CurrentUserContext(_initialUserId));
 
             // --- EVENTS/GSS HTTP SERVICES ---
             services.AddHttpClient<IEventService, EventHttpService>(client =>
