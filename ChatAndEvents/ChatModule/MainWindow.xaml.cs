@@ -28,6 +28,7 @@ using ChatAndEvents.Data.EventsData.Services.Interfaces;
 using ChatAndEvents.Data.EventsData.Services.notificationServices;
 using ChatAndEvents.Data.EventsData.Services.reputationService;
 using ChatAndEvents.Data.EventsData.Services.userServices;
+using ChatModule.src.HttpService;
 using ChatModule.src.view_models;
 using ChatModule.src.views;
 using ChatModule.ViewModels;
@@ -142,6 +143,21 @@ namespace ChatModule
                 client.BaseAddress = baseAddress;
             });
 
+            services.AddHttpClient<IAnnouncementService, AnnouncementHttpService>(client =>
+            {
+                client.BaseAddress = baseAddress;
+            });
+
+            services.AddHttpClient<IAttendedEventService, AttendedEventHttpService>(client =>
+            {
+                client.BaseAddress = baseAddress;
+            });
+
+            services.AddHttpClient<IAchievementService, AchievementHttpService>(client =>
+            {
+                client.BaseAddress = baseAddress;
+            });
+
             // --- OLD DATABASE SERVICES (Commented out) ---
             // services.AddTransient<FriendRequestService>();
             // services.AddTransient<FriendListService>();
@@ -170,13 +186,10 @@ namespace ChatModule
             services.AddTransient<ICategoryServices, CategoryServices>();
             services.AddTransient<IQuestService, QuestService>();
             services.AddTransient<IQuestApprovalService, QuestApprovalService>();
-            services.AddTransient<IAnnouncementService, AnnouncementService>();
             services.AddTransient<IDiscussionService, DiscussionService>();
             services.AddTransient<IMemoryService, MemoryService>();
-            services.AddTransient<IAttendedEventService, AttendedEventService>();
             services.AddTransient<INotificationService, NotificationService>();
             services.AddSingleton<IReputationService, ReputationService>();
-            services.AddTransient<IAchievementService, AchievementService>();
             services.AddTransient<IEventStatisticsService, EventStatisticsService>();
 
             services.AddTransient<EventListingViewModel>();
