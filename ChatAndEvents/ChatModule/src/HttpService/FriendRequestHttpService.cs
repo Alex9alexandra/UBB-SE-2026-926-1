@@ -30,7 +30,7 @@ namespace ChatAndEvents.Data.ChatData.services
         public async Task<bool> SendFriendRequestByUsernameAsync(Guid senderUserId, string receiverUsername)
         {
             var response = await _httpClient.PostAsync(
-                $"api/FriendRequest/username?senderUserId={senderUserId}&username={receiverUsername}", null);
+                $"api/FriendRequest/username?senderUserId={senderUserId}&username={Uri.EscapeDataString(receiverUsername)}", null);
             
             if (response.IsSuccessStatusCode)
             {

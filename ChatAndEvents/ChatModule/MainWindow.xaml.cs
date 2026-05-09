@@ -39,6 +39,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System;
+using System.Linq;
 using System.Net.Http; // Added for HttpClient
 using System.Threading.Tasks;
 
@@ -52,6 +53,7 @@ namespace ChatModule
 
         private readonly IUserRepository _userRepository;
         private readonly IConversationRepository _conversationRepository;
+        private readonly IConversationListService _conversationListService;
         private readonly IParticipantRepository _participantRepository;
         private readonly IMessageRepository _messageRepository;
         private readonly IDirectMessageService _directMessageService;
@@ -295,11 +297,11 @@ namespace ChatModule
             _moderationService = provider.GetRequiredService<IModerationService>();
 
             // 1. Get the newly extracted Interface!
-            var conversationListService = provider.GetRequiredService<IConversationListService>();
+            _conversationListService = provider.GetRequiredService<IConversationListService>();
             var friendListService = provider.GetRequiredService<IFriendListService>();
 
             ViewModel = new MainViewModel(
-                conversationListService,
+                _conversationListService,
                 _friendRequestService,
                 friendListService,
                 _blockService,
@@ -474,7 +476,8 @@ namespace ChatModule
             var username = usernameBox.Text?.Trim();
             if (string.IsNullOrWhiteSpace(username)) return;
 
-            var user = await _userRepository.GetByUsernameAsync(username);
+            var user = (await _searchService.SearchUsersAsync(username))
+                .FirstOrDefault(candidate => string.Equals(candidate.Username, username, StringComparison.OrdinalIgnoreCase));
             if (user == null || user.Id == ViewModel.CurrentUserId)
             {
                 await ShowInfoDialogAsync("User not found", "Enter another username to start a DM.");
@@ -528,7 +531,7 @@ namespace ChatModule
         {
             try
             {
-                var conversation = await _conversationRepository.GetByIdAsync(conversationId);
+                var conversation = await _conversationListService.GetByIdAsync(conversationId);
                 if (conversation == null) return;
 
                 var chatViewModel = new ChatViewModel(
@@ -537,7 +540,7 @@ namespace ChatModule
                     _readReceiptService,
                     _mentionService,
                     _directMessageService,
-                    _conversationRepository,
+                    _conversationListService,
                     _searchService,
                     ViewModel.CurrentUserId);
 

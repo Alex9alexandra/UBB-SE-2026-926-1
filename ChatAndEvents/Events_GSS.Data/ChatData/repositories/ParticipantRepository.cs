@@ -50,7 +50,8 @@ namespace ChatAndEvents.Data.ChatData.repositories
         public async Task UpdateRoleAsync(Guid conversationId, Guid userId, ParticipantRole role)
         {
             using var db = await _contextFactory.CreateDbContextAsync();
-            var participant = await GetAsync(conversationId, userId);
+            var participant = await db.Participants
+                .FirstOrDefaultAsync(p => p.ConversationId == conversationId && p.UserId == userId);
             if (participant == null) return;
             participant.Role = role;
             await db.SaveChangesAsync();
@@ -59,7 +60,8 @@ namespace ChatAndEvents.Data.ChatData.repositories
         public async Task UpdateLastReadAsync(Guid conversationId, Guid userId, Guid messageId)
         {
             using var db = await _contextFactory.CreateDbContextAsync();
-            var participant = await GetAsync(conversationId, userId);
+            var participant = await db.Participants
+                .FirstOrDefaultAsync(p => p.ConversationId == conversationId && p.UserId == userId);
             if (participant == null) return;
             participant.LastReadMessageId = messageId;
             await db.SaveChangesAsync();
@@ -68,7 +70,8 @@ namespace ChatAndEvents.Data.ChatData.repositories
         public async Task UpdateTimeoutAsync(Guid conversationId, Guid userId, DateTime? until)
         {
             using var db = await _contextFactory.CreateDbContextAsync();
-            var participant = await GetAsync(conversationId, userId);
+            var participant = await db.Participants
+                .FirstOrDefaultAsync(p => p.ConversationId == conversationId && p.UserId == userId);
             if (participant == null) return;
             participant.TimeoutUntil = until;
             await db.SaveChangesAsync();
@@ -77,7 +80,8 @@ namespace ChatAndEvents.Data.ChatData.repositories
         public async Task UpdateFavouriteAsync(Guid conversationId, Guid userId, bool isFav)
         {
             using var db = await _contextFactory.CreateDbContextAsync();
-            var participant = await GetAsync(conversationId, userId);
+            var participant = await db.Participants
+                .FirstOrDefaultAsync(p => p.ConversationId == conversationId && p.UserId == userId);
             if (participant == null) return;
             participant.IsFavourite = isFav;
             await db.SaveChangesAsync();
@@ -86,7 +90,8 @@ namespace ChatAndEvents.Data.ChatData.repositories
         public async Task DeleteAsync(Guid conversationId, Guid userId)
         {
             using var db = await _contextFactory.CreateDbContextAsync();
-            var participant = await GetAsync(conversationId, userId);
+            var participant = await db.Participants
+                .FirstOrDefaultAsync(p => p.ConversationId == conversationId && p.UserId == userId);
             if (participant == null) return;
             db.Participants.Remove(participant);
             await db.SaveChangesAsync();
@@ -95,7 +100,8 @@ namespace ChatAndEvents.Data.ChatData.repositories
         public async Task UpdateNicknameAsync(Guid conversationId, Guid userId, string? nickname)
         {
             using var db = await _contextFactory.CreateDbContextAsync();
-            var participant = await GetAsync(conversationId, userId);
+            var participant = await db.Participants
+                .FirstOrDefaultAsync(p => p.ConversationId == conversationId && p.UserId == userId);
             if (participant == null) return;
             participant.Nickname = nickname;
             await db.SaveChangesAsync();

@@ -66,6 +66,11 @@ namespace ChatAndEvents.Data.ChatData.services
             return conversations;
         }
 
+        public async Task<Conversation?> GetByIdAsync(Guid conversationId)
+        {
+            return await _conversationRepository.GetByIdAsync(conversationId);
+        }
+
         public async Task<List<Conversation>> GetDmsAsync(Guid userId)
         {
             var conversations = await GetAllAsync(userId);

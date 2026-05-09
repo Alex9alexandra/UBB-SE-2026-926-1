@@ -5,6 +5,7 @@ namespace ChatAndEvents.Data.ChatData.services
     public interface IConversationListService
     {
         Task<List<Conversation>> GetAllAsync(Guid userId);
+        Task<Conversation?> GetByIdAsync(Guid conversationId);
         Task<List<Conversation>> GetDmsAsync(Guid userId);
         Task<List<Conversation>> GetFavouritesAsync(Guid userId);
         Task<List<Conversation>> GetGroupsAsync(Guid userId);

@@ -92,36 +92,33 @@ namespace ChatAndEvents.Data.ChatData.repositories
 
         public async Task UpdateFriendshipStatusAsync(Guid firstUserId, Guid secondUserId, FriendStatus newStatus)
         {
-            var friendship = await GetFriendshipAsync(firstUserId, secondUserId);
-            if (friendship == null)
-            {
-                return;
-            }
             using var db = await _contextFactory.CreateDbContextAsync();
+            var friendship = await db.Friends.FirstOrDefaultAsync(friendship =>
+                (friendship.UserId1 == firstUserId && friendship.UserId2 == secondUserId) ||
+                (friendship.UserId1 == secondUserId && friendship.UserId2 == firstUserId));
+            if (friendship == null) return;
             friendship.Status = newStatus;
             await db.SaveChangesAsync();
         }
 
         public async Task SetMatchStatusAsync(Guid firstUserId, Guid secondUserId, bool isMatchStatus)
         {
-            var friendship = await GetFriendshipAsync(firstUserId, secondUserId);
-            if (friendship == null)
-            {
-                return;
-            }
             using var db = await _contextFactory.CreateDbContextAsync();
+            var friendship = await db.Friends.FirstOrDefaultAsync(friendship =>
+                (friendship.UserId1 == firstUserId && friendship.UserId2 == secondUserId) ||
+                (friendship.UserId1 == secondUserId && friendship.UserId2 == firstUserId));
+            if (friendship == null) return;
             friendship.IsMatch = isMatchStatus;
             await db.SaveChangesAsync();
         }
 
         public async Task DeleteFriendshipAsync(Guid firstUserId, Guid secondUserId)
         {
-            var friendship = await GetFriendshipAsync(firstUserId, secondUserId);
-            if (friendship == null)
-            {
-                return;
-            }
             using var db = await _contextFactory.CreateDbContextAsync();
+            var friendship = await db.Friends.FirstOrDefaultAsync(friendship =>
+                (friendship.UserId1 == firstUserId && friendship.UserId2 == secondUserId) ||
+                (friendship.UserId1 == secondUserId && friendship.UserId2 == firstUserId));
+            if (friendship == null) return;
             db.Friends.Remove(friendship);
             await db.SaveChangesAsync();
         }
