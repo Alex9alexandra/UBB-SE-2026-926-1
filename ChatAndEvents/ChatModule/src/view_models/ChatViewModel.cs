@@ -7,7 +7,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using ChatAndEvents.Data.ChatData.domain;
-using ChatAndEvents.Data.ChatData.repoInterfaces.Repositories;
 using ChatAndEvents.Data.ChatData.serviceInterfaces.Services;
 using ChatAndEvents.Data.ChatData.services;
 using ChatModule.ViewModels;
@@ -24,7 +23,7 @@ namespace ChatModule.src.view_models
         private readonly IReadReceiptService _readReceiptService;
         private readonly IMentionService _mentionService;
         private readonly IDirectMessageService _directMessageService;
-        private readonly IConversationRepository _conversationRepository;
+        private readonly IConversationListService _conversationListService;
         private readonly Guid _currentUserId;
 
         private string _conversationTitle = string.Empty;
@@ -51,7 +50,7 @@ namespace ChatModule.src.view_models
             IReadReceiptService readReceiptService,
             IMentionService mentionService,
             IDirectMessageService directMessageService,
-            IConversationRepository conversationRepository,
+            IConversationListService conversationListService,
             ISearchService searchService,
             Guid currentUserId)
         {
@@ -60,7 +59,7 @@ namespace ChatModule.src.view_models
             this._readReceiptService = readReceiptService;
             this._mentionService = mentionService;
             this._directMessageService = directMessageService;
-            this._conversationRepository = conversationRepository;
+            this._conversationListService = conversationListService;
             this._currentUserId = currentUserId;
             this.MessageSearch = new MessageSearchViewModel(searchService, currentUserId);
 
@@ -256,7 +255,7 @@ namespace ChatModule.src.view_models
                 await this.PopulateReactionCountersAsync();
                 await this.PopulateReplyPreviewsAsync();
 
-                var conversation = await this._conversationRepository.GetByIdAsync(conversationId);
+                var conversation = await this._conversationListService.GetByIdAsync(conversationId);
                 this.IsConversationGroup = conversation?.Type == ConversationType.Group;
 
                 if (conversation?.Type == ConversationType.Dm)

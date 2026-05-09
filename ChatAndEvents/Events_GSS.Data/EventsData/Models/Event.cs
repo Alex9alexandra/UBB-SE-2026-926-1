@@ -20,8 +20,8 @@ public class Event
     // Navigation properties 
     public Category? Category { get; set; }
     public User? Admin { get; set; }
-    public ICollection<AttendedEvent> Attendees { get; set; }
-    public ICollection<Memory> Memories { get; set; }
-    public ICollection<Announcement> Announcements { get; set; }
-    public ICollection<Quest> Quests { get; set; }
+    public ICollection<AttendedEvent> Attendees { get; set; } = new List<AttendedEvent>();
+    public ICollection<Memory> Memories { get; set; } = new List<Memory>();
+    public ICollection<Announcement> Announcements { get; set; } = new List<Announcement>();
+    public ICollection<Quest> Quests { get; set; } = new List<Quest>();
 }

@@ -25,6 +25,17 @@ namespace ChatAndEvents.Data.ChatData.services
             return conversations ?? new List<Conversation>();
         }
 
+        public async Task<Conversation?> GetByIdAsync(Guid conversationId)
+        {
+            var response = await _httpClient.GetAsync($"api/ConversationList/{conversationId}");
+            if (!response.IsSuccessStatusCode)
+            {
+                return null;
+            }
+
+            return await response.Content.ReadFromJsonAsync<Conversation>();
+        }
+
         public async Task<List<Conversation>> GetDmsAsync(Guid userId)
         {
             var conversations = await _httpClient.GetFromJsonAsync<List<Conversation>>(

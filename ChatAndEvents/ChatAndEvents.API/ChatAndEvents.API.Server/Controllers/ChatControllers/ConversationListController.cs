@@ -14,6 +14,18 @@ public class ConversationListController : ControllerBase
         _conversationListService = conversationListService;
     }
 
+    [HttpGet("{conversationId}")]
+    public async Task<IActionResult> GetById(Guid conversationId)
+    {
+        var conversation = await _conversationListService.GetByIdAsync(conversationId);
+        if (conversation == null)
+        {
+            return NotFound();
+        }
+
+        return Ok(conversation);
+    }
+
     [HttpGet("{userId}/all")]
     public async Task<IActionResult> GetAll(Guid userId)
     {
