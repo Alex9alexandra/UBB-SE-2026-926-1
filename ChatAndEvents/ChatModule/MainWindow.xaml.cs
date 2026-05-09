@@ -38,6 +38,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System;
+using System.Net.Http; // Added for HttpClient
 using System.Threading.Tasks;
 
 namespace ChatModule
@@ -49,19 +50,19 @@ namespace ChatModule
         private readonly string _initialUsername;
 
         private readonly IUserRepository _userRepository;
-        private readonly ConversationRepository _conversationRepository;
-        private readonly ParticipantRepository _participantRepository;
-        private readonly MessageRepository _messageRepository;
-        private readonly DirectMessageService _directMessageService;
+        private readonly IConversationRepository _conversationRepository;
+        private readonly IParticipantRepository _participantRepository;
+        private readonly IMessageRepository _messageRepository;
+        private readonly IDirectMessageService _directMessageService;
         private readonly IGroupService _groupService;
-        private readonly SearchService _searchService;
-        private readonly MessageService _messageService;
-        private readonly MessageInteractionService _messageInteractionService;
-        private readonly ReadReceiptService _readReceiptService;
-        private readonly MentionService _mentionService;
-        private readonly FriendRequestService _friendRequestService;
-        private readonly BlockService _blockService;
-        private readonly ProfileService _profileService;
+        private readonly ISearchService _searchService;
+        private readonly IMessageService _messageService;
+        private readonly IMessageInteractionService _messageInteractionService;
+        private readonly IReadReceiptService _readReceiptService;
+        private readonly IMentionService _mentionService;
+        private readonly IFriendRequestService _friendRequestService;
+        private readonly IBlockService _blockService;
+        private readonly IProfileService _profileService;
         private readonly IMemberPanelService _memberPanelService;
         private readonly IModerationService _moderationService;
 
@@ -89,34 +90,68 @@ namespace ChatModule
                 options.UseSqlServer(ConnectionString),
                 ServiceLifetime.Transient);
 
+            // --- REPOSITORIES ---
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IFriendRepository, FriendRepository>();
-            services.AddTransient<FriendRepository>();
             services.AddTransient<IConversationRepository, ConversationRepository>();
-            services.AddTransient<ConversationRepository>();
             services.AddTransient<IParticipantRepository, ParticipantRepository>();
-            services.AddTransient<ParticipantRepository>();
             services.AddTransient<IMessageRepository, MessageRepository>();
-            services.AddTransient<MessageRepository>();
 
-            services.AddTransient<ConversationListService>();
-            services.AddTransient<FriendRequestService>();
-            services.AddTransient<FriendListService>();
-            services.AddTransient<BlockService>();
-            services.AddTransient<ProfileService>();
-            services.AddTransient<DirectMessageService>();
-            services.AddTransient<GroupService>();
-            services.AddTransient<IGroupService, GroupService>();
-            services.AddTransient<SearchService>();
-            services.AddTransient<MessageService>();
-            services.AddTransient<MessageInteractionService>();
-            services.AddTransient<ReadReceiptService>();
-            services.AddTransient<MentionService>();
-            services.AddTransient<MemberPanelService>();
-            services.AddTransient<IMemberPanelService, MemberPanelService>();
-            services.AddTransient<ModerationService>();
+            // --- LOCAL CHAT SERVICES (Not yet migrated) ---
+            services.AddTransient<ConversationListService>(); // Keep concrete if no interface yet
+            services.AddTransient<ISearchService, SearchService>();
+            services.AddTransient<IMessageService, MessageService>();
+            services.AddTransient<IMessageInteractionService, MessageInteractionService>();
+            services.AddTransient<IReadReceiptService, ReadReceiptService>();
+            services.AddTransient<IMentionService, MentionService>();
+            services.AddTransient<IProfileService, ProfileService>();
             services.AddTransient<IModerationService, ModerationService>();
 
+            // ==========================================================
+            // --- THE BATCH SWITCH: NEW CLOUD HTTP SERVICES ---
+            // ==========================================================
+            var baseAddress = new Uri("http://172.30.250.53/");
+
+            services.AddHttpClient<IMemberPanelService, MemberPanelHttpService>(client =>
+            {
+                client.BaseAddress = baseAddress;
+            });
+
+            services.AddHttpClient<IFriendRequestService, FriendRequestHttpService>(client =>
+            {
+                client.BaseAddress = baseAddress;
+            });
+
+            services.AddHttpClient<IFriendListService, FriendListHttpService>(client =>
+            {
+                client.BaseAddress = baseAddress;
+            });
+
+            services.AddHttpClient<IBlockService, BlockHttpService>(client =>
+            {
+                client.BaseAddress = baseAddress;
+            });
+
+            services.AddHttpClient<IDirectMessageService, DirectMessageHttpService>(client =>
+            {
+                client.BaseAddress = baseAddress;
+            });
+
+            services.AddHttpClient<IGroupService, GroupHttpService>(client =>
+            {
+                client.BaseAddress = baseAddress;
+            });
+
+            // --- OLD DATABASE SERVICES (Commented out) ---
+            // services.AddTransient<FriendRequestService>();
+            // services.AddTransient<FriendListService>();
+            // services.AddTransient<BlockService>();
+            // services.AddTransient<DirectMessageService>();
+            // services.AddTransient<GroupService>();
+            // ==========================================================
+
+
+            // --- EVENTS/GSS REPOSITORIES ---
             services.AddTransient<IEventRepository, EventRepository>();
             services.AddTransient<ICategoryRepository, CategoryRepository>();
             services.AddTransient<IQuestRepository, QuestRepository>();
@@ -130,6 +165,7 @@ namespace ChatModule
             services.AddTransient<IAchievementRepository, AchievementRepository>();
             services.AddTransient<IEventStatisticsRepository, EventStatisticsRepository>();
 
+            // --- EVENTS/GSS SERVICES ---
             services.AddTransient<IEventService, EventService>();
             services.AddTransient<ICategoryServices, CategoryServices>();
             services.AddTransient<IQuestService, QuestService>();
@@ -164,27 +200,29 @@ namespace ChatModule
 
             var provider = Events_GSS.App.Services;
 
+            // --- RESOLVING WITH INTERFACES ---
             _userRepository = provider.GetRequiredService<IUserRepository>();
-            _conversationRepository = provider.GetRequiredService<ConversationRepository>();
-            _participantRepository = provider.GetRequiredService<ParticipantRepository>();
-            _messageRepository = provider.GetRequiredService<MessageRepository>();
-            _directMessageService = provider.GetRequiredService<DirectMessageService>();
+            _conversationRepository = provider.GetRequiredService<IConversationRepository>();
+            _participantRepository = provider.GetRequiredService<IParticipantRepository>();
+            _messageRepository = provider.GetRequiredService<IMessageRepository>();
+
+            _directMessageService = provider.GetRequiredService<IDirectMessageService>();
             _groupService = provider.GetRequiredService<IGroupService>();
-            _searchService = provider.GetRequiredService<SearchService>();
-            _messageService = provider.GetRequiredService<MessageService>();
-            _messageInteractionService = provider.GetRequiredService<MessageInteractionService>();
-            _readReceiptService = provider.GetRequiredService<ReadReceiptService>();
-            _mentionService = provider.GetRequiredService<MentionService>();
-            _friendRequestService = provider.GetRequiredService<FriendRequestService>();
-            _blockService = provider.GetRequiredService<BlockService>();
-            _profileService = provider.GetRequiredService<ProfileService>();
+            _searchService = provider.GetRequiredService<ISearchService>();
+            _messageService = provider.GetRequiredService<IMessageService>();
+            _messageInteractionService = provider.GetRequiredService<IMessageInteractionService>();
+            _readReceiptService = provider.GetRequiredService<IReadReceiptService>();
+            _mentionService = provider.GetRequiredService<IMentionService>();
+            _friendRequestService = provider.GetRequiredService<IFriendRequestService>();
+            _blockService = provider.GetRequiredService<IBlockService>();
+            _profileService = provider.GetRequiredService<IProfileService>();
             _memberPanelService = provider.GetRequiredService<IMemberPanelService>();
             _moderationService = provider.GetRequiredService<IModerationService>();
 
-            var conversationListService = provider.GetRequiredService<ConversationListService>();
-            var friendListService = provider.GetRequiredService<FriendListService>();
+            // 1. Get the newly extracted Interface!
+            var conversationListService = provider.GetRequiredService<IConversationListService>();
+            var friendListService = provider.GetRequiredService<IFriendListService>();
 
-            
             ViewModel = new MainViewModel(
                 conversationListService,
                 _friendRequestService,
@@ -192,7 +230,8 @@ namespace ChatModule
                 _blockService,
                 _profileService,
                 _directMessageService,
-                provider.GetRequiredService<IEventRepository>(),
+                // --- GSS SERVICES ---
+                // (Notice that IEventRepository is completely GONE from this list!)
                 provider.GetRequiredService<INotificationService>(),
                 provider.GetRequiredService<IReputationService>(),
                 provider.GetRequiredService<IUserService>(),
@@ -214,7 +253,7 @@ namespace ChatModule
 
             ViewModel.NavigateToLoginRequested += () =>
             {
-                
+
                 var loginServices = new ServiceCollection();
                 loginServices.AddDbContext<AppDbContext>(options =>
                     options.UseSqlServer(ConnectionString), ServiceLifetime.Transient);
@@ -238,7 +277,7 @@ namespace ChatModule
             _ = InitialiseAndRenderAsync();
         }
 
-        
+
         private async System.Threading.Tasks.Task InitialiseAndRenderAsync()
         {
             try

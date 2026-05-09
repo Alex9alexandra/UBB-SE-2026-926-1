@@ -14,7 +14,7 @@ namespace ChatModule.ViewModels
         public const string FavoritesTab = "Favorites";
         public const string UnreadTab = "Unread";
 
-        private readonly ConversationListService _conversationListService;
+        private readonly IConversationListService _conversationListService;
         private readonly Guid _currentUserId;
 
         public ObservableCollection<Conversation> Conversations { get; } = new ();
@@ -86,7 +86,7 @@ namespace ChatModule.ViewModels
         public event Action? NewDmRequested;
         public event Action<Guid>? ConversationOpened;
 
-        public ConversationListViewModel(ConversationListService conversationListService, Guid currentUserId)
+        public ConversationListViewModel(IConversationListService conversationListService, Guid currentUserId)
         {
             _conversationListService = conversationListService ?? throw new ArgumentNullException(nameof(conversationListService));
             _currentUserId = currentUserId;

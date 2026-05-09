@@ -16,21 +16,22 @@ using ChatAndEvents.Data.EventsData.Services.reputationService;
 using ChatAndEvents.Data.EventsData.Services.userServices;
 using ChatAndEvents.Data.ChatData.domain;
 using ChatAndEvents.Data.ChatData.services;
+using ChatAndEvents.Data.ChatData.serviceInterfaces.Services; // Added for the Chat Interfaces!
 
 namespace ChatModule.ViewModels
 {
     public class MainViewModel : BaseViewModel    
     {
-        // --- Chat Services ---
-        private readonly ConversationListService _conversationListService;
-        private readonly FriendRequestService _friendRequestService;
-        private readonly FriendListService? _friendListService;
-        private readonly BlockService _blockService;
+        // --- Chat Services (Now strictly using Interfaces!) ---
+        private readonly IConversationListService _conversationListService;
+        private readonly IFriendRequestService _friendRequestService;
+        private readonly IFriendListService? _friendListService;
+        private readonly IBlockService _blockService;
         private readonly IDirectMessageService _directMessageService;
         private readonly IProfileService _profileService;
 
         // --- Event/GSS Services ---
-        private readonly IEventRepository _eventRepository;
+        // (Removed the illegal IEventRepository from here!)
         private readonly INotificationService _notificationService;
         private readonly IReputationService _reputationService;
         private readonly IUserService _userService;
@@ -80,13 +81,12 @@ namespace ChatModule.ViewModels
 
         // Constructor 1 (Without FriendListService)
         public MainViewModel(
-            ConversationListService conversationListService,
-            FriendRequestService friendRequestService,
-            BlockService blockService,
+            IConversationListService conversationListService,
+            IFriendRequestService friendRequestService,
+            IBlockService blockService,
             IProfileService profileService,
             IDirectMessageService directMessageService,
             // --- GSS SERVICES ---
-            IEventRepository eventRepository,
             INotificationService notificationService,
             IReputationService reputationService,
             IUserService userService,
@@ -101,7 +101,6 @@ namespace ChatModule.ViewModels
                 blockService,
                 profileService,
                 directMessageService,
-                eventRepository,
                 notificationService,
                 reputationService,
                 userService,
@@ -114,14 +113,13 @@ namespace ChatModule.ViewModels
 
         // Constructor 2 (The Main One)
         public MainViewModel(
-            ConversationListService conversationListService,
-            FriendRequestService friendRequestService,
-            FriendListService? friendListService,
-            BlockService blockService,
+            IConversationListService conversationListService,
+            IFriendRequestService friendRequestService,
+            IFriendListService? friendListService,
+            IBlockService blockService,
             IProfileService profileService,
             IDirectMessageService directMessageService,
             // --- GSS SERVICES ---
-            IEventRepository eventRepository,
             INotificationService notificationService,
             IReputationService reputationService,
             IUserService userService,
@@ -138,7 +136,6 @@ namespace ChatModule.ViewModels
             _directMessageService = directMessageService ?? throw new ArgumentNullException(nameof(directMessageService));
 
             // Assign the Events/GSS services
-            _eventRepository = eventRepository ?? throw new ArgumentNullException(nameof(eventRepository));
             _notificationService = notificationService ?? throw new ArgumentNullException(nameof(notificationService));
             _reputationService = reputationService ?? throw new ArgumentNullException(nameof(reputationService));
             _userService = userService ?? throw new ArgumentNullException(nameof(userService));
@@ -196,9 +193,9 @@ namespace ChatModule.ViewModels
 
         private async Task GoToEventsAsync()
         {
-            var vm = new EventListingViewModel(_eventRepository);
+            // Now correctly passing the Service instead of the Repository!
+            var vm = new EventListingViewModel(_eventService);
 
-            // --- THIS IS YOUR MISSING CODE ---
             // Listen for the "Create" shout, and execute the existing command if allowed
             vm.CreateEventRequested += () =>
             {
@@ -207,23 +204,17 @@ namespace ChatModule.ViewModels
                     GoToCreateEventCommand.Execute(null);
                 }
             };
-            // ---------------------------------
 
             // This is the "Listener" that connects the two.
-            // Visual Studio's static analysis sometimes misses this as a 'reference'.
             vm.EventDetailsRequested += (selectedEvent) =>
             {
-                _ = GoToEventDetailsAsync(selectedEvent); // <--- Call it here!
+                _ = GoToEventDetailsAsync(selectedEvent); 
             };
 
             await vm.LoadEventsAsync();
             CurrentPage = vm;
         }
 
-        /// <summary>
-        /// Aici e doar sa arate toate, trebuie facut sa le poti vedea doar pe ale tale
-        /// </summary>
-        /// <returns></returns>
         private async Task GoToMyEventsAsync()
         {
             var vm = new MyEventsViewModel(_eventService, _userService, _attendedEventService);

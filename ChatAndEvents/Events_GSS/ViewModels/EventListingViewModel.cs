@@ -1,16 +1,18 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using ChatAndEvents.Data.EventsData.Models;
-using ChatAndEvents.Data.EventsData.Repositories.eventRepository;
+using ChatAndEvents.Data.EventsData.Services.eventServices;
 
 namespace Events_GSS.ViewModels
 {
-    // 1. Inherit from INotifyPropertyChanged instead of BaseViewModel
     public class EventListingViewModel : INotifyPropertyChanged
     {
-        private readonly IEventRepository _eventRepository;
+        // 1. Safely holding the Service Interface
+        private readonly IEventService _eventService;
+        
         public event Action? CreateEventRequested;
         public event Action<Event>? EventDetailsRequested;
 
@@ -23,7 +25,6 @@ namespace Events_GSS.ViewModels
             get => _isLoading;
             set
             {
-                // 2. We handle the notification manually here instead of using BaseViewModel's "Set()"
                 if (_isLoading != value)
                 {
                     _isLoading = value;
@@ -32,9 +33,10 @@ namespace Events_GSS.ViewModels
             }
         }
 
-        public EventListingViewModel(IEventRepository eventRepository)
+        // 2. The Constructor now strictly demands the Service, NOT the Repository
+        public EventListingViewModel(IEventService eventService)
         {
-            _eventRepository = eventRepository;
+            _eventService = eventService ?? throw new ArgumentNullException(nameof(eventService));
         }
 
         public async Task LoadEventsAsync()
@@ -42,7 +44,9 @@ namespace Events_GSS.ViewModels
             IsLoading = true;
             try
             {
-                var events = await _eventRepository.GetAllPublicActiveAsync();
+                // 3. We now call the Service method instead of the DB Repository directly!
+                var events = await _eventService.GetAllPublicActiveEventsAsync();
+                
                 Events.Clear();
                 foreach (var ev in events)
                 {
@@ -59,12 +63,12 @@ namespace Events_GSS.ViewModels
             }
         }
 
-        // 3. This is the background magic that BaseViewModel used to do for you!
         public event PropertyChangedEventHandler? PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+        
         public void RequestCreateEvent() => CreateEventRequested?.Invoke();
         public void RequestEventDetails(Event selectedEvent) => EventDetailsRequested?.Invoke(selectedEvent);
     }
