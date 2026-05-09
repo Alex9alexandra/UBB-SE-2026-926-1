@@ -30,6 +30,18 @@ public class MessageController : ControllerBase
         return Ok(messages);
     }
 
+    [HttpGet("{conversationId}/cannot-send-reason")]
+    public async Task<IActionResult> GetCannotSendReason(
+        Guid conversationId,
+        [FromQuery] Guid userId)
+    {
+        var reason = await _messageService.GetCannotSendReasonAsync(
+            conversationId,
+            userId);
+
+        return Ok(reason);
+    }
+
     [HttpPost]
     public async Task<IActionResult> SendMessage(
         [FromQuery] Guid conversationId,
