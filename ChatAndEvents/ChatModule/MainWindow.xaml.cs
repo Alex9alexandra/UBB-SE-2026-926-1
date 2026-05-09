@@ -28,6 +28,7 @@ using ChatAndEvents.Data.EventsData.Services.Interfaces;
 using ChatAndEvents.Data.EventsData.Services.notificationServices;
 using ChatAndEvents.Data.EventsData.Services.reputationService;
 using ChatAndEvents.Data.EventsData.Services.userServices;
+using ChatModule.src.HttpService;
 using ChatModule.src.view_models;
 using ChatModule.src.views;
 using ChatModule.ViewModels;
@@ -142,6 +143,21 @@ namespace ChatModule
                 client.BaseAddress = baseAddress;
             });
 
+            services.AddHttpClient<IAnnouncementService, AnnouncementHttpService>(client =>
+            {
+                client.BaseAddress = baseAddress;
+            });
+
+            services.AddHttpClient<IAttendedEventService, AttendedEventHttpService>(client =>
+            {
+                client.BaseAddress = baseAddress;
+            });
+
+            services.AddHttpClient<IAchievementService, AchievementHttpService>(client =>
+            {
+                client.BaseAddress = baseAddress;
+            });
+
             // --- OLD DATABASE SERVICES (Commented out) ---
             // services.AddTransient<FriendRequestService>();
             // services.AddTransient<FriendListService>();
@@ -186,8 +202,6 @@ namespace ChatModule
                 client.BaseAddress = baseAddress;
             });
 
-            services.AddTransient<IAnnouncementService, AnnouncementService>();
-
             services.AddHttpClient<IDiscussionService, DiscussionHttpService>(client =>
             {
                 client.BaseAddress = baseAddress;
@@ -197,8 +211,6 @@ namespace ChatModule
             {
                 client.BaseAddress = baseAddress;
             });
-
-            services.AddTransient<IAttendedEventService, AttendedEventService>();
 
             services.AddHttpClient<INotificationService, NotificationHttpService>(client =>
             {
@@ -210,13 +222,11 @@ namespace ChatModule
                 client.BaseAddress = baseAddress;
             });
 
-            services.AddTransient<IAchievementService, AchievementService>();
-
             services.AddHttpClient<IEventStatisticsService, EventStatisticsHttpService>(client =>
             {
                 client.BaseAddress = baseAddress;
             });
-
+            // --- EVENTS/GSS SERVICES ---
             services.AddTransient<EventListingViewModel>();
             services.AddTransient<ReputationViewModel>();
             services.AddTransient<NotificationViewModel>();
