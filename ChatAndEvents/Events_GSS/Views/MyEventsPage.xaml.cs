@@ -3,6 +3,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml;
 using ChatAndEvents.Data.EventsData.Models;
+using Microsoft.UI.Xaml.Navigation;
 
 namespace Events_GSS.Views
 {
@@ -15,6 +16,12 @@ namespace Events_GSS.Views
             this.InitializeComponent();
             ViewModel = viewModel;
             this.MyEventsListView.ItemsSource = ViewModel.Events;
+        }
+
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+            await ViewModel.LoadMyEventsAsync();
         }
 
         private void OnEventTapped(object sender, TappedRoutedEventArgs e)

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Text.Json;
 using System.Threading.Tasks;
 using ChatAndEvents.Data.EventsData.Models;
 
@@ -89,7 +90,16 @@ public class DiscussionHttpService : IDiscussionService
 
     public async Task<int?> GetSlowModeSecondsAsync(int eventId)
     {
-        return await _httpClient.GetFromJsonAsync<int?>($"api/Discussion/{eventId}/slowmode");
+        var response = await _httpClient.GetAsync($"api/Discussion/{eventId}/slowmode");
+        response.EnsureSuccessStatusCode();
+
+        var content = await response.Content.ReadAsStringAsync();
+        if (string.IsNullOrWhiteSpace(content) || content.Trim() == "null")
+        {
+            return null;
+        }
+
+        return JsonSerializer.Deserialize<int>(content, new JsonSerializerOptions(JsonSerializerDefaults.Web));
     }
 
     public async Task<List<User>> GetEventParticipantsAsync(int eventId)

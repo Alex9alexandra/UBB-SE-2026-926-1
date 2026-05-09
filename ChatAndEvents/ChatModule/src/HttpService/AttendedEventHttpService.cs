@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Text.Json;
 using System.Threading.Tasks;
 using ChatAndEvents.Data.EventsData.Models;
 using ChatAndEvents.Data.EventsData.Services.attendedEventServices;
@@ -43,7 +44,15 @@ namespace ChatModule.src.HttpService
                 return null;
             }
 
-            return await response.Content.ReadFromJsonAsync<AttendedEvent>();
+            var content = await response.Content.ReadAsStringAsync();
+            if (string.IsNullOrWhiteSpace(content) || content.Trim() == "null")
+            {
+                return null;
+            }
+
+            return JsonSerializer.Deserialize<AttendedEvent>(
+                content,
+                new JsonSerializerOptions(JsonSerializerDefaults.Web));
         }
 
         public async Task AttendEventAsync(int eventId, Guid userId)
