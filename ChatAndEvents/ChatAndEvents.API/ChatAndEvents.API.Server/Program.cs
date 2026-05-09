@@ -1,7 +1,18 @@
 using ChatAndEvents.Data;
+using ChatAndEvents.Data.ChatData.repoInterfaces.Repositories;
+using ChatAndEvents.Data.ChatData.repositories;
 using ChatAndEvents.Data.ChatData.serviceInterfaces.Services;
 using ChatAndEvents.Data.ChatData.services;
 using ChatAndEvents.Data.Database;
+using ChatAndEvents.Data.EventsData.Repositories;
+using ChatAndEvents.Data.EventsData.Repositories.achievementRepository;
+using ChatAndEvents.Data.EventsData.Repositories.announcementRepository;
+using ChatAndEvents.Data.EventsData.Repositories.categoriesRepository;
+using ChatAndEvents.Data.EventsData.Repositories.discussionRepository;
+using ChatAndEvents.Data.EventsData.Repositories.eventRepository;
+using ChatAndEvents.Data.EventsData.Repositories.eventStatisticsRepository;
+using ChatAndEvents.Data.EventsData.Repositories.notificationRepository;
+using ChatAndEvents.Data.EventsData.Repositories.reputationRepository;
 using ChatAndEvents.Data.EventsData.Services;
 using ChatAndEvents.Data.EventsData.Services.achievementServices;
 using ChatAndEvents.Data.EventsData.Services.announcementServices;
@@ -30,6 +41,13 @@ builder.Services.AddSwaggerGen(options =>
     options.CustomSchemaIds(type => type.FullName);
 });
 
+// chat module repositories
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IFriendRepository, FriendRepository>();
+builder.Services.AddScoped<IConversationRepository, ConversationRepository>();
+builder.Services.AddScoped<IParticipantRepository, ParticipantRepository>();
+builder.Services.AddScoped<IMessageRepository, MessageRepository>();
+
 // chat module services
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddScoped<IConversationListService, ConversationListService>();
@@ -47,7 +65,22 @@ builder.Services.AddScoped<IMessageService, MessageService>();
 builder.Services.AddScoped<IModerationService, ModerationService>();
 builder.Services.AddScoped<IReadReceiptService, ReadReceiptService>();
 
+// events module repositories
+builder.Services.AddScoped<IEventRepository, EventRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<IQuestRepository, QuestRepository>();
+builder.Services.AddScoped<IQuestMemoryRepository, QuestMemoryRepository>();
+builder.Services.AddScoped<IAnnouncementRepository, AnnouncementRepository>();
+builder.Services.AddScoped<IDiscussionRepository, DiscussionRepository>();
+builder.Services.AddScoped<IMemoryRepository, MemoryRepository>();
+builder.Services.AddScoped<IAttendedEventRepository, AttendedEventRepository>();
+builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
+builder.Services.AddScoped<IReputationRepository, ReputationRepository>();
+builder.Services.AddScoped<IAchievementRepository, AchievementRepository>();
+builder.Services.AddScoped<IEventStatisticsRepository, EventStatisticsRepository>();
+
 // events module services
+builder.Services.AddScoped<IUserService, ChatUserService>();
 builder.Services.AddScoped<IMemoryService, MemoryService>();
 builder.Services.AddScoped<IQuestApprovalService, QuestApprovalService>();
 builder.Services.AddScoped<IQuestService, QuestService>();
