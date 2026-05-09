@@ -63,6 +63,20 @@ public class AnnouncementsController : ControllerBase
         return Ok(new { readers, total });
     }
 
+    [HttpPut("{announcementId}/react")]
+    public async Task<IActionResult> AddOrUpdateReaction(int announcementId, [FromQuery] Guid userId, [FromQuery] string emoji)
+    {
+        await _announcementService.AddOrUpdateReactAsync(announcementId, userId, emoji);
+        return NoContent();
+    }
+
+    [HttpDelete("{announcementId}/react")]
+    public async Task<IActionResult> RemoveReaction(int announcementId, [FromQuery] Guid userId)
+    {
+        await _announcementService.RemoveReactionAsync(announcementId, userId);
+        return NoContent();
+    }
+
     [HttpPost("{announcementId}/react")]
     public async Task<IActionResult> ToggleReaction(int announcementId, [FromQuery] Guid userId, [FromQuery] string emoji)
     {
