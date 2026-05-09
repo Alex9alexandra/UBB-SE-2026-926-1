@@ -11,15 +11,22 @@ namespace ChatModule.src.HttpService
     public class UserHttpService : IUserService
     {
         private readonly HttpClient _httpClient;
+        private readonly CurrentUserContext _currentUserContext;
 
-        public UserHttpService(HttpClient httpClient)
+        public UserHttpService(HttpClient httpClient, CurrentUserContext currentUserContext)
         {
             _httpClient = httpClient;
+            _currentUserContext = currentUserContext;
         }
 
         public async Task<User> GetCurrentUser()
         {
-            return await _httpClient.GetFromJsonAsync<User>("api/User/current")
+            if (_currentUserContext.UserId == Guid.Empty)
+            {
+                throw new InvalidOperationException("Current user id is not set.");
+            }
+
+            return await _httpClient.GetFromJsonAsync<User>($"api/User/{_currentUserContext.UserId}")
                    ?? throw new InvalidOperationException("Failed to read current user from API.");
         }
 
@@ -53,8 +60,13 @@ namespace ChatModule.src.HttpService
 
         public async Task<bool> IsAttending(Event currentEvent)
         {
+            if (_currentUserContext.UserId == Guid.Empty)
+            {
+                return false;
+            }
+
             var response = await _httpClient.GetAsync(
-                $"api/User/{currentEvent.EventId}/attending");
+                $"api/User/{currentEvent.EventId}/attending?userId={_currentUserContext.UserId}");
 
             if (!response.IsSuccessStatusCode)
             {
@@ -66,8 +78,13 @@ namespace ChatModule.src.HttpService
 
         public bool IsAdmin(Event currentEvent)
         {
+            if (_currentUserContext.UserId == Guid.Empty)
+            {
+                return false;
+            }
+
             var response = _httpClient.GetAsync(
-                $"api/User/{currentEvent.EventId}/admin").GetAwaiter().GetResult();
+                $"api/User/{currentEvent.EventId}/admin?userId={_currentUserContext.UserId}").GetAwaiter().GetResult();
 
             if (!response.IsSuccessStatusCode)
             {
