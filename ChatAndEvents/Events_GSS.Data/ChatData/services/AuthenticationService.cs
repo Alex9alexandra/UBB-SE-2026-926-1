@@ -21,12 +21,12 @@ namespace ChatAndEvents.Data.ChatData.services
         }
         private string HashPassword(string password)
         {
-            return BCrypt.Net.BCrypt.HashPassword(password);
+            return global::BCrypt.Net.BCrypt.HashPassword(password);
         }
 
         private bool VerifyPassword(string password, string hash)
         {
-            return BCrypt.Net.BCrypt.Verify(password, hash);
+            return global::BCrypt.Net.BCrypt.Verify(password, hash);
         }
 
         public async Task<User?> LoginAsync(string username, string password)

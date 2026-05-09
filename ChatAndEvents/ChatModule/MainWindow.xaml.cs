@@ -98,7 +98,7 @@ namespace ChatModule
             services.AddTransient<IMessageRepository, MessageRepository>();
 
             // --- LOCAL CHAT SERVICES (Not yet migrated) ---
-            services.AddTransient<ConversationListService>(); // Keep concrete if no interface yet
+            services.AddTransient<IConversationListService, ConversationListService>();
             services.AddTransient<ISearchService, SearchService>();
             services.AddTransient<IMessageService, MessageService>();
             services.AddTransient<IMessageInteractionService, MessageInteractionService>();
@@ -165,19 +165,57 @@ namespace ChatModule
             services.AddTransient<IAchievementRepository, AchievementRepository>();
             services.AddTransient<IEventStatisticsRepository, EventStatisticsRepository>();
 
-            // --- EVENTS/GSS SERVICES ---
-            services.AddTransient<IEventService, EventService>();
-            services.AddTransient<ICategoryServices, CategoryServices>();
-            services.AddTransient<IQuestService, QuestService>();
-            services.AddTransient<IQuestApprovalService, QuestApprovalService>();
+            // --- EVENTS/GSS HTTP SERVICES ---
+            services.AddHttpClient<IEventService, EventHttpService>(client =>
+            {
+                client.BaseAddress = baseAddress;
+            });
+
+            services.AddHttpClient<ICategoryServices, CategoryHttpService>(client =>
+            {
+                client.BaseAddress = baseAddress;
+            });
+
+            services.AddHttpClient<IQuestService, QuestHttpService>(client =>
+            {
+                client.BaseAddress = baseAddress;
+            });
+
+            services.AddHttpClient<IQuestApprovalService, QuestApprovalHttpService>(client =>
+            {
+                client.BaseAddress = baseAddress;
+            });
+
             services.AddTransient<IAnnouncementService, AnnouncementService>();
-            services.AddTransient<IDiscussionService, DiscussionService>();
-            services.AddTransient<IMemoryService, MemoryService>();
+
+            services.AddHttpClient<IDiscussionService, DiscussionHttpService>(client =>
+            {
+                client.BaseAddress = baseAddress;
+            });
+
+            services.AddHttpClient<IMemoryService, MemoryHttpService>(client =>
+            {
+                client.BaseAddress = baseAddress;
+            });
+
             services.AddTransient<IAttendedEventService, AttendedEventService>();
-            services.AddTransient<INotificationService, NotificationService>();
-            services.AddSingleton<IReputationService, ReputationService>();
+
+            services.AddHttpClient<INotificationService, NotificationHttpService>(client =>
+            {
+                client.BaseAddress = baseAddress;
+            });
+
+            services.AddHttpClient<IReputationService, ReputationHttpService>(client =>
+            {
+                client.BaseAddress = baseAddress;
+            });
+
             services.AddTransient<IAchievementService, AchievementService>();
-            services.AddTransient<IEventStatisticsService, EventStatisticsService>();
+
+            services.AddHttpClient<IEventStatisticsService, EventStatisticsHttpService>(client =>
+            {
+                client.BaseAddress = baseAddress;
+            });
 
             services.AddTransient<EventListingViewModel>();
             services.AddTransient<ReputationViewModel>();
