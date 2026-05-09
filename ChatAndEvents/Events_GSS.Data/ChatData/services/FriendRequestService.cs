@@ -6,6 +6,7 @@ using ChatAndEvents.Data.ChatData.repositories;
 using ChatAndEvents.Data.ChatData.domain;
 using ChatAndEvents.Data.ChatData.serviceInterfaces.Services;
 using ChatAndEvents.Data.ChatData.repoInterfaces.Repositories;
+using ChatAndEvents.Data.EventsData.Services.notificationServices;
 
 namespace ChatAndEvents.Data.ChatData.services
 {
@@ -15,17 +16,20 @@ namespace ChatAndEvents.Data.ChatData.services
         private readonly IUserRepository _userRepository;
         private readonly IConversationRepository _conversationRepository;
         private readonly IParticipantRepository _participantRepository;
+        private readonly INotificationService? _notificationService;
 
         public FriendRequestService(
             IFriendRepository friendRepository,
             IUserRepository userRepository,
             IConversationRepository conversationRepository,
-            IParticipantRepository participantRepository)
+            IParticipantRepository participantRepository,
+            INotificationService? notificationService = null)
         {
             this._friendRepository = friendRepository;
             this._userRepository = userRepository;
             this._conversationRepository = conversationRepository;
             this._participantRepository = participantRepository;
+            this._notificationService = notificationService;
         }
 
         public async Task SendFriendRequestAsync(Guid senderUserId, Guid receiverUserId)
@@ -48,6 +52,7 @@ namespace ChatAndEvents.Data.ChatData.services
                 {
                     await _friendRepository.UpdateFriendshipStatusAsync(senderUserId, receiverUserId, FriendStatus.Pending);
                     await _friendRepository.SetMatchStatusAsync(senderUserId, receiverUserId, false);
+                    await TryNotifyFriendRequestAsync(senderUserId, receiverUserId);
                     return;
                 }
 
@@ -65,6 +70,29 @@ namespace ChatAndEvents.Data.ChatData.services
             };
 
             await _friendRepository.CreateFriendshipAsync(newFriendRequest);
+            await TryNotifyFriendRequestAsync(senderUserId, receiverUserId);
+        }
+
+        private async Task TryNotifyFriendRequestAsync(Guid senderUserId, Guid receiverUserId)
+        {
+            if (_notificationService == null)
+            {
+                return;
+            }
+
+            try
+            {
+                var sender = await _userRepository.GetByIdAsync(senderUserId);
+                var senderName = sender?.Username ?? "Someone";
+                await _notificationService.NotifyAsync(
+                    receiverUserId,
+                    "New friend request",
+                    $"{senderName} sent you a friend request.");
+            }
+            catch
+            {
+                // Notifications should not block the friend request itself.
+            }
         }
 
         public async Task<bool> SendFriendRequestByUsernameAsync(Guid senderUserId, string receiverUsername)

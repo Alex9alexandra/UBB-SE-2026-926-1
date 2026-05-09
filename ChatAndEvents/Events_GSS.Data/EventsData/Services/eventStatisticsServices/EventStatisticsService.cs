@@ -56,7 +56,7 @@ public class EventStatisticsService : IEventStatisticsService
         var result = await this._repository.GetEngagementBreakdownAsync(eventId);
         if (result == null)
         {
-            return null;
+            return new EngagementBreakdown();
         }
 
         if (result.TotalQuestSubmissions > 0)

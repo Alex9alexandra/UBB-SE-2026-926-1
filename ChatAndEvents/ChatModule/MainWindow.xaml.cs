@@ -383,9 +383,10 @@ namespace ChatModule
 
                 EventListingViewModel vm => new EventListingPage(vm),
                 ReputationViewModel vm => new ReputationPage(vm),
-                NotificationViewModel => new NotificationView(),
+                NotificationViewModel vm => new NotificationView(vm),
                 CreateEventViewModel vm => new CreateEventPage(),
                 EventDetailViewModel vm => new EventDetailPage(vm),
+                EventStatisticsViewModel vm => new EventStatisticsPage(vm),
                 MyEventsViewModel vm => new MyEventsPage(vm),
 
                 _ => null

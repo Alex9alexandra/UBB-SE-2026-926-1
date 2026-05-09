@@ -19,9 +19,9 @@ public class EventStatisticsRepository : IEventStatisticsRepository
         var totalParticipants = await db.AttendedEvents
             .CountAsync(ae => ae.EventId == eventId);
 
-        var discussionUsers = db.Discussions
-            .Where(d => EF.Property<int>(d, "EventId") == eventId)
-            .Select(d => EF.Property<Guid>(d, "CreatorId"));
+        var discussionUsers = db.DiscussionMessages
+            .Where(d => d.AssociatedEvent!.EventId == eventId && d.Author != null)
+            .Select(d => d.Author!.UserId);
 
         var memoryUsers = db.Memories
             .Where(m => m.EventId == eventId)
@@ -47,8 +47,8 @@ public class EventStatisticsRepository : IEventStatisticsRepository
     public async Task<EngagementBreakdown> GetEngagementBreakdownAsync(int eventId)
     {
         using var db = await _contextFactory.CreateDbContextAsync();
-        var totalMessages = await db.Discussions
-            .CountAsync(d => EF.Property<int>(d, "EventId") == eventId);
+        var totalMessages = await db.DiscussionMessages
+            .CountAsync(d => d.AssociatedEvent!.EventId == eventId);
 
         var totalMemories = await db.Memories
             .CountAsync(m => m.EventId == eventId);
@@ -83,9 +83,9 @@ public class EventStatisticsRepository : IEventStatisticsRepository
             .Where(ae => ae.EventId == eventId)
             .ToListAsync();
 
-        var messageCounts = await db.Discussions
-            .Where(d => EF.Property<int>(d, "EventId") == eventId)
-            .GroupBy(d => EF.Property<Guid>(d, "CreatorId"))
+        var messageCounts = await db.DiscussionMessages
+            .Where(d => d.AssociatedEvent!.EventId == eventId && d.Author != null)
+            .GroupBy(d => d.Author!.UserId)
             .Select(g => new { UserId = g.Key, Count = g.Count() })
             .ToDictionaryAsync(x => x.UserId, x => x.Count);
 

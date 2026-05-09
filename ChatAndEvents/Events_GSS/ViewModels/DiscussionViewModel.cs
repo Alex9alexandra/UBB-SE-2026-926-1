@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Threading.Tasks;
 using ChatAndEvents.Data.EventsData.Models;
 using ChatAndEvents.Data.EventsData.Services.discussionService;
@@ -259,19 +260,20 @@ public partial class DiscussionViewModel : ObservableObject
     [RelayCommand]
     public async Task HandleMediaFileAsync(Windows.Storage.IStorageFile file)
     {
-        await RunGuardedAsync(async () =>
+        await RunGuardedAsync(() =>
         {
-            var localFolder = Windows.Storage.ApplicationData.Current.LocalFolder;
-            var mediaFolder = await localFolder.CreateFolderAsync(
-                "DiscussionMedia",
-                Windows.Storage.CreationCollisionOption.OpenIfExists);
+            var extension = Path.GetExtension(file.Name).ToLowerInvariant();
+            var mediaFolder = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "ChatModule",
+                "DiscussionMedia");
+            Directory.CreateDirectory(mediaFolder);
 
-            var copy = await file.CopyAsync(
-                mediaFolder,
-                file.Name,
-                Windows.Storage.NameCollisionOption.GenerateUniqueName);
+            var targetPath = Path.Combine(mediaFolder, $"{Guid.NewGuid():N}{extension}");
+            File.Copy(file.Path, targetPath, overwrite: false);
 
-            MediaPath = copy.Path;
+            MediaPath = targetPath;
+            return Task.CompletedTask;
         });
     }
 

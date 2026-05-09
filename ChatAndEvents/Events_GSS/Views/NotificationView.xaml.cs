@@ -40,6 +40,13 @@ namespace Events_GSS.Views
             Loaded += async (s, e) => await ViewModel.LoadAsync();
         }
 
+        public NotificationView(NotificationViewModel viewModel)
+        {
+            InitializeComponent();
+            ViewModel = viewModel;
+            DataContext = ViewModel;
+        }
+
         private async void DeleteButton_Click(object sender, RoutedEventArgs e)
         {
             if (sender is Button btn && btn.Tag is Notification notification)

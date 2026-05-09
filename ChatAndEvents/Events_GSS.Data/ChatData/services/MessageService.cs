@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using ChatAndEvents.Data.ChatData.repositories;
 using ChatAndEvents.Data.ChatData.domain;
 using ChatAndEvents.Data.ChatData.repositories;
 using ChatAndEvents.Data.ChatData.repoInterfaces.Repositories;
 using ChatAndEvents.Data.ChatData.serviceInterfaces.Services;
+using ChatAndEvents.Data.EventsData.Services.notificationServices;
 
 namespace ChatAndEvents.Data.ChatData.services
 {
@@ -16,17 +18,20 @@ namespace ChatAndEvents.Data.ChatData.services
         private readonly IParticipantRepository _participantRepository;
         private readonly IUserRepository _userRepository;
         private readonly IConversationRepository _conversationRepository;
+        private readonly INotificationService? _notificationService;
 
         public MessageService(
             IMessageRepository messageRepository,
             IParticipantRepository participantRepository,
             IUserRepository userRepository,
-            IConversationRepository conversationRepository)
+            IConversationRepository conversationRepository,
+            INotificationService? notificationService = null)
         {
             _messageRepository = messageRepository;
             _participantRepository = participantRepository;
             _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
             _conversationRepository = conversationRepository ?? throw new ArgumentNullException(nameof(conversationRepository));
+            _notificationService = notificationService;
         }
 
         private async Task<Participant> RequireActiveParticipantAsync(Guid conversationId, Guid userId)
@@ -162,7 +167,42 @@ namespace ChatAndEvents.Data.ChatData.services
             message.SenderUsername = sender?.Username;
             message.SenderAvatarUrl = sender?.AvatarUrl;
 
+            try
+            {
+                await NotifyConversationParticipantsAsync(conversationId, senderId, sender?.Username, content);
+            }
+            catch
+            {
+                // Notifications should never prevent the message itself from being sent.
+            }
+
             return message;
+        }
+
+        private async Task NotifyConversationParticipantsAsync(
+            Guid conversationId,
+            Guid senderId,
+            string? senderUsername,
+            string content)
+        {
+            if (_notificationService == null)
+            {
+                return;
+            }
+
+            var participants = await _participantRepository.GetAllForConversationAsync(conversationId);
+            var conversation = await _conversationRepository.GetByIdAsync(conversationId);
+            var senderName = string.IsNullOrWhiteSpace(senderUsername) ? "Someone" : senderUsername;
+            var title = conversation?.Type == ConversationType.Group && !string.IsNullOrWhiteSpace(conversation.Title)
+                ? $"New message in {conversation.Title}"
+                : "New message";
+            var preview = content.Length > 80 ? $"{content[..80]}..." : content;
+            var description = $"{senderName}: {preview}";
+
+            foreach (var participant in participants.Where(participant => participant.UserId != senderId))
+            {
+                await _notificationService.NotifyAsync(participant.UserId, title, description);
+            }
         }
 
         public Task<string> PersistImageAttachmentAsync(string sourcePath)

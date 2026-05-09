@@ -103,9 +103,7 @@ public sealed partial class EventDetailPage : Page
 
     private void OnStatisticsClicked(object sender, RoutedEventArgs e)
     {
-        // Their old NavigationService is gone, so for now we just print to debug.
-        // To fix this later, you add a 'RequestStatistics(currentEvent)' shout to the ViewModel!
-        System.Diagnostics.Debug.WriteLine("Statistics button clicked!");
+        ViewModel.RequestStatistics();
     }
 
     // --- THEIR ORIGINAL UI LOGIC REMAINS INTACT BELOW ---

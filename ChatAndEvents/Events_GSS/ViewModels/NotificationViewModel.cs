@@ -15,7 +15,12 @@ namespace Events_GSS.ViewModels
     {
         private readonly INotificationService _notificationService;
         private readonly IUserService _userService;
-        public string ErrorMessage { get; set; } = string.Empty;
+        private string _errorMessage = string.Empty;
+        public string ErrorMessage
+        {
+            get => _errorMessage;
+            set { _errorMessage = value; OnPropertyChanged(); }
+        }
 
         private bool _isLoading;
         public bool IsLoading
@@ -40,10 +45,21 @@ namespace Events_GSS.ViewModels
         public async Task LoadAsync()
         {
             IsLoading = true;
-            var currentUser = await _userService.GetCurrentUser();
-            var notifications = await _notificationService.GetNotificationsAsync(currentUser.UserId);
-            Notifications = new ObservableCollection<Notification>(notifications);
-            IsLoading = false;
+            ErrorMessage = string.Empty;
+            try
+            {
+                var currentUser = await _userService.GetCurrentUser();
+                var notifications = await _notificationService.GetNotificationsAsync(currentUser.UserId);
+                Notifications = new ObservableCollection<Notification>(notifications);
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = $"Could not load notifications: {ex.Message}";
+            }
+            finally
+            {
+                IsLoading = false;
+            }
         }
 
         public async Task DeleteAsync(Notification notification)

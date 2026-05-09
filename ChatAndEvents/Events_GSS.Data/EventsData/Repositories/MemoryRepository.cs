@@ -36,9 +36,9 @@ namespace ChatAndEvents.Data.EventsData.Repositories
 
         public async Task<int> AddAsync(Memory memory)
         {
-            if (memory.Event == null || memory.Author == null)
+            if (memory.EventId <= 0 || memory.AuthorId == Guid.Empty)
             {
-                throw new ArgumentException("Event and Author are required.", nameof(memory));
+                throw new ArgumentException("EventId and AuthorId are required.", nameof(memory));
             }
 
             var memoryEntity = new Memory
@@ -46,8 +46,8 @@ namespace ChatAndEvents.Data.EventsData.Repositories
                 PhotoPath = memory.PhotoPath,
                 Text = memory.Text,
                 CreatedAt = memory.CreatedAt,
-                EventId = memory.Event.EventId,
-                AuthorId = memory.Author.UserId,
+                EventId = memory.EventId,
+                AuthorId = memory.AuthorId,
             };
             using var db = await _contextFactory.CreateDbContextAsync();
             db.Memories.Add(memoryEntity);

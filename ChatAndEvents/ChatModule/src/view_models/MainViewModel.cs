@@ -10,6 +10,7 @@ using ChatAndEvents.Data.EventsData.Repositories.eventRepository;
 using ChatAndEvents.Data.EventsData.Services.achievementServices;
 using ChatAndEvents.Data.EventsData.Services.attendedEventServices;
 using ChatAndEvents.Data.EventsData.Services.eventServices;
+using ChatAndEvents.Data.EventsData.Services.eventStatisticsServices;
 using ChatAndEvents.Data.EventsData.Services.Interfaces;
 using ChatAndEvents.Data.EventsData.Services.notificationServices;
 using ChatAndEvents.Data.EventsData.Services.reputationService;
@@ -17,6 +18,7 @@ using ChatAndEvents.Data.EventsData.Services.userServices;
 using ChatAndEvents.Data.ChatData.domain;
 using ChatAndEvents.Data.ChatData.services;
 using ChatAndEvents.Data.ChatData.serviceInterfaces.Services; // Added for the Chat Interfaces!
+using Microsoft.Extensions.DependencyInjection;
 
 namespace ChatModule.ViewModels
 {
@@ -234,6 +236,7 @@ namespace ChatModule.ViewModels
 
             // Back from detail goes back to My Events, not the public list
             vm.BackRequested += () => _ = this.GoToMyEventsAsync();
+            vm.StatisticsRequested += selected => this.ShowStatistics(selected, () => _ = this.GoToMyEventDetailsAsync(selected));
             this.CurrentPage = vm;
             return Task.CompletedTask;
         }
@@ -313,8 +316,17 @@ namespace ChatModule.ViewModels
             var vm = new EventDetailViewModel(selectedEvent, _attendedEventService);
 
             vm.BackRequested += () => _ = GoToEventsAsync();
+            vm.StatisticsRequested += selected => this.ShowStatistics(selected, () => _ = this.GoToEventDetailsAsync(selected));
             CurrentPage = vm;
             return Task.CompletedTask;
+        }
+
+        private void ShowStatistics(Event selectedEvent, Action goBack)
+        {
+            var statisticsService = Events_GSS.App.Services.GetRequiredService<IEventStatisticsService>();
+            var vm = new EventStatisticsViewModel(statisticsService, selectedEvent);
+            vm.BackRequested += goBack;
+            CurrentPage = vm;
         }
 
         private Task LogoutAsync()

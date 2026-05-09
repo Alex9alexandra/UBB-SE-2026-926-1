@@ -34,6 +34,8 @@ public class NotificationRepository : INotificationRepository
     public async Task AddAsync(Guid userId, string title, string description, DateTime createdAt)
     {
         using var db = await _contextFactory.CreateDbContextAsync();
+        await EnsureNotificationUserAsync(db, userId);
+
         db.Notifications.Add(new Notification
         {
             UserId = userId,
@@ -43,6 +45,22 @@ public class NotificationRepository : INotificationRepository
         });
 
         await db.SaveChangesAsync();
+    }
+
+    private static async Task EnsureNotificationUserAsync(AppDbContext db, Guid userId)
+    {
+        var userExists = await db.Set<User>().AnyAsync(user => user.UserId == userId);
+        if (userExists)
+        {
+            return;
+        }
+
+        var chatUser = await db.Users.FindAsync(userId);
+        db.Set<User>().Add(new User
+        {
+            UserId = userId,
+            Name = chatUser?.Username ?? "User",
+        });
     }
 
     /// <summary>

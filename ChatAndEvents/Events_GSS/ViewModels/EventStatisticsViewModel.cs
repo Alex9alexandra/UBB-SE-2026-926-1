@@ -27,6 +27,7 @@ public class EventStatisticsViewModel : INotifyPropertyChanged
         _event = currentEvent;
     }
 
+    public event Action? BackRequested;
     public string EventName => _event.Name;
 
     public bool IsLoading
@@ -101,6 +102,11 @@ public class EventStatisticsViewModel : INotifyPropertyChanged
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;
+
+    public void RequestBack()
+    {
+        BackRequested?.Invoke();
+    }
 
     private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
     {

@@ -8,6 +8,7 @@ public class EventDetailViewModel
     public Event SelectedEvent { get; }
     
     public event Action? BackRequested;
+    public event Action<Event>? StatisticsRequested;
 
     // Now it takes the event AND the service
     public EventDetailViewModel(Event selectedEvent, IAttendedEventService attendedService)
@@ -17,6 +18,7 @@ public class EventDetailViewModel
     }
 
     public void RequestBack() => BackRequested?.Invoke();
+    public void RequestStatistics() => StatisticsRequested?.Invoke(SelectedEvent);
     
     // You could move the "Join/Leave" logic here later!
 }

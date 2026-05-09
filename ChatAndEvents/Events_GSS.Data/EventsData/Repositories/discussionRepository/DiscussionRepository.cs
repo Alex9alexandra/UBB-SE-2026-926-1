@@ -107,13 +107,22 @@ public class DiscussionRepository : IDiscussionRepository
     public async Task AddReactionAsync(int messageId, Guid userId, string emoji)
     {
         using var db = await _contextFactory.CreateDbContextAsync();
-        var message = await db.DiscussionMessages.FindAsync(messageId);
+        var message = await db.DiscussionMessages
+            .Include(d => d.AssociatedEvent)
+            .FirstOrDefaultAsync(d => d.Id == messageId);
         if (message == null)
             throw new InvalidOperationException("Message not found.");
 
+        var authorExists = await db.Set<User>().AnyAsync(user => user.UserId == userId);
+        if (!authorExists)
+            throw new InvalidOperationException("User not found.");
+
+        var discussionId = await GetOrCreateDiscussionIdAsync(db, message.AssociatedEvent!.EventId, userId);
 
         var reaction = new DiscussionReaction
         {
+            DiscussionId = discussionId,
+            UserId = Guid.NewGuid(),
             MessageId = messageId,
             AuthorId = userId,
             Emoji = emoji
@@ -123,11 +132,43 @@ public class DiscussionRepository : IDiscussionRepository
         await db.SaveChangesAsync();
     }
 
+    private static async Task<int> GetOrCreateDiscussionIdAsync(AppDbContext db, int eventId, Guid creatorId)
+    {
+        var existingDiscussionId = await db.Discussions
+            .Where(d => EF.Property<int>(d, "EventId") == eventId)
+            .Select(d => d.Id)
+            .FirstOrDefaultAsync();
+
+        if (existingDiscussionId != 0)
+        {
+            return existingDiscussionId;
+        }
+
+        var currentEvent = await db.Events.FindAsync(eventId)
+            ?? throw new InvalidOperationException("Event not found.");
+        var creator = await db.Set<User>().FindAsync(creatorId)
+            ?? throw new InvalidOperationException("User not found.");
+
+        var discussion = new Discussion
+        {
+            Title = currentEvent.Name,
+            Description = null,
+            DateCreated = DateTime.UtcNow,
+            IsClosed = false,
+            AssociatedEvent = currentEvent,
+            Creator = creator,
+        };
+
+        db.Discussions.Add(discussion);
+        await db.SaveChangesAsync();
+        return discussion.Id;
+    }
+
     public async Task RemoveReactionAsync(int messageId, Guid userId)
     {
         using var db = await _contextFactory.CreateDbContextAsync();
         await db.DiscussionReactions
-            .Where(r => r.Message!.Id == messageId && r.Author!.UserId == userId)
+            .Where(r => r.MessageId == messageId && r.AuthorId == userId)
             .ExecuteDeleteAsync();
     }
 
@@ -138,7 +179,7 @@ public class DiscussionRepository : IDiscussionRepository
             .AsNoTracking()
             .Include(r => r.Author)
             .Include(r => r.Message)
-            .FirstOrDefaultAsync(r => r.Message!.Id == messageId && r.Author!.UserId == userId);
+            .FirstOrDefaultAsync(r => r.MessageId == messageId && r.AuthorId == userId);
     }
 
     public async Task<List<DiscussionReaction>> GetReactionsAsync(int messageId)
@@ -155,7 +196,7 @@ public class DiscussionRepository : IDiscussionRepository
     {
         using var db = await _contextFactory.CreateDbContextAsync();
         await db.DiscussionReactions
-            .Where(r => r.Message!.Id == messageId && r.Author!.UserId == userId)
+            .Where(r => r.MessageId == messageId && r.AuthorId == userId)
             .ExecuteUpdateAsync(setters => 
                 setters.SetProperty(r => r.Emoji, emoji));
     }
