@@ -2,13 +2,14 @@ using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using ChatAndEvents.Data.ChatData.domain;
+using ChatAndEvents.Data.ChatData.serviceInterfaces.Services;
 using ChatAndEvents.Data.ChatData.services;
 
 namespace ChatModule.ViewModels;
 public class ProfileViewModel : BaseViewModel
 {
-    private readonly FriendRequestService _friendRequestService;
-    private readonly BlockService _blockService;
+    private readonly IFriendRequestService _friendRequestService;
+    private readonly IBlockService _blockService;
     private readonly IDirectMessageService _directMessageService;
     private readonly Guid _currentUserId;
     private readonly IProfileService _profileService;
@@ -158,8 +159,8 @@ public class ProfileViewModel : BaseViewModel
     }
 
     public ProfileViewModel(
-        FriendRequestService friendRequestService,
-        BlockService blockService,
+        IFriendRequestService friendRequestService,
+        IBlockService blockService,
         IDirectMessageService directMessageService,
         IProfileService profileService,
         Guid currentUserId)

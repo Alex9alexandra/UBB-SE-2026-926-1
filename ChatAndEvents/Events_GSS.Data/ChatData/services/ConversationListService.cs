@@ -7,7 +7,7 @@ using ChatAndEvents.Data.ChatData.repositories;
 
 namespace ChatAndEvents.Data.ChatData.services
 {
-    public class ConversationListService
+    public class ConversationListService : IConversationListService
     {
         private readonly ConversationRepository _conversationRepository;
         private readonly ParticipantRepository _participantRepository;
