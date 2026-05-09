@@ -99,12 +99,6 @@ namespace ChatModule
             services.AddTransient<IMessageRepository, MessageRepository>();
 
             // --- LOCAL CHAT SERVICES (Not yet migrated) ---
-            services.AddTransient<ISearchService, SearchService>();
-            services.AddTransient<IMessageService, MessageService>();
-            services.AddTransient<IMessageInteractionService, MessageInteractionService>();
-            services.AddTransient<IReadReceiptService, ReadReceiptService>();
-            services.AddTransient<IProfileService, ProfileService>();
-            services.AddTransient<IModerationService, ModerationService>();
 
             // ==========================================================
             // --- THE BATCH SWITCH: NEW CLOUD HTTP SERVICES ---
@@ -167,6 +161,36 @@ namespace ChatModule
             });
 
             services.AddHttpClient<IUserService, UserHttpService>(client =>
+            {
+                client.BaseAddress = baseAddress;
+            });
+
+            services.AddHttpClient<ISearchService, SearchHttpService>(client =>
+            {
+                client.BaseAddress = baseAddress;
+            });
+
+            services.AddHttpClient<IMessageInteractionService, MessageInteractionHttpService>(client =>
+            {
+                client.BaseAddress = baseAddress;
+            });
+
+            services.AddHttpClient<IReadReceiptService, ReadReceiptHttpService>(client =>
+            {
+                client.BaseAddress = baseAddress;
+            });
+
+            services.AddHttpClient<IProfileService, ProfileHttpService>(client =>
+            {
+                client.BaseAddress = baseAddress;
+            });
+
+            services.AddHttpClient<IModerationService, ModerationHttpService>(client =>
+            {
+                client.BaseAddress = baseAddress;
+            });
+
+            services.AddHttpClient<IMessageService, MessageHttpService>(client =>
             {
                 client.BaseAddress = baseAddress;
             });
@@ -305,13 +329,13 @@ namespace ChatModule
             {
 
                 var loginServices = new ServiceCollection();
-                loginServices.AddDbContext<AppDbContext>(options =>
-                    options.UseSqlServer(ConnectionString), ServiceLifetime.Transient);
-                loginServices.AddTransient<IUserRepository, UserRepository>();
-                loginServices.AddTransient<AuthenticationService>();
+                loginServices.AddHttpClient<IAuthenticationService, AuthentificationHttpService>(client =>
+                {
+                    client.BaseAddress = baseAddress;
+                });
                 var loginProvider = loginServices.BuildServiceProvider();
 
-                var loginWindow = new LoginWindow(loginProvider.GetRequiredService<AuthenticationService>());
+                var loginWindow = new LoginWindow(loginProvider.GetRequiredService<IAuthenticationService>());
                 loginWindow.LoginSucceeded += (newUserId, newUsername) =>
                 {
                     var nextMain = new MainWindow(newUserId, newUsername);
