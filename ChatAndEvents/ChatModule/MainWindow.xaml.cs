@@ -99,12 +99,10 @@ namespace ChatModule
             services.AddTransient<IMessageRepository, MessageRepository>();
 
             // --- LOCAL CHAT SERVICES (Not yet migrated) ---
-            services.AddTransient<ConversationListService>(); // Keep concrete if no interface yet
             services.AddTransient<ISearchService, SearchService>();
             services.AddTransient<IMessageService, MessageService>();
             services.AddTransient<IMessageInteractionService, MessageInteractionService>();
             services.AddTransient<IReadReceiptService, ReadReceiptService>();
-            services.AddTransient<IMentionService, MentionService>();
             services.AddTransient<IProfileService, ProfileService>();
             services.AddTransient<IModerationService, ModerationService>();
 
@@ -119,6 +117,11 @@ namespace ChatModule
             });
 
             services.AddHttpClient<IFriendRequestService, FriendRequestHttpService>(client =>
+            {
+                client.BaseAddress = baseAddress;
+            });
+
+            services.AddHttpClient<IConversationListService, ConversationListHttpService>(client =>
             {
                 client.BaseAddress = baseAddress;
             });
@@ -143,6 +146,11 @@ namespace ChatModule
                 client.BaseAddress = baseAddress;
             });
 
+            services.AddHttpClient<IMentionService, MentionHttpService>(client =>
+            {
+                client.BaseAddress = baseAddress;
+            });
+
             services.AddHttpClient<IAnnouncementService, AnnouncementHttpService>(client =>
             {
                 client.BaseAddress = baseAddress;
@@ -154,6 +162,11 @@ namespace ChatModule
             });
 
             services.AddHttpClient<IAchievementService, AchievementHttpService>(client =>
+            {
+                client.BaseAddress = baseAddress;
+            });
+
+            services.AddHttpClient<IUserService, UserHttpService>(client =>
             {
                 client.BaseAddress = baseAddress;
             });
@@ -196,17 +209,6 @@ namespace ChatModule
             services.AddTransient<ReputationViewModel>();
             services.AddTransient<NotificationViewModel>();
 
-            services.AddSingleton<IUserService>(sp =>
-            {
-                var chatUserService = new ChatUserService(
-                    sp.GetRequiredService<IUserRepository>(),
-                    sp.GetRequiredService<IReputationRepository>(),
-                    sp.GetRequiredService<IAttendedEventService>(),
-                    sp.GetRequiredService<IDbContextFactory<AppDbContext>>()
-                );
-                chatUserService.SetCurrentUserId(userId);
-                return chatUserService;
-            });
 
             Events_GSS.App.Services = services.BuildServiceProvider();
             Events_GSS.App.MainWindowHandle = WinRT.Interop.WindowNative.GetWindowHandle(this);

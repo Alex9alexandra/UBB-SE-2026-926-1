@@ -1,13 +1,9 @@
-﻿using ChatAndEvents.Data.ChatData.repositories;
-using ChatAndEvents.Data.ChatData.services;
+﻿using ChatAndEvents.Data.ChatData.services;
 using ChatAndEvents.Data.Database;
-using ChatAndEvents.Data.EventsData.Repositories;
 using ChatModule.src.views;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using System;
-using System.Configuration;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -20,12 +16,9 @@ namespace ChatModule
     public partial class App : Application
     {
         public static Window? MainAppWindow { get; private set; }
-
         private Window? _window;
         private LoginWindow? _loginWindow;
-
-        public DatabaseManager? DatabaseManager { get; private set; }
-
+        
         public static void SetMainWindow(Window window)
         {
             MainAppWindow = window;
@@ -41,22 +34,16 @@ namespace ChatModule
         [ExcludeFromCodeCoverage]
         protected override void OnLaunched(LaunchActivatedEventArgs args)
         {
-            var connectionString =
-                 ConfigurationManager.ConnectionStrings["ChatAndEventsDB"]?.ConnectionString
-                 ?? "Data Source=.\\SQLEXPRESS;Initial Catalog=ChatAndEventsDB;Integrated Security=True;Encrypt=True;TrustServerCertificate=True;";
-
-
             var services = new ServiceCollection();
-
-            services.AddDbContextFactory<AppDbContext>(options =>
-                options.UseSqlServer(connectionString));
-
-            services.AddTransient<IUserRepository, UserRepository>();
-
-            services.AddTransient<AuthenticationService>();
+            var baseAddress = new Uri("http://172.30.250.53/");
+            
+            services.AddHttpClient<IAuthenticationService, AuthentificationHttpService>(client =>
+            {
+                client.BaseAddress = baseAddress;
+            });
 
             var provider = services.BuildServiceProvider();
-            var authService = provider.GetRequiredService<AuthenticationService>();
+            var authService = provider.GetRequiredService<IAuthenticationService>();
 
             _loginWindow = new LoginWindow(authService);
             _loginWindow.LoginSucceeded += OnLoginSucceededAsync;
