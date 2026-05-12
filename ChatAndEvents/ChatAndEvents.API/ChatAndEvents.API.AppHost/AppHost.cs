@@ -10,4 +10,6 @@ var webfrontend = builder.AddViteApp("webfrontend", "../frontend")
 
 server.PublishWithContainerFiles(webfrontend, "wwwroot");
 
+builder.AddProject<Projects.ChatAndEvents_Web>("chatandevents-web");
+
 builder.Build().Run();

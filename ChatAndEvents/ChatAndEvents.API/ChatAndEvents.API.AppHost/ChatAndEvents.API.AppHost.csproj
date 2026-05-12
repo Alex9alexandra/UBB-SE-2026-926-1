@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\ChatAndEvents.Web\ChatAndEvents.Web.csproj" />
     <ProjectReference Include="..\ChatAndEvents.API.Server\ChatAndEvents.API.Server.csproj" />
   </ItemGroup>
 
