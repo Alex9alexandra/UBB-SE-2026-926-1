@@ -24,11 +24,11 @@ builder.Services.AddHttpClient("API", client =>
 });
 
 //register the http services - this is just an example
-builder.Services.AddScoped<IEventService, EventHttpService>(sp =>
-{
-    var factory = sp.GetRequiredService<IHttpClientFactory>();
-    return new EventHttpService(factory.CreateClient("API"));
-});
+//builder.Services.AddScoped<IEventService, EventHttpService>(sp =>
+//{
+//    var factory = sp.GetRequiredService<IHttpClientFactory>();
+//    return new EventHttpService(factory.CreateClient("API"));
+//});
 //repeat ^ for the all services
 
 var app = builder.Build();
