@@ -9,12 +9,12 @@ namespace ChatModule.Tests
 {
     public class ForgotPasswordViewModelTests
     {
-        private readonly Mock<IAuthentificationService> _mockAuth;
+        private readonly Mock<IAuthenticationService> _mockAuth;
         private readonly ForgotPasswordViewModel _viewModel;
 
         public ForgotPasswordViewModelTests()
         {
-            _mockAuth = new Mock<IAuthentificationService>();
+            _mockAuth = new Mock<IAuthenticationService>();
             _viewModel = new ForgotPasswordViewModel(_mockAuth.Object);
         }
 

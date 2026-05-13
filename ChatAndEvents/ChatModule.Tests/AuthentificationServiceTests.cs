@@ -12,12 +12,12 @@ namespace ChatModule.Tests
     public class AuthentificationServiceTests
     {
         private readonly Mock<IUserRepository> _mockUserRepo;
-        private readonly AuthentificationService _authService;
+        private readonly AuthenticationService _authService;
 
         public AuthentificationServiceTests()
         {
             _mockUserRepo = new Mock<IUserRepository>();
-            _authService = new AuthentificationService(_mockUserRepo.Object);
+            _authService = new AuthenticationService(_mockUserRepo.Object);
         }
 
         [Fact]
