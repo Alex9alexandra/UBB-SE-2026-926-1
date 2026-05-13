@@ -15,7 +15,7 @@ namespace ChatModule.src.views
 {
     public sealed class LoginWindow : Window
     {
-        private readonly IAuthenticationService _authenticationService;
+        private readonly IAuthentificationService _authenticationService;
         private readonly TextBlock _errorText;
         private readonly ProgressRing _loadingRing;
         private readonly Button _loginButton;
@@ -24,7 +24,7 @@ namespace ChatModule.src.views
 
         public event Func<Guid, string, Task>? LoginSucceeded;
 
-        public LoginWindow(IAuthenticationService authenticationService)
+        public LoginWindow(IAuthentificationService authenticationService)
         {
             this._authenticationService = authenticationService;
             ViewModel = new LoginViewModel(this._authenticationService);

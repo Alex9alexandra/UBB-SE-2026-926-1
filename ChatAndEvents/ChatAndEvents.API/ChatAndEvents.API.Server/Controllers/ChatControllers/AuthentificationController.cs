@@ -5,11 +5,11 @@ namespace ChatAndEvents.API.Server.Controllers.Chat;
 
 [ApiController]
 [Route("api/[controller]")]
-public class AuthenticationController : ControllerBase
+public class AuthentificationController : ControllerBase
 {
-    private readonly IAuthenticationService _authenticationService;
+    private readonly IAuthentificationService _authenticationService;
 
-    public AuthenticationController(IAuthenticationService authenticationService)
+    public AuthentificationController(IAuthentificationService authenticationService)
     {
         _authenticationService = authenticationService;
     }

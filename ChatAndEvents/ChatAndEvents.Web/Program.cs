@@ -8,6 +8,7 @@ using ChatAndEvents.Data.EventsData.Services.reputationService;
 using ChatAndEvents.Data.EventsData.Services.userServices;
 
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddScoped<IMessageService, MessageHttpService>(sp =>
@@ -53,6 +54,12 @@ builder.Services.AddScoped<IUserService, UserHttpService>(sp =>
     var factory = sp.GetRequiredService<IHttpClientFactory>();
     var currentUserContext = sp.GetRequiredService<CurrentUserContext>();
     return new UserHttpService(factory.CreateClient("API"), currentUserContext);
+});
+
+builder.Services.AddScoped<IAuthenticationService, AuthentificationHttpService>(sp =>
+{
+    var factory = sp.GetRequiredService<IHttpClientFactory>();
+    return new AuthentificationHttpService(factory.CreateClient("API"));
 });
 
 // Add services to the container.

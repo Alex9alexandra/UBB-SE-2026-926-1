@@ -332,13 +332,13 @@ namespace ChatModule
             {
 
                 var loginServices = new ServiceCollection();
-                loginServices.AddHttpClient<IAuthenticationService, AuthentificationHttpService>(client =>
+                loginServices.AddHttpClient<IAuthentificationService, AuthentificationHttpService>(client =>
                 {
                     client.BaseAddress = baseAddress;
                 });
                 var loginProvider = loginServices.BuildServiceProvider();
 
-                var loginWindow = new LoginWindow(loginProvider.GetRequiredService<IAuthenticationService>());
+                var loginWindow = new LoginWindow(loginProvider.GetRequiredService<IAuthentificationService>());
                 loginWindow.LoginSucceeded += (newUserId, newUsername) =>
                 {
                     var nextMain = new MainWindow(newUserId, newUsername);

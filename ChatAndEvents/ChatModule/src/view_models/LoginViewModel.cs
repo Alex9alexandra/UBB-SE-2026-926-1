@@ -7,7 +7,7 @@ namespace ChatModule.viewModels;
 
 public class LoginViewModel : BaseViewModel
 {
-    private readonly IAuthenticationService _authenticationService;
+    private readonly IAuthentificationService _authenticationService;
 
     private string username = string.Empty;
     public string Username
@@ -45,7 +45,7 @@ public class LoginViewModel : BaseViewModel
         public event Action? RegisterRequested;
         public event Action? ForgotPasswordRequested;
 
-        public LoginViewModel(IAuthenticationService authenticationService)
+        public LoginViewModel(IAuthentificationService authenticationService)
         {
             this._authenticationService = authenticationService ?? throw new ArgumentNullException(nameof(authenticationService));
 

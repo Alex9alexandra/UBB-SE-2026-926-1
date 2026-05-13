@@ -6,7 +6,7 @@ namespace ChatModule.ViewModels;
 
 public class ForgotPasswordViewModel : BaseViewModel
 {
-    private readonly IAuthenticationService _authentificationService;
+    private readonly IAuthentificationService _authentificationService;
 
     private string email = string.Empty;
     public string Email
@@ -41,7 +41,7 @@ public class ForgotPasswordViewModel : BaseViewModel
 
     public event Action? NavigateToLoginRequested;
 
-    public ForgotPasswordViewModel(IAuthenticationService authentificationService)
+    public ForgotPasswordViewModel(IAuthentificationService authentificationService)
     {
         this._authentificationService = authentificationService ?? throw new ArgumentNullException(nameof(authentificationService));
         SubmitCommand = new RelayCommand(SubmitAsync);
