@@ -1,6 +1,28 @@
 //https://localhost:7283-> port for https -> look in properties  for the current web app
 
+using ChatAndEvents.Data.ChatData.serviceInterfaces.Services;
+using ChatAndEvents.Data.ChatData.services;
+
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddScoped<IMessageService, MessageHttpService>(sp =>
+{
+    var factory = sp.GetRequiredService<IHttpClientFactory>();
+    return new MessageHttpService(factory.CreateClient("API"));
+});
+
+builder.Services.AddScoped<IConversationListService, ConversationListHttpService>(sp =>
+{
+    var factory = sp.GetRequiredService<IHttpClientFactory>();
+    return new ConversationListHttpService(factory.CreateClient("API"));
+});
+
+builder.Services.AddScoped<IReadReceiptService, ReadReceiptHttpService>(sp =>
+{
+    var factory = sp.GetRequiredService<IHttpClientFactory>();
+    return new ReadReceiptHttpService(factory.CreateClient("API"));
+});
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

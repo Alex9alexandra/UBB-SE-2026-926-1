@@ -1,0 +1,41 @@
+@model ChatAndEvents.Web.Models.ChatViewModel
+
+<div class="chat-container" style="max-width: 800px; margin: auto;">
+    
+    <div class="chat-header bg-primary text-white p-3">
+        <h2>@Model.ConversationTitle</h2>
+    </div>
+
+    <div class="chat-messages p-3 bg-light" style="height: 500px; overflow-y: auto;">
+        @if (Model.ErrorMessage != null)
+        {
+            <div class="alert alert-danger">@Model.ErrorMessage</div>
+        }
+
+        @foreach (var message in Model.Messages)
+        {
+            <div class="message mb-3 p-2 border rounded">
+                <strong>@(message.SenderUsername ?? "Unknown")</strong>
+                <small class="text-muted">@message.CreatedAt.ToShortTimeString()</small>
+                <p class="mb-0">@message.Content</p>
+            </div>
+        }
+    </div>
+
+    <div class="chat-input p-3 bg-dark">
+        @if (Model.IsInputDisabled)
+        {
+            <div class="alert alert-warning mb-0">@Model.InputDisabledReason</div>
+        }
+        else
+        {
+            <form asp-controller="Chat" asp-action="SendMessage" method="post" class="d-flex">
+                <input type="hidden" name="conversationId" value="@Model.ConversationId" />
+                <input type="hidden" name="currentUserId" value="AICI_VINE_ID_UL_USERULUI" /> 
+
+                <input type="text" name="messageInput" class="form-control me-2" placeholder="Type a message..." required />
+                <button type="submit" class="btn btn-success">Send</button>
+            </form>
+        }
+    </div>
+</div>
