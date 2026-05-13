@@ -4,9 +4,11 @@ using ChatAndEvents.Data.ChatData.serviceInterfaces.Services;
 using ChatAndEvents.Data.ChatData.services;
 using ChatAndEvents.Data.EventsData.Services.achievementServices;
 using ChatAndEvents.Data.EventsData.Services.announcementServices;
+using ChatAndEvents.Data.EventsData.Services.discussionService;
+using ChatAndEvents.Data.EventsData.Services.Interfaces;
 using ChatAndEvents.Data.EventsData.Services.reputationService;
 using ChatAndEvents.Data.EventsData.Services.userServices;
-
+using ChatAndEvents.Data.EventsData.Services.memoryServices;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -60,6 +62,18 @@ builder.Services.AddScoped<IAuthenticationService, AuthentificationHttpService>(
 {
     var factory = sp.GetRequiredService<IHttpClientFactory>();
     return new AuthentificationHttpService(factory.CreateClient("API"));
+});
+
+builder.Services.AddScoped<IMemoryService, MemoryHttpService>(sp =>
+{
+    var factory = sp.GetRequiredService<IHttpClientFactory>();
+    return new MemoryHttpService(factory.CreateClient("API"));
+});
+
+builder.Services.AddScoped<IDiscussionService, DiscussionHttpService>(sp =>
+{
+    var factory = sp.GetRequiredService<IHttpClientFactory>();
+    return new DiscussionHttpService(factory.CreateClient("API"));
 });
 
 // Add services to the container.

@@ -9,7 +9,7 @@ namespace Events_GSS.Test
     using System.Threading.Tasks;
     using ChatAndEvents.Data.EventsData.Models;
     using ChatAndEvents.Data.EventsData.Repositories;
-    using ChatAndEvents.Data.EventsData.Services;
+    using ChatAndEvents.Data.EventsData.Services.memoryServices;
     using ChatAndEvents.Data.EventsData.Services.reputationService;
     using Events_GSS.Data.Models;
 

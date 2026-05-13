@@ -8,7 +8,9 @@
   <Project Path="ChatAndEvents.API/ChatAndEvents.API.Server/ChatAndEvents.API.Server.csproj">
     <BuildDependency Project="Events_GSS.Data/ChatAndEvents.Data.csproj" />
   </Project>
-  <Project Path="ChatAndEvents.Web/ChatAndEvents.Web.csproj" />
+  <Project Path="ChatAndEvents.Web/ChatAndEvents.Web.csproj">
+    <Build Solution="Debug|*" Project="false" />
+  </Project>
   <Project Path="ChatModule.Tests/ChatModule.Tests.csproj">
     <Platform Project="x64" />
     <Build Solution="Release|x64" Project="false" />
