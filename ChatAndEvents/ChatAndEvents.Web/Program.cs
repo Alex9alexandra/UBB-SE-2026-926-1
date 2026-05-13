@@ -89,10 +89,10 @@ builder.Services.AddScoped<IUserService, UserHttpService>(sp =>
     return new UserHttpService(factory.CreateClient("API"), currentUserContext);
 });
 
-builder.Services.AddScoped<IAuthenticationService, AuthentificationHttpService>(sp =>
+builder.Services.AddScoped<IAuthenticationService, AuthenticationHttpService>(sp =>
 {
     var factory = sp.GetRequiredService<IHttpClientFactory>();
-    return new AuthentificationHttpService(factory.CreateClient("API"));
+    return new AuthenticationHttpService(factory.CreateClient("API"));
 });
 
 builder.Services.AddScoped<IMemoryService, MemoryHttpService>(sp =>

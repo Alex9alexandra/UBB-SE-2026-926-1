@@ -55,7 +55,7 @@ builder.Services.AddScoped<IParticipantRepository, ParticipantRepository>();
 builder.Services.AddScoped<IMessageRepository, MessageRepository>();
 
 // chat module services
-builder.Services.AddScoped<IAuthentificationService, AuthentificationService>();
+builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddScoped<IConversationListService, ConversationListService>();
 builder.Services.AddScoped<IProfileService, ProfileService>();
 builder.Services.AddScoped<ISearchService, SearchService>();
