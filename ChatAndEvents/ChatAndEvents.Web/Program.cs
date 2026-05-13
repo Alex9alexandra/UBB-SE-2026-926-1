@@ -2,6 +2,10 @@
 
 using ChatAndEvents.Data.ChatData.serviceInterfaces.Services;
 using ChatAndEvents.Data.ChatData.services;
+using ChatAndEvents.Data.EventsData.Services.achievementServices;
+using ChatAndEvents.Data.EventsData.Services.announcementServices;
+using ChatAndEvents.Data.EventsData.Services.reputationService;
+using ChatAndEvents.Data.EventsData.Services.userServices;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,6 +26,33 @@ builder.Services.AddScoped<IReadReceiptService, ReadReceiptHttpService>(sp =>
 {
     var factory = sp.GetRequiredService<IHttpClientFactory>();
     return new ReadReceiptHttpService(factory.CreateClient("API"));
+});
+
+builder.Services.AddSingleton(new CurrentUserContext(Guid.Parse("11111111-1111-1111-1111-111111111111")));
+
+builder.Services.AddScoped<IAnnouncementService, AnnouncementHttpService>(sp =>
+{
+    var factory = sp.GetRequiredService<IHttpClientFactory>();
+    return new AnnouncementHttpService(factory.CreateClient("API"));
+});
+
+builder.Services.AddScoped<IReputationService, ReputationHttpService>(sp =>
+{
+    var factory = sp.GetRequiredService<IHttpClientFactory>();
+    return new ReputationHttpService(factory.CreateClient("API"));
+});
+
+builder.Services.AddScoped<IAchievementService, AchievementHttpService>(sp =>
+{
+    var factory = sp.GetRequiredService<IHttpClientFactory>();
+    return new AchievementHttpService(factory.CreateClient("API"));
+});
+
+builder.Services.AddScoped<IUserService, UserHttpService>(sp =>
+{
+    var factory = sp.GetRequiredService<IHttpClientFactory>();
+    var currentUserContext = sp.GetRequiredService<CurrentUserContext>();
+    return new UserHttpService(factory.CreateClient("API"), currentUserContext);
 });
 
 // Add services to the container.
