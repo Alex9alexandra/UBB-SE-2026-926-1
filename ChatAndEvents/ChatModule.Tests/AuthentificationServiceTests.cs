@@ -9,15 +9,15 @@ using ChatAndEvents.Data.ChatData.services;
 
 namespace ChatModule.Tests
 {
-    public class AuthenticationServiceTests
+    public class AuthentificationServiceTests
     {
         private readonly Mock<IUserRepository> _mockUserRepo;
-        private readonly AuthenticationService _authService;
+        private readonly AuthentificationService _authService;
 
-        public AuthenticationServiceTests()
+        public AuthentificationServiceTests()
         {
             _mockUserRepo = new Mock<IUserRepository>();
-            _authService = new AuthenticationService(_mockUserRepo.Object);
+            _authService = new AuthentificationService(_mockUserRepo.Object);
         }
 
         [Fact]

@@ -34,7 +34,7 @@ namespace ChatModule.src.views
             InitializeComponent();
         }
 
-        public RegisterWindow(IAuthenticationService authenticationService)
+        public RegisterWindow(IAuthentificationService authenticationService)
             : this(new RegisterViewModel(authenticationService))
         {
         }

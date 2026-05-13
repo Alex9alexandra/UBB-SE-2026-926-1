@@ -7,7 +7,7 @@ using ChatAndEvents.Data.ChatData.repositories;
 
 namespace ChatAndEvents.Data.ChatData.services
 {
-    public class AuthenticationService : IAuthenticationService
+    public class AuthentificationService : IAuthentificationService
     {
         private const int MinimumUsernameLength = 5;
         private const int MaximumUsernameLength = 16;
@@ -15,7 +15,7 @@ namespace ChatAndEvents.Data.ChatData.services
         private const int MaximumPasswordLength = 32;
         private readonly IUserRepository _userRepository;
 
-        public AuthenticationService(IUserRepository userRepository)
+        public AuthentificationService(IUserRepository userRepository)
         {
             this._userRepository = userRepository;
         }

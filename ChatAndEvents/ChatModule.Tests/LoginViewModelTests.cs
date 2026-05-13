@@ -10,12 +10,12 @@ namespace ChatModule.Tests
 {
     public class LoginViewModelTests
     {
-        private readonly Mock<IAuthenticationService> _mockAuth;
+        private readonly Mock<IAuthentificationService> _mockAuth;
         private readonly LoginViewModel _viewModel;
 
         public LoginViewModelTests()
         {
-            _mockAuth = new Mock<IAuthenticationService>();
+            _mockAuth = new Mock<IAuthentificationService>();
             _viewModel = new LoginViewModel(_mockAuth.Object);
         }
 
