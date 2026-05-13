@@ -58,4 +58,3 @@ namespace ChatAndEvents.Data.ChatData.services
         }
     }
 }
-

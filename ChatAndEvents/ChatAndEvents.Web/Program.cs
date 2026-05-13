@@ -93,6 +93,18 @@ builder.Services.AddScoped<IAuthenticationService, AuthentificationHttpService>(
     return new AuthentificationHttpService(factory.CreateClient("API"));
 });
 
+builder.Services.AddScoped<IGroupService, GroupHttpService>(sp =>
+{
+    var factory = sp.GetRequiredService<IHttpClientFactory>();
+    return new GroupHttpService(factory.CreateClient("API"));
+});
+
+builder.Services.AddScoped<ISearchService, SearchHttpService>(sp =>
+{
+    var factory = sp.GetRequiredService<IHttpClientFactory>();
+    return new SearchHttpService(factory.CreateClient("API"));
+});
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 

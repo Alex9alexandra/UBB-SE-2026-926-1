@@ -79,5 +79,39 @@ namespace ChatAndEvents.Web.Controllers
                 return View(model);
             }
         }
+
+        // --- Register routes ---
+
+        [HttpGet]
+        public IActionResult Register()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Register(RegisterViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            try
+            {
+                await _authService.RegisterAsync(
+                    model.Username,
+                    model.Email,
+                    model.Password,
+                    model.Phone,
+                    model.Birthday,
+                    avatarUrl: null);
+
+                return RedirectToAction("Login");
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
+                return View(model);
+            }
+        }
     }
 }
