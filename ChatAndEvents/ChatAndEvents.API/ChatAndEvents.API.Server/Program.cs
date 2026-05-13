@@ -22,6 +22,7 @@ using ChatAndEvents.Data.EventsData.Services.discussionService;
 using ChatAndEvents.Data.EventsData.Services.eventServices;
 using ChatAndEvents.Data.EventsData.Services.eventStatisticsServices;
 using ChatAndEvents.Data.EventsData.Services.Interfaces;
+using ChatAndEvents.Data.EventsData.Services.memoryServices;
 using ChatAndEvents.Data.EventsData.Services.notificationServices;
 using ChatAndEvents.Data.EventsData.Services.reputationService;
 using ChatAndEvents.Data.EventsData.Services.userServices;

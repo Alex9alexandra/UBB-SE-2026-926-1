@@ -11,7 +11,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using ChatAndEvents.Data.EventsData.Messaging;
 using ChatAndEvents.Data.EventsData.Services.Interfaces;
 
-namespace ChatAndEvents.Data.EventsData.Services
+namespace ChatAndEvents.Data.EventsData.Services.memoryServices
 {
     public class MemoryService : IMemoryService
     {
