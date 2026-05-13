@@ -32,6 +32,24 @@ builder.Services.AddScoped<IReadReceiptService, ReadReceiptHttpService>(sp =>
     return new ReadReceiptHttpService(factory.CreateClient("API"));
 });
 
+builder.Services.AddScoped<IMemberPanelService, MemberPanelHttpService>(sp =>
+{
+    var factory = sp.GetRequiredService<IHttpClientFactory>();
+    return new MemberPanelHttpService(factory.CreateClient("API"));
+});
+
+builder.Services.AddScoped<IModerationService, ModerationHttpService>(sp =>
+{
+    var factory = sp.GetRequiredService<IHttpClientFactory>();
+    return new ModerationHttpService(factory.CreateClient("API"));
+});
+
+builder.Services.AddScoped<ISearchService, SearchHttpService>(sp =>
+{
+    var factory = sp.GetRequiredService<IHttpClientFactory>();
+    return new SearchHttpService(factory.CreateClient("API"));
+});
+
 builder.Services.AddScoped<IFriendListService, FriendListApiClient>(sp =>
 {
     var factory = sp.GetRequiredService<IHttpClientFactory>();
