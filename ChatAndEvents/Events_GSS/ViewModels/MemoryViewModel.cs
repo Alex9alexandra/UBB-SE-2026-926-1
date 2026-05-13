@@ -4,8 +4,8 @@
 
 namespace Events_GSS.ViewModels
 {
-    using ChatAndEvents.Data.EventsData.Services.Interfaces;
-    using ChatAndEvents.Data.EventsData.ViewModels;
+    using Events_GSS.Data.Services.Interfaces;
+    using Events_GSS.Data.ViewModels;
 
     /// <summary>
     /// The WinUI wrapper for the memory view model. 

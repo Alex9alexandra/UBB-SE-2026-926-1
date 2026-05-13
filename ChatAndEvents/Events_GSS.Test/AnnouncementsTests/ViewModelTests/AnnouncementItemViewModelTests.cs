@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ChatAndEvents.Data.EventsData.Models;
 using Events_GSS.Data.Models;
 using Events_GSS.Data.ViewModelsCore;
 
@@ -15,7 +14,7 @@ namespace Events_GSS.Tests.AnnouncementsTests.ViewModelTests
         public void PreviewText_EmptyMessage_ReturnsEmpty()
         {
             var model = new Announcement(1, "", DateTime.UtcNow);
-            var core = new AnnouncementItemViewModelCore(model, 1);
+            var core = new AnnouncementItemViewModelCore(model, Guid.Empty);
 
             Assert.Equal(string.Empty, core.PreviewText);
         }
@@ -25,7 +24,7 @@ namespace Events_GSS.Tests.AnnouncementsTests.ViewModelTests
         {
             var text = "short message";
             var model = new Announcement(1, text, DateTime.UtcNow);
-            var core = new AnnouncementItemViewModelCore(model, 1);
+            var core = new AnnouncementItemViewModelCore(model, Guid.Empty);
 
             Assert.Equal(text, core.PreviewText);
         }
@@ -40,7 +39,7 @@ namespace Events_GSS.Tests.AnnouncementsTests.ViewModelTests
                                     "never gonna say goodbye, " +
                                     "is this over 120 characters yeeeet?");
             var model = new Announcement(1, text, DateTime.UtcNow);
-            var core = new AnnouncementItemViewModelCore(model, 1);
+            var core = new AnnouncementItemViewModelCore(model, Guid.Empty);
 
             Assert.Equal(121, core.PreviewText.Length);
         }
@@ -49,7 +48,7 @@ namespace Events_GSS.Tests.AnnouncementsTests.ViewModelTests
         public void PreviewText_WithNewline_ReturnsFirstLineOnly()
         {
             var model = new Announcement(1, "hehehe\nhaw", DateTime.UtcNow);
-            var core = new AnnouncementItemViewModelCore(model, 1);
+            var core = new AnnouncementItemViewModelCore(model, Guid.Empty);
 
             Assert.Equal("hehehe", core.PreviewText);
         }
@@ -58,7 +57,7 @@ namespace Events_GSS.Tests.AnnouncementsTests.ViewModelTests
         public void HasFullContent_WithNewline_ReturnsTrue()
         {
             var model = new Announcement(1, "yabadaba\ndooooo", DateTime.UtcNow);
-            var core = new AnnouncementItemViewModelCore(model, 1);
+            var core = new AnnouncementItemViewModelCore(model, Guid.Empty);
 
             Assert.True(core.HasFullContent);
         }
@@ -67,7 +66,7 @@ namespace Events_GSS.Tests.AnnouncementsTests.ViewModelTests
         public void HasFullContent_Over120Chars_ReturnsTrue()
         {
             var model = new Announcement(1, new string('a', 150), DateTime.UtcNow);
-            var core = new AnnouncementItemViewModelCore(model, 1);
+            var core = new AnnouncementItemViewModelCore(model, Guid.Empty);
 
             Assert.True(core.HasFullContent);
         }
@@ -76,7 +75,7 @@ namespace Events_GSS.Tests.AnnouncementsTests.ViewModelTests
         public void HasFullContent_ShortMessage_ReturnsFalse()
         {
             var model = new Announcement(1, "shortie", DateTime.UtcNow);
-            var core = new AnnouncementItemViewModelCore(model, 1);
+            var core = new AnnouncementItemViewModelCore(model, Guid.Empty);
 
             Assert.False(core.HasFullContent);
         }
@@ -88,12 +87,12 @@ namespace Events_GSS.Tests.AnnouncementsTests.ViewModelTests
             {
                 Reactions = new List<AnnouncementReaction>
         {
-            new() { Emoji = "👍", Author = new User { UserId = Guid.Parse("00000000-0000-0000-0000-000000000001") } },
-            new() { Emoji = "🔥", Author = new User { UserId = Guid.Parse("00000000-0000-0000-0000-000000000002") } }
+            new() { Emoji = "👍", Author = new ChatAndEvents.Data.ChatData.domain.User { Id = Guid.Parse("00000000-0000-0000-0000-000000000001") } },
+            new() { Emoji = "🔥", Author = new ChatAndEvents.Data.ChatData.domain.User { Id = Guid.Parse("00000000-0000-0000-0000-000000000002") } }
         }
             };
 
-            var core = new AnnouncementItemViewModelCore(model, 1);
+            var core = new AnnouncementItemViewModelCore(model, Guid.Empty);
 
             Assert.Equal(2, core.ReactionGroups.Count);
         }
@@ -105,8 +104,8 @@ namespace Events_GSS.Tests.AnnouncementsTests.ViewModelTests
             {
                 Reactions = new List<AnnouncementReaction>
         {
-            new() { Emoji = "👍", Author = new User { UserId = Guid.Parse("00000000-0000-0000-0000-000000000001") } },
-            new() { Emoji = "👍", Author = new User { UserId = Guid.Parse("00000000-0000-0000-0000-000000000002") } }
+            new() { Emoji = "👍", Author = new ChatAndEvents.Data.ChatData.domain.User { Id = Guid.Parse("00000000-0000-0000-0000-000000000001") } },
+            new() { Emoji = "👍", Author = new ChatAndEvents.Data.ChatData.domain.User { Id = Guid.Parse("00000000-0000-0000-0000-000000000002") } }
         }
             };
 
@@ -124,7 +123,7 @@ namespace Events_GSS.Tests.AnnouncementsTests.ViewModelTests
             {
                 Reactions = new List<AnnouncementReaction>
         {
-            new() { Emoji = "👍", Author = new User { UserId = Guid.Parse("00000000-0000-0000-0000-000000000001") } }
+            new() { Emoji = "👍", Author = new ChatAndEvents.Data.ChatData.domain.User { Id = Guid.Parse("00000000-0000-0000-0000-000000000001") } }
         }
             };
 
@@ -140,7 +139,7 @@ namespace Events_GSS.Tests.AnnouncementsTests.ViewModelTests
             {
                 Reactions = new List<AnnouncementReaction>
         {
-            new() { Emoji = "👍", Author = new User { UserId = Guid.Parse("00000000-0000-0000-0000-000000000002") } }
+            new() { Emoji = "👍", Author = new ChatAndEvents.Data.ChatData.domain.User { Id = Guid.Parse("00000000-0000-0000-0000-000000000002") } }
         }
             };
 
@@ -156,7 +155,7 @@ namespace Events_GSS.Tests.AnnouncementsTests.ViewModelTests
             {
                 Reactions = new List<AnnouncementReaction>
         {
-            new() { Emoji = "🔥", Author = new User { UserId = Guid.Parse("00000000-0000-0000-0000-000000000001") } }
+            new() { Emoji = "🔥", Author = new ChatAndEvents.Data.ChatData.domain.User { Id = Guid.Parse("00000000-0000-0000-0000-000000000001") } }
         }
             };
 
@@ -172,7 +171,7 @@ namespace Events_GSS.Tests.AnnouncementsTests.ViewModelTests
             {
                 Reactions = new List<AnnouncementReaction>
         {
-            new() { Emoji = "🔥", Author = new User { UserId = Guid.Parse("00000000-0000-0000-0000-000000000002") } }
+            new() { Emoji = "🔥", Author = new ChatAndEvents.Data.ChatData.domain.User { Id = Guid.Parse("00000000-0000-0000-0000-000000000002") } }
         }
             };
 

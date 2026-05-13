@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using ChatAndEvents.Data.EventsData.Models;
+using Events_GSS.Data.Models;
 
-namespace ChatAndEvents.Data.EventsData.ViewModelsCore;
+namespace Events_GSS.Data.ViewModelsCore;
 
 public class MessageSegment
 {

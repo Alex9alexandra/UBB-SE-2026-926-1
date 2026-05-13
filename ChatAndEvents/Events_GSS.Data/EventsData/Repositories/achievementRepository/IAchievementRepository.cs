@@ -2,9 +2,9 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-namespace ChatAndEvents.Data.EventsData.Repositories.achievementRepository;
+namespace Events_GSS.Data.Repositories.achievementRepository;
 
-using ChatAndEvents.Data.EventsData.Models;
+using Events_GSS.Data.Models;
 using Microsoft.Data.SqlClient;
 
 /// <summary>

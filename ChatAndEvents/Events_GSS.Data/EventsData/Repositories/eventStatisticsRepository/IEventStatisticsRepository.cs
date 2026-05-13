@@ -2,9 +2,9 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-namespace ChatAndEvents.Data.EventsData.Repositories.eventStatisticsRepository;
+namespace Events_GSS.Data.Repositories.eventStatisticsRepository;
 
-using ChatAndEvents.Data.EventsData.Models;
+using Events_GSS.Data.Models;
 
 /// <summary>
 /// Defines the contract for the event statistics repository, which provides methods to retrieve various statistics and analytics related to events, such as participant overviews, engagement breakdowns, leaderboards, and quest analytics. This interface abstracts the data access layer for event statistics, allowing for different implementations that can interact with various data sources or storage mechanisms.

@@ -5,8 +5,8 @@ using Events_GSS.Services;
 
 using Xunit;
 using Moq;
-using ChatAndEvents.Data.EventsData.Models;
-using ChatAndEvents.Data.EventsData.Services.attendedEventServices;
+using Events_GSS.Data.Models;
+using Events_GSS.Data.Services.attendedEventServices;
 
 namespace Events_GSS.Test.Services;
 

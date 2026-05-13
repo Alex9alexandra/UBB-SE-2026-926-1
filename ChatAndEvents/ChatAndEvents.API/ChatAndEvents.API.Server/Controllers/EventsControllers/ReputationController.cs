@@ -1,4 +1,4 @@
-﻿using ChatAndEvents.Data.EventsData.Services.reputationService;
+﻿using Events_GSS.Data.Services.reputationService;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ChatAndEvents.API.Server.Controllers.Events;

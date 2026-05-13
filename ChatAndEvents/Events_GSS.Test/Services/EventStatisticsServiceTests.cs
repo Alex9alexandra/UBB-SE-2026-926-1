@@ -1,8 +1,8 @@
 ﻿using Events_GSS.Data.Services.eventStatisticsServices;
 using Moq;
 using Xunit;
-using ChatAndEvents.Data.EventsData.Models;
-using ChatAndEvents.Data.EventsData.Repositories.eventStatisticsRepository;
+using Events_GSS.Data.Models;
+using Events_GSS.Data.Repositories.eventStatisticsRepository;
 
 namespace Events_GSS.Tests.Services;
 

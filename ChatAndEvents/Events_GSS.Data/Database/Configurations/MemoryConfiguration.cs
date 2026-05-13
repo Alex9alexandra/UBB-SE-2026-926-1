@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using ChatAndEvents.Data.EventsData.Models;
+using Events_GSS.Data.Models;
 
 namespace ChatAndEvents.Data.Database.Configurations;
 

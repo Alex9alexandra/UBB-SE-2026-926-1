@@ -6,28 +6,28 @@ using ChatAndEvents.Data.ChatData.serviceInterfaces.Services;
 using ChatAndEvents.Data.ChatData.services;
 using ChatAndEvents.Data.Database;
 // --- MERGED TEAM NAMESPACES ---
-using ChatAndEvents.Data.EventsData.Models;
-using ChatAndEvents.Data.EventsData.Repositories;
-using ChatAndEvents.Data.EventsData.Repositories.achievementRepository;
-using ChatAndEvents.Data.EventsData.Repositories.announcementRepository;
-using ChatAndEvents.Data.EventsData.Repositories.categoriesRepository;
-using ChatAndEvents.Data.EventsData.Repositories.discussionRepository;
-using ChatAndEvents.Data.EventsData.Repositories.eventRepository;
-using ChatAndEvents.Data.EventsData.Repositories.eventStatisticsRepository;
-using ChatAndEvents.Data.EventsData.Repositories.notificationRepository;
-using ChatAndEvents.Data.EventsData.Repositories.reputationRepository;
-using ChatAndEvents.Data.EventsData.Services;
-using ChatAndEvents.Data.EventsData.Services.achievementServices;
-using ChatAndEvents.Data.EventsData.Services.announcementServices;
-using ChatAndEvents.Data.EventsData.Services.attendedEventServices;
-using ChatAndEvents.Data.EventsData.Services.categoryServices;
-using ChatAndEvents.Data.EventsData.Services.discussionService;
-using ChatAndEvents.Data.EventsData.Services.eventServices;
-using ChatAndEvents.Data.EventsData.Services.eventStatisticsServices;
-using ChatAndEvents.Data.EventsData.Services.Interfaces;
-using ChatAndEvents.Data.EventsData.Services.notificationServices;
-using ChatAndEvents.Data.EventsData.Services.reputationService;
-using ChatAndEvents.Data.EventsData.Services.userServices;
+using Events_GSS.Data.Models;
+using Events_GSS.Data.Repositories;
+using Events_GSS.Data.Repositories.achievementRepository;
+using Events_GSS.Data.Repositories.announcementRepository;
+using Events_GSS.Data.Repositories.categoriesRepository;
+using Events_GSS.Data.Repositories.discussionRepository;
+using Events_GSS.Data.Repositories.eventRepository;
+using Events_GSS.Data.Repositories.eventStatisticsRepository;
+using Events_GSS.Data.Repositories.notificationRepository;
+using Events_GSS.Data.Repositories.reputationRepository;
+using Events_GSS.Data.Services;
+using Events_GSS.Data.Services.achievementServices;
+using Events_GSS.Data.Services.announcementServices;
+using Events_GSS.Data.Services.attendedEventServices;
+using Events_GSS.Data.Services.categoryServices;
+using Events_GSS.Data.Services.discussionService;
+using Events_GSS.Data.Services.eventServices;
+using Events_GSS.Data.Services.eventStatisticsServices;
+using Events_GSS.Data.Services.Interfaces;
+using Events_GSS.Data.Services.notificationServices;
+using Events_GSS.Data.Services.reputationService;
+using Events_GSS.Data.Services.userServices;
 using ChatModule.src.HttpService;
 using ChatModule.src.view_models;
 using ChatModule.src.views;
@@ -147,7 +147,7 @@ namespace ChatModule
                 client.BaseAddress = baseAddress;
             });
 
-            services.AddHttpClient<IAnnouncementService, AnnouncementHttpService>(client =>
+            services.AddHttpClient<IAnnouncementService, ChatModule.src.HttpService.AnnouncementHttpService>(client =>
             {
                 client.BaseAddress = baseAddress;
             });
@@ -157,12 +157,12 @@ namespace ChatModule
                 client.BaseAddress = baseAddress;
             });
 
-            services.AddHttpClient<IAchievementService, AchievementHttpService>(client =>
+            services.AddHttpClient<IAchievementService, ChatModule.src.HttpService.AchievementHttpService>(client =>
             {
                 client.BaseAddress = baseAddress;
             });
 
-            services.AddHttpClient<IUserService, UserHttpService>(client =>
+            services.AddHttpClient<IUserService, ChatModule.src.HttpService.UserHttpService>(client =>
             {
                 client.BaseAddress = baseAddress;
             });
@@ -219,7 +219,7 @@ namespace ChatModule
             services.AddTransient<IReputationRepository, ReputationRepository>();
             services.AddTransient<IAchievementRepository, AchievementRepository>();
             services.AddTransient<IEventStatisticsRepository, EventStatisticsRepository>();
-            services.AddSingleton(new CurrentUserContext(_initialUserId));
+            services.AddSingleton(new Events_GSS.Data.Services.userServices.CurrentUserContext(_initialUserId));
 
             // --- EVENTS/GSS HTTP SERVICES ---
             services.AddHttpClient<IEventService, EventHttpService>(client =>
@@ -330,12 +330,15 @@ namespace ChatModule
 
             ViewModel.NavigateToLoginRequested += () =>
             {
-
                 var loginServices = new ServiceCollection();
-                loginServices.AddHttpClient<IAuthentificationService, AuthentificationHttpService>(client =>
-                {
-                    client.BaseAddress = baseAddress;
-                });
+
+                // Configure the typed HTTP client; do not return a value from the lambda.
+                loginServices.AddHttpClient<IAuthentificationService, AuthentificationHttpService>()
+                    .ConfigureHttpClient(client =>
+                    {
+                        client.BaseAddress = baseAddress;
+                    });
+
                 var loginProvider = loginServices.BuildServiceProvider();
 
                 var loginWindow = new LoginWindow(loginProvider.GetRequiredService<IAuthentificationService>());

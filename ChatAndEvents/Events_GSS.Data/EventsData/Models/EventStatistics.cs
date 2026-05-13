@@ -2,7 +2,7 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-namespace ChatAndEvents.Data.EventsData.Models;
+namespace Events_GSS.Data.Models;
 
 /// <summary>
 /// ... Represents the statistics of an event, including participant overview, engagement breakdown, leaderboard entries, and quest analytics.

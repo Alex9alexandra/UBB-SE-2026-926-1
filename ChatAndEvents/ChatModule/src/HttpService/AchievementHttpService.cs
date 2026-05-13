@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
-using ChatAndEvents.Data.EventsData.Models;
-using ChatAndEvents.Data.EventsData.Services.achievementServices;
+using Events_GSS.Data.Models;
+using Events_GSS.Data.Services.achievementServices;
 
 namespace ChatModule.src.HttpService
 {

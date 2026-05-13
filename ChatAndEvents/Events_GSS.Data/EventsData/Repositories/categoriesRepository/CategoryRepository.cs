@@ -1,8 +1,8 @@
 ﻿using ChatAndEvents.Data.Database;
-using ChatAndEvents.Data.EventsData.Models;
+using Events_GSS.Data.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace ChatAndEvents.Data.EventsData.Repositories.categoriesRepository;
+namespace Events_GSS.Data.Repositories.categoriesRepository;
 
 public class CategoryRepository : ICategoryRepository
 {

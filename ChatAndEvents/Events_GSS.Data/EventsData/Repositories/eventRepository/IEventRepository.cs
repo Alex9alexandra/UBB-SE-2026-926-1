@@ -2,10 +2,10 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-namespace ChatAndEvents.Data.EventsData.Repositories.eventRepository;
+namespace Events_GSS.Data.Repositories.eventRepository;
 
 using System;
-using ChatAndEvents.Data.EventsData.Models;
+using Events_GSS.Data.Models;
 
 /// <summary>
 /// Repository interface for managing event data operations.

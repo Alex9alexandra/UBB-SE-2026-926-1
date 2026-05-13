@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using ChatAndEvents.Data.EventsData.Models;
-using ChatAndEvents.Data.EventsData.Repositories.categoriesRepository;
+using Events_GSS.Data.Models;
+using Events_GSS.Data.Repositories.categoriesRepository;
 
-namespace ChatAndEvents.Data.EventsData.Services.categoryServices;
+namespace Events_GSS.Data.Services.categoryServices;
 
 /// <summary>
 /// Service for managing category operations.

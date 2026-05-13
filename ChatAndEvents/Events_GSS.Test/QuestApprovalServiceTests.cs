@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using ChatAndEvents.Data.EventsData.Models;
-using ChatAndEvents.Data.EventsData.Services;
-using ChatAndEvents.Data.EventsData.Services.Interfaces;
-using ChatAndEvents.Data.EventsData.Services.notificationServices;
+using Events_GSS.Data.Models;
+using Events_GSS.Data.Services;
+using Events_GSS.Data.Services.Interfaces;
+using Events_GSS.Data.Services.notificationServices;
 using Events_GSS.Data.Models;
 using Events_GSS.Data.Repositories;
 

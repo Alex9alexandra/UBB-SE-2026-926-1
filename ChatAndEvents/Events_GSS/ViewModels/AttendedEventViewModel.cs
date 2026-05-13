@@ -10,12 +10,12 @@ using System.Collections.Generic;
 using System;
 using System.Threading.Tasks;
 using System.Linq;
-using ChatAndEvents.Data.EventsData.Models;
-using ChatAndEvents.Data.EventsData.Services.achievementServices;
-using ChatAndEvents.Data.EventsData.Services.announcementServices;
-using ChatAndEvents.Data.EventsData.Services.attendedEventServices;
-using ChatAndEvents.Data.EventsData.Services.reputationService;
-using ChatAndEvents.Data.EventsData.Services.userServices;
+using Events_GSS.Data.Models;
+using Events_GSS.Data.Services.achievementServices;
+using Events_GSS.Data.Services.announcementServices;
+using Events_GSS.Data.Services.attendedEventServices;
+using Events_GSS.Data.Services.reputationService;
+using Events_GSS.Data.Services.userServices;
 
 namespace Events_GSS.ViewModels
 {

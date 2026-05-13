@@ -2,13 +2,13 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-namespace ChatAndEvents.Data.EventsData.Services.notificationServices;
+namespace Events_GSS.Data.Services.notificationServices;
 
 using System;
 using System.Collections.Generic;
 using System.Text;
-using ChatAndEvents.Data.EventsData.Models;
-using ChatAndEvents.Data.EventsData.Repositories.notificationRepository;
+using Events_GSS.Data.Models;
+using Events_GSS.Data.Repositories.notificationRepository;
 
 /// <summary>
 /// Implements the <see cref="INotificationService"/> interface, providing methods to manage and retrieve notifications for users in the system. This class serves as a service layer that interacts with the notification repository to perform operations such as adding new notifications, retrieving notifications by user ID, and deleting notifications by their unique identifier. The service layer abstracts the underlying data access logic, allowing for separation of concerns and easier maintenance of the notification-related functionality in the application.

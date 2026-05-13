@@ -262,7 +262,7 @@ namespace ChatAndEvents.Data.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("ChatAndEvents.Data.EventsData.Models.Achievement", b =>
+            modelBuilder.Entity("Events_GSS.Data.Models.Achievement", b =>
                 {
                     b.Property<int>("AchievementId")
                         .ValueGeneratedOnAdd()
@@ -286,7 +286,7 @@ namespace ChatAndEvents.Data.Migrations
                     b.ToTable("Achievements");
                 });
 
-            modelBuilder.Entity("ChatAndEvents.Data.EventsData.Models.Announcement", b =>
+            modelBuilder.Entity("Events_GSS.Data.Models.Announcement", b =>
                 {
                     b.Property<int>("AnnouncementId")
                         .ValueGeneratedOnAdd()
@@ -331,7 +331,7 @@ namespace ChatAndEvents.Data.Migrations
                     b.ToTable("Announcements");
                 });
 
-            modelBuilder.Entity("ChatAndEvents.Data.EventsData.Models.AnnouncementReaction", b =>
+            modelBuilder.Entity("Events_GSS.Data.Models.AnnouncementReaction", b =>
                 {
                     b.Property<int>("AnnouncementId")
                         .HasColumnType("int");
@@ -353,7 +353,7 @@ namespace ChatAndEvents.Data.Migrations
                     b.ToTable("AnnouncementReactions");
                 });
 
-            modelBuilder.Entity("ChatAndEvents.Data.EventsData.Models.AnnouncementReadReceipt", b =>
+            modelBuilder.Entity("Events_GSS.Data.Models.AnnouncementReadReceipt", b =>
                 {
                     b.Property<int>("AnnouncementId")
                         .HasColumnType("int");
@@ -371,7 +371,7 @@ namespace ChatAndEvents.Data.Migrations
                     b.ToTable("AnnouncementReadReceipts");
                 });
 
-            modelBuilder.Entity("ChatAndEvents.Data.EventsData.Models.AttendedEvent", b =>
+            modelBuilder.Entity("Events_GSS.Data.Models.AttendedEvent", b =>
                 {
                     b.Property<int>("EventId")
                         .HasColumnType("int");
@@ -398,7 +398,7 @@ namespace ChatAndEvents.Data.Migrations
                     b.ToTable("AttendedEvents");
                 });
 
-            modelBuilder.Entity("ChatAndEvents.Data.EventsData.Models.Category", b =>
+            modelBuilder.Entity("Events_GSS.Data.Models.Category", b =>
                 {
                     b.Property<int>("CategoryId")
                         .ValueGeneratedOnAdd()
@@ -457,7 +457,7 @@ namespace ChatAndEvents.Data.Migrations
                         });
                 });
 
-            modelBuilder.Entity("ChatAndEvents.Data.EventsData.Models.DiscussionMessage", b =>
+            modelBuilder.Entity("Events_GSS.Data.Models.DiscussionMessage", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -497,7 +497,7 @@ namespace ChatAndEvents.Data.Migrations
                     b.ToTable("DiscussionMessages");
                 });
 
-            modelBuilder.Entity("ChatAndEvents.Data.EventsData.Models.DiscussionMute", b =>
+            modelBuilder.Entity("Events_GSS.Data.Models.DiscussionMute", b =>
                 {
                     b.Property<int>("DiscussionId")
                         .HasColumnType("int");
@@ -532,7 +532,7 @@ namespace ChatAndEvents.Data.Migrations
                     b.ToTable("DiscussionMutes");
                 });
 
-            modelBuilder.Entity("ChatAndEvents.Data.EventsData.Models.DiscussionReaction", b =>
+            modelBuilder.Entity("Events_GSS.Data.Models.DiscussionReaction", b =>
                 {
                     b.Property<int>("DiscussionId")
                         .HasColumnType("int");
@@ -562,7 +562,7 @@ namespace ChatAndEvents.Data.Migrations
                     b.ToTable("DiscussionReactions");
                 });
 
-            modelBuilder.Entity("ChatAndEvents.Data.EventsData.Models.Event", b =>
+            modelBuilder.Entity("Events_GSS.Data.Models.Event", b =>
                 {
                     b.Property<int>("EventId")
                         .ValueGeneratedOnAdd()
@@ -617,7 +617,7 @@ namespace ChatAndEvents.Data.Migrations
                     b.ToTable("Events");
                 });
 
-            modelBuilder.Entity("ChatAndEvents.Data.EventsData.Models.Memory", b =>
+            modelBuilder.Entity("Events_GSS.Data.Models.Memory", b =>
                 {
                     b.Property<int>("MemoryId")
                         .ValueGeneratedOnAdd()
@@ -649,7 +649,7 @@ namespace ChatAndEvents.Data.Migrations
                     b.ToTable("Memories", (string)null);
                 });
 
-            modelBuilder.Entity("ChatAndEvents.Data.EventsData.Models.MemoryLike", b =>
+            modelBuilder.Entity("Events_GSS.Data.Models.MemoryLike", b =>
                 {
                     b.Property<int>("MemoryId")
                         .HasColumnType("int");
@@ -664,7 +664,7 @@ namespace ChatAndEvents.Data.Migrations
                     b.ToTable("MemoryLikes", (string)null);
                 });
 
-            modelBuilder.Entity("ChatAndEvents.Data.EventsData.Models.Notification", b =>
+            modelBuilder.Entity("Events_GSS.Data.Models.Notification", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -693,7 +693,7 @@ namespace ChatAndEvents.Data.Migrations
                     b.ToTable("Notifications", (string)null);
                 });
 
-            modelBuilder.Entity("ChatAndEvents.Data.EventsData.Models.Quest", b =>
+            modelBuilder.Entity("Events_GSS.Data.Models.Quest", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -727,7 +727,7 @@ namespace ChatAndEvents.Data.Migrations
                     b.ToTable("Quests");
                 });
 
-            modelBuilder.Entity("ChatAndEvents.Data.EventsData.Models.QuestMemory", b =>
+            modelBuilder.Entity("Events_GSS.Data.Models.QuestMemory", b =>
                 {
                     b.Property<int>("QuestId")
                         .HasColumnType("int");
@@ -745,7 +745,7 @@ namespace ChatAndEvents.Data.Migrations
                     b.ToTable("QuestMemories");
                 });
 
-            modelBuilder.Entity("ChatAndEvents.Data.EventsData.Models.User", b =>
+            modelBuilder.Entity("Events_GSS.Data.Models.User", b =>
                 {
                     b.Property<Guid>("UserId")
                         .ValueGeneratedOnAdd()
@@ -763,7 +763,7 @@ namespace ChatAndEvents.Data.Migrations
                     b.ToTable("User");
                 });
 
-            modelBuilder.Entity("ChatAndEvents.Data.EventsData.Models.UserReputationScore", b =>
+            modelBuilder.Entity("Events_GSS.Data.Models.UserReputationScore", b =>
                 {
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -916,15 +916,15 @@ namespace ChatAndEvents.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("ChatAndEvents.Data.EventsData.Models.Announcement", b =>
+            modelBuilder.Entity("Events_GSS.Data.Models.Announcement", b =>
                 {
-                    b.HasOne("ChatAndEvents.Data.EventsData.Models.User", "Author")
+                    b.HasOne("Events_GSS.Data.Models.User", "Author")
                         .WithMany()
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("ChatAndEvents.Data.EventsData.Models.Event", "Event")
+                    b.HasOne("Events_GSS.Data.Models.Event", "Event")
                         .WithMany("Announcements")
                         .HasForeignKey("EventId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -935,9 +935,9 @@ namespace ChatAndEvents.Data.Migrations
                     b.Navigation("Event");
                 });
 
-            modelBuilder.Entity("ChatAndEvents.Data.EventsData.Models.AnnouncementReaction", b =>
+            modelBuilder.Entity("Events_GSS.Data.Models.AnnouncementReaction", b =>
                 {
-                    b.HasOne("ChatAndEvents.Data.EventsData.Models.Announcement", "Announcement")
+                    b.HasOne("Events_GSS.Data.Models.Announcement", "Announcement")
                         .WithMany("Reactions")
                         .HasForeignKey("AnnouncementId")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -954,9 +954,9 @@ namespace ChatAndEvents.Data.Migrations
                     b.Navigation("Author");
                 });
 
-            modelBuilder.Entity("ChatAndEvents.Data.EventsData.Models.AnnouncementReadReceipt", b =>
+            modelBuilder.Entity("Events_GSS.Data.Models.AnnouncementReadReceipt", b =>
                 {
-                    b.HasOne("ChatAndEvents.Data.EventsData.Models.Announcement", "Announcement")
+                    b.HasOne("Events_GSS.Data.Models.Announcement", "Announcement")
                         .WithMany("ReadReceipts")
                         .HasForeignKey("AnnouncementId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -973,15 +973,15 @@ namespace ChatAndEvents.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("ChatAndEvents.Data.EventsData.Models.AttendedEvent", b =>
+            modelBuilder.Entity("Events_GSS.Data.Models.AttendedEvent", b =>
                 {
-                    b.HasOne("ChatAndEvents.Data.EventsData.Models.Event", "Event")
+                    b.HasOne("Events_GSS.Data.Models.Event", "Event")
                         .WithMany("Attendees")
                         .HasForeignKey("EventId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ChatAndEvents.Data.EventsData.Models.User", "User")
+                    b.HasOne("Events_GSS.Data.Models.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -992,17 +992,17 @@ namespace ChatAndEvents.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("ChatAndEvents.Data.EventsData.Models.DiscussionMessage", b =>
+            modelBuilder.Entity("Events_GSS.Data.Models.DiscussionMessage", b =>
                 {
-                    b.HasOne("ChatAndEvents.Data.EventsData.Models.Event", "AssociatedEvent")
+                    b.HasOne("Events_GSS.Data.Models.Event", "AssociatedEvent")
                         .WithMany()
                         .HasForeignKey("AssociatedEventEventId");
 
-                    b.HasOne("ChatAndEvents.Data.EventsData.Models.User", "Author")
+                    b.HasOne("Events_GSS.Data.Models.User", "Author")
                         .WithMany()
                         .HasForeignKey("AuthorUserId");
 
-                    b.HasOne("ChatAndEvents.Data.EventsData.Models.DiscussionMessage", "ReplyTo")
+                    b.HasOne("Events_GSS.Data.Models.DiscussionMessage", "ReplyTo")
                         .WithMany()
                         .HasForeignKey("ReplyToId");
 
@@ -1013,7 +1013,7 @@ namespace ChatAndEvents.Data.Migrations
                     b.Navigation("ReplyTo");
                 });
 
-            modelBuilder.Entity("ChatAndEvents.Data.EventsData.Models.DiscussionMute", b =>
+            modelBuilder.Entity("Events_GSS.Data.Models.DiscussionMute", b =>
                 {
                     b.HasOne("Events_GSS.Data.Models.Discussion", "Discussion")
                         .WithMany("Mutes")
@@ -1021,13 +1021,13 @@ namespace ChatAndEvents.Data.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("ChatAndEvents.Data.EventsData.Models.User", "MutedBy")
+                    b.HasOne("Events_GSS.Data.Models.User", "MutedBy")
                         .WithMany()
                         .HasForeignKey("MutedById")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("ChatAndEvents.Data.EventsData.Models.User", "MutedUser")
+                    b.HasOne("Events_GSS.Data.Models.User", "MutedUser")
                         .WithMany()
                         .HasForeignKey("MutedUserId")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -1040,9 +1040,9 @@ namespace ChatAndEvents.Data.Migrations
                     b.Navigation("MutedUser");
                 });
 
-            modelBuilder.Entity("ChatAndEvents.Data.EventsData.Models.DiscussionReaction", b =>
+            modelBuilder.Entity("Events_GSS.Data.Models.DiscussionReaction", b =>
                 {
-                    b.HasOne("ChatAndEvents.Data.EventsData.Models.User", "Author")
+                    b.HasOne("Events_GSS.Data.Models.User", "Author")
                         .WithMany()
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -1054,7 +1054,7 @@ namespace ChatAndEvents.Data.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("ChatAndEvents.Data.EventsData.Models.DiscussionMessage", "Message")
+                    b.HasOne("Events_GSS.Data.Models.DiscussionMessage", "Message")
                         .WithMany("Reactions")
                         .HasForeignKey("MessageId")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -1067,14 +1067,14 @@ namespace ChatAndEvents.Data.Migrations
                     b.Navigation("Message");
                 });
 
-            modelBuilder.Entity("ChatAndEvents.Data.EventsData.Models.Event", b =>
+            modelBuilder.Entity("Events_GSS.Data.Models.Event", b =>
                 {
-                    b.HasOne("ChatAndEvents.Data.EventsData.Models.User", "Admin")
+                    b.HasOne("Events_GSS.Data.Models.User", "Admin")
                         .WithMany()
                         .HasForeignKey("AdminId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("ChatAndEvents.Data.EventsData.Models.Category", "Category")
+                    b.HasOne("Events_GSS.Data.Models.Category", "Category")
                         .WithMany()
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.SetNull);
@@ -1084,15 +1084,15 @@ namespace ChatAndEvents.Data.Migrations
                     b.Navigation("Category");
                 });
 
-            modelBuilder.Entity("ChatAndEvents.Data.EventsData.Models.Memory", b =>
+            modelBuilder.Entity("Events_GSS.Data.Models.Memory", b =>
                 {
-                    b.HasOne("ChatAndEvents.Data.EventsData.Models.User", "Author")
+                    b.HasOne("Events_GSS.Data.Models.User", "Author")
                         .WithMany()
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("ChatAndEvents.Data.EventsData.Models.Event", "Event")
+                    b.HasOne("Events_GSS.Data.Models.Event", "Event")
                         .WithMany("Memories")
                         .HasForeignKey("EventId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1103,15 +1103,15 @@ namespace ChatAndEvents.Data.Migrations
                     b.Navigation("Event");
                 });
 
-            modelBuilder.Entity("ChatAndEvents.Data.EventsData.Models.MemoryLike", b =>
+            modelBuilder.Entity("Events_GSS.Data.Models.MemoryLike", b =>
                 {
-                    b.HasOne("ChatAndEvents.Data.EventsData.Models.Memory", "Memory")
+                    b.HasOne("Events_GSS.Data.Models.Memory", "Memory")
                         .WithMany("Likes")
                         .HasForeignKey("MemoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ChatAndEvents.Data.EventsData.Models.User", "User")
+                    b.HasOne("Events_GSS.Data.Models.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1122,9 +1122,9 @@ namespace ChatAndEvents.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("ChatAndEvents.Data.EventsData.Models.Notification", b =>
+            modelBuilder.Entity("Events_GSS.Data.Models.Notification", b =>
                 {
-                    b.HasOne("ChatAndEvents.Data.EventsData.Models.User", "User")
+                    b.HasOne("Events_GSS.Data.Models.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -1133,15 +1133,15 @@ namespace ChatAndEvents.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("ChatAndEvents.Data.EventsData.Models.Quest", b =>
+            modelBuilder.Entity("Events_GSS.Data.Models.Quest", b =>
                 {
-                    b.HasOne("ChatAndEvents.Data.EventsData.Models.Event", "Event")
+                    b.HasOne("Events_GSS.Data.Models.Event", "Event")
                         .WithMany("Quests")
                         .HasForeignKey("EventId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ChatAndEvents.Data.EventsData.Models.Quest", "PrerequisiteQuest")
+                    b.HasOne("Events_GSS.Data.Models.Quest", "PrerequisiteQuest")
                         .WithMany()
                         .HasForeignKey("PrerequisiteQuestId");
 
@@ -1150,15 +1150,15 @@ namespace ChatAndEvents.Data.Migrations
                     b.Navigation("PrerequisiteQuest");
                 });
 
-            modelBuilder.Entity("ChatAndEvents.Data.EventsData.Models.QuestMemory", b =>
+            modelBuilder.Entity("Events_GSS.Data.Models.QuestMemory", b =>
                 {
-                    b.HasOne("ChatAndEvents.Data.EventsData.Models.Memory", "Proof")
+                    b.HasOne("Events_GSS.Data.Models.Memory", "Proof")
                         .WithMany()
                         .HasForeignKey("MemoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ChatAndEvents.Data.EventsData.Models.Quest", "ForQuest")
+                    b.HasOne("Events_GSS.Data.Models.Quest", "ForQuest")
                         .WithMany("QuestMemories")
                         .HasForeignKey("QuestId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1169,11 +1169,11 @@ namespace ChatAndEvents.Data.Migrations
                     b.Navigation("Proof");
                 });
 
-            modelBuilder.Entity("ChatAndEvents.Data.EventsData.Models.UserReputationScore", b =>
+            modelBuilder.Entity("Events_GSS.Data.Models.UserReputationScore", b =>
                 {
-                    b.HasOne("ChatAndEvents.Data.EventsData.Models.User", "User")
+                    b.HasOne("Events_GSS.Data.Models.User", "User")
                         .WithOne("ReputationScore")
-                        .HasForeignKey("ChatAndEvents.Data.EventsData.Models.UserReputationScore", "UserId")
+                        .HasForeignKey("Events_GSS.Data.Models.UserReputationScore", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1182,13 +1182,13 @@ namespace ChatAndEvents.Data.Migrations
 
             modelBuilder.Entity("Events_GSS.Data.Models.Discussion", b =>
                 {
-                    b.HasOne("ChatAndEvents.Data.EventsData.Models.User", "Creator")
+                    b.HasOne("Events_GSS.Data.Models.User", "Creator")
                         .WithMany()
                         .HasForeignKey("CreatorId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("ChatAndEvents.Data.EventsData.Models.Event", "AssociatedEvent")
+                    b.HasOne("Events_GSS.Data.Models.Event", "AssociatedEvent")
                         .WithMany()
                         .HasForeignKey("EventId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1206,19 +1206,19 @@ namespace ChatAndEvents.Data.Migrations
                     b.Navigation("Participants");
                 });
 
-            modelBuilder.Entity("ChatAndEvents.Data.EventsData.Models.Announcement", b =>
+            modelBuilder.Entity("Events_GSS.Data.Models.Announcement", b =>
                 {
                     b.Navigation("Reactions");
 
                     b.Navigation("ReadReceipts");
                 });
 
-            modelBuilder.Entity("ChatAndEvents.Data.EventsData.Models.DiscussionMessage", b =>
+            modelBuilder.Entity("Events_GSS.Data.Models.DiscussionMessage", b =>
                 {
                     b.Navigation("Reactions");
                 });
 
-            modelBuilder.Entity("ChatAndEvents.Data.EventsData.Models.Event", b =>
+            modelBuilder.Entity("Events_GSS.Data.Models.Event", b =>
                 {
                     b.Navigation("Announcements");
 
@@ -1229,17 +1229,17 @@ namespace ChatAndEvents.Data.Migrations
                     b.Navigation("Quests");
                 });
 
-            modelBuilder.Entity("ChatAndEvents.Data.EventsData.Models.Memory", b =>
+            modelBuilder.Entity("Events_GSS.Data.Models.Memory", b =>
                 {
                     b.Navigation("Likes");
                 });
 
-            modelBuilder.Entity("ChatAndEvents.Data.EventsData.Models.Quest", b =>
+            modelBuilder.Entity("Events_GSS.Data.Models.Quest", b =>
                 {
                     b.Navigation("QuestMemories");
                 });
 
-            modelBuilder.Entity("ChatAndEvents.Data.EventsData.Models.User", b =>
+            modelBuilder.Entity("Events_GSS.Data.Models.User", b =>
                 {
                     b.Navigation("ReputationScore");
                 });

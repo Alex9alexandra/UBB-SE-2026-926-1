@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using ChatAndEvents.Data.EventsData.Models;
+using Events_GSS.Data.Models;
 
-namespace ChatAndEvents.Data.EventsData.ViewModelsCore;
+namespace Events_GSS.Data.ViewModelsCore;
 
 public sealed class AnnouncementsViewModelCore
 {

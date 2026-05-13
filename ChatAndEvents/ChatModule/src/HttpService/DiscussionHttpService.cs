@@ -4,9 +4,9 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Threading.Tasks;
-using ChatAndEvents.Data.EventsData.Models;
+using Events_GSS.Data.Models;
 
-namespace ChatAndEvents.Data.EventsData.Services.discussionService;
+namespace Events_GSS.Data.Services.discussionService;
 
 public class DiscussionHttpService : IDiscussionService
 {

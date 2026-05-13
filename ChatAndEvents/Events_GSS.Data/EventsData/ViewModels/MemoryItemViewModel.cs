@@ -2,11 +2,11 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-namespace ChatAndEvents.Data.EventsData.ViewModels
+namespace Events_GSS.Data.ViewModels
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
-    using ChatAndEvents.Data.EventsData.Models;
+    using Events_GSS.Data.Models;
 
     /// <summary>
     /// Represents the view model for a single memory item.

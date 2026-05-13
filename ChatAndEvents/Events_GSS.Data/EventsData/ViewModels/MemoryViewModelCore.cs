@@ -2,7 +2,7 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-namespace ChatAndEvents.Data.EventsData.ViewModels
+namespace Events_GSS.Data.ViewModels
 {
     using System;
     using System.Collections.Generic;
@@ -11,8 +11,8 @@ namespace ChatAndEvents.Data.EventsData.ViewModels
     using System.Linq;
     using System.Runtime.CompilerServices;
     using System.Threading.Tasks;
-    using ChatAndEvents.Data.EventsData.Models;
-    using ChatAndEvents.Data.EventsData.Services.Interfaces;
+    using Events_GSS.Data.Models;
+    using Events_GSS.Data.Services.Interfaces;
     using CommunityToolkit.Mvvm.Input;
 
     /// <summary>

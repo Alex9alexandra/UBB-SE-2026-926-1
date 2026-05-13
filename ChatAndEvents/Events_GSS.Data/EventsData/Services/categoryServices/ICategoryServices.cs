@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using ChatAndEvents.Data.EventsData.Models;
+using Events_GSS.Data.Models;
 
-namespace ChatAndEvents.Data.EventsData.Services.categoryServices;
+namespace Events_GSS.Data.Services.categoryServices;
 
 /// <summary>
 /// Defines the contract for category-related operations.

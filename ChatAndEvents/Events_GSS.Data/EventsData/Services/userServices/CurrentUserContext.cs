@@ -1,6 +1,6 @@
 using System;
 
-namespace ChatAndEvents.Data.EventsData.Services.userServices;
+namespace Events_GSS.Data.Services.userServices;
 
 public class CurrentUserContext
 {

@@ -2,14 +2,14 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-namespace ChatAndEvents.Data.EventsData.Repositories
+namespace Events_GSS.Data.Repositories
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using ChatAndEvents.Data.Database;
-    using ChatAndEvents.Data.EventsData.Models;
+    using Events_GSS.Data.Models;
     using Microsoft.EntityFrameworkCore;
 
     public class MemoryRepository : IMemoryRepository

@@ -1,4 +1,4 @@
-﻿using ChatAndEvents.Data.EventsData.Services.notificationServices;
+﻿using Events_GSS.Data.Services.notificationServices;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ChatAndEvents.API.Server.Controllers.Events;

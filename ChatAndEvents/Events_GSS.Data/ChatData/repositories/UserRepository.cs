@@ -53,13 +53,13 @@ namespace ChatAndEvents.Data.ChatData.repositories
             using var db = await _contextFactory.CreateDbContextAsync();
             db.Users.Add(user);
 
-            var eventsUser = new ChatAndEvents.Data.EventsData.Models.User
+            var eventsUser = new Events_GSS.Data.Models.User
             {
                 UserId = user.Id,
                 Name = user.Username,
                 ReputationPoints = 0
             };
-            db.Set<ChatAndEvents.Data.EventsData.Models.User>().Add(eventsUser);
+            db.Set<Events_GSS.Data.Models.User>().Add(eventsUser);
 
             await db.SaveChangesAsync();
         }

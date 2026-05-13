@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 
-namespace ChatAndEvents.Data.EventsData.ViewModelsCore;
+namespace Events_GSS.Data.ViewModelsCore;
 
 public static class DiscussionViewModelCore
 {

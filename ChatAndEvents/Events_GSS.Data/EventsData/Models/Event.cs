@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ChatAndEvents.Data.EventsData.Models;
+namespace Events_GSS.Data.Models;
 
 public class Event
 {

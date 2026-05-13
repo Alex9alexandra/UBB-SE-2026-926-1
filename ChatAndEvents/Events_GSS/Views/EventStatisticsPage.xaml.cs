@@ -1,5 +1,5 @@
-using ChatAndEvents.Data.EventsData.Models;
-using ChatAndEvents.Data.EventsData.Services.eventStatisticsServices;
+using Events_GSS.Data.Models;
+using Events_GSS.Data.Services.eventStatisticsServices;
 using Events_GSS.Services;
 using Events_GSS.ViewModels;
 using System.Threading.Tasks;

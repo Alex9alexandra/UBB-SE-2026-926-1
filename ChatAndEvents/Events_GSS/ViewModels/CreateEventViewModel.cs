@@ -6,12 +6,12 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 using Microsoft.UI.Xaml;
-using ChatAndEvents.Data.EventsData.Models;
-using ChatAndEvents.Data.EventsData.Services.attendedEventServices;
-using ChatAndEvents.Data.EventsData.Services.eventServices;
-using ChatAndEvents.Data.EventsData.Services.Interfaces;
-using ChatAndEvents.Data.EventsData.Services.userServices;
-using ChatAndEvents.Data.EventsData.ViewModelsCore;
+using Events_GSS.Data.Models;
+using Events_GSS.Data.Services.attendedEventServices;
+using Events_GSS.Data.Services.eventServices;
+using Events_GSS.Data.Services.Interfaces;
+using Events_GSS.Data.Services.userServices;
+using Events_GSS.Data.ViewModelsCore;
 
 namespace Events_GSS.ViewModels;
 

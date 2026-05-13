@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using ChatAndEvents.Data.EventsData.Models;
+using Events_GSS.Data.Models;
 
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Data;

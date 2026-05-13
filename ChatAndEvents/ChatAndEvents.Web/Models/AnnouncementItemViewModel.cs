@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-using ChatAndEvents.Data.EventsData.Models;
-using ChatAndEvents.Data.EventsData.ViewModelsCore;
+using Events_GSS.Data.Models;
+using Events_GSS.Data.ViewModelsCore;
 
 namespace ChatAndEvents.Web.Models;
 

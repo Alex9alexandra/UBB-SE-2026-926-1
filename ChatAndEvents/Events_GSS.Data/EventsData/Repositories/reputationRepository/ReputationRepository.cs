@@ -1,9 +1,9 @@
-namespace ChatAndEvents.Data.EventsData.Repositories.reputationRepository;
+namespace Events_GSS.Data.Repositories.reputationRepository;
 
 using System;
 using System.Threading.Tasks;
 using ChatAndEvents.Data.Database;
-using ChatAndEvents.Data.EventsData.Models;
+using Events_GSS.Data.Models;
 using Microsoft.EntityFrameworkCore;
 
 //private readonly IDbContextFactory<AppDbContext> _contextFactory;

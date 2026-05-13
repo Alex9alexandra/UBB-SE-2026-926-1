@@ -1,4 +1,4 @@
-﻿namespace ChatAndEvents.Data.EventsData.Models;
+﻿namespace Events_GSS.Data.Models;
 
 public enum QuestMemoryStatus
 {

@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
-using ChatAndEvents.Data.EventsData.Models;
+using Events_GSS.Data.Models;
 
-namespace ChatAndEvents.Data.EventsData.Services.userServices;
+namespace Events_GSS.Data.Services.userServices;
 
 public class UserHttpService : IUserService
 {

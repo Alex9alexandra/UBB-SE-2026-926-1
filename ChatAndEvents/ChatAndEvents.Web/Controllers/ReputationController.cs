@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
-using ChatAndEvents.Data.EventsData.Services.achievementServices;
-using ChatAndEvents.Data.EventsData.Services.reputationService;
-using ChatAndEvents.Data.EventsData.Services.userServices;
+using Events_GSS.Data.Services.achievementServices;
+using Events_GSS.Data.Services.reputationService;
+using Events_GSS.Data.Services.userServices;
 using ChatAndEvents.Web.Models;
 using Microsoft.AspNetCore.Mvc;
 

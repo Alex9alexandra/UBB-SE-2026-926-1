@@ -1,4 +1,4 @@
-namespace ChatAndEvents.Data.EventsData.Messaging;
+namespace Events_GSS.Data.Messaging;
 
 public enum ReputationAction
 {

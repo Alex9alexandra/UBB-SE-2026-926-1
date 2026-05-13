@@ -2,9 +2,9 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-namespace ChatAndEvents.Data.EventsData.Services.reputationService;
+namespace Events_GSS.Data.Services.reputationService;
 
-using ChatAndEvents.Data.EventsData.Models;
+using Events_GSS.Data.Models;
 
 /// <summary>
 /// Defines the contract for the reputation service, which provides methods to manage and retrieve user reputation points, tiers, achievements, and permissions related to posting memories, messages, creating events, and attending events. This interface abstracts the business logic layer for user reputation management, allowing for different implementations that can interact with various data sources or storage mechanisms to calculate and maintain user reputation in the system.

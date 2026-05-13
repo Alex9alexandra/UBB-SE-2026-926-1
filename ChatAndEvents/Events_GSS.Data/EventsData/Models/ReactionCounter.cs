@@ -2,7 +2,7 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-namespace ChatAndEvents.Data.EventsData.Models;
+namespace Events_GSS.Data.Models;
 
 using System;
 using System.Collections.Generic;

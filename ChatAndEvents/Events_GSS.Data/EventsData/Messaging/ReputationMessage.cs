@@ -1,6 +1,6 @@
 using CommunityToolkit.Mvvm.Messaging.Messages;
 
-namespace ChatAndEvents.Data.EventsData.Messaging;
+namespace Events_GSS.Data.Messaging;
 
 public class ReputationMessage : ValueChangedMessage<ReputationAction>
 {

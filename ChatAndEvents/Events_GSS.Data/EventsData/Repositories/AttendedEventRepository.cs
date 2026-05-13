@@ -1,11 +1,11 @@
 ﻿using System.Data;
 using ChatAndEvents.Data.Database;
-using ChatAndEvents.Data.EventsData.Models;
-using ChatAndEvents.Data.EventsData.Models;
+using Events_GSS.Data.Models;
+using Events_GSS.Data.Models;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
-namespace ChatAndEvents.Data.EventsData.Repositories
+namespace Events_GSS.Data.Repositories
 {
     public class AttendedEventRepository : IAttendedEventRepository
     {

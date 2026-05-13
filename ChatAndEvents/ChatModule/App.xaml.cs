@@ -36,8 +36,9 @@ namespace ChatModule
         {
             var services = new ServiceCollection();
             var baseAddress = new Uri("http://172.30.250.53/");
-            
-            services.AddHttpClient<IAuthentificationService, AuthentificationHttpService>(client =>
+
+            services.AddHttpClient<ChatAndEvents.Data.ChatData.services.IAuthentificationService, ChatModule.HttpService.AuthentificationHttpService>()
+                .ConfigureHttpClient(client =>
             {
                 client.BaseAddress = baseAddress;
             });

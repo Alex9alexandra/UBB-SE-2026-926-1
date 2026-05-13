@@ -4,10 +4,10 @@ using Microsoft.Extensions.DependencyInjection;
 
 using Events_GSS.ViewModels;
 using Events_GSS.Services;
-using ChatAndEvents.Data.EventsData.Services.attendedEventServices;
-using ChatAndEvents.Data.EventsData.Services.eventServices;
-using ChatAndEvents.Data.EventsData.Services.Interfaces;
-using ChatAndEvents.Data.EventsData.Services.userServices;
+using Events_GSS.Data.Services.attendedEventServices;
+using Events_GSS.Data.Services.eventServices;
+using Events_GSS.Data.Services.Interfaces;
+using Events_GSS.Data.Services.userServices;
 
 namespace Events_GSS.Views;
 

@@ -1,12 +1,12 @@
-﻿namespace ChatAndEvents.Data.EventsData.Services.eventServices;
+﻿namespace Events_GSS.Data.Services.eventServices;
 
 using System;
-using ChatAndEvents.Data.EventsData.Messaging;
-using ChatAndEvents.Data.EventsData.Models;
-using ChatAndEvents.Data.EventsData.Repositories.eventRepository;
-using ChatAndEvents.Data.EventsData.Services.reputationService;
+using Events_GSS.Data.Messaging;
+using Events_GSS.Data.Models;
+using Events_GSS.Data.Repositories.eventRepository;
+using Events_GSS.Data.Services.reputationService;
 using CommunityToolkit.Mvvm.Messaging;
-using ChatAndEvents.Data.EventsData.Messaging;
+using Events_GSS.Data.Messaging;
 
 /// <summary>
 /// Provides event management services including CRUD operations and filtering.

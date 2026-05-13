@@ -1,5 +1,5 @@
-﻿using ChatAndEvents.Data.EventsData.Models;
-using ChatAndEvents.Data.EventsData.Services.attendedEventServices;
+﻿using Events_GSS.Data.Models;
+using Events_GSS.Data.Services.attendedEventServices;
 using System.ComponentModel;
 
 public class EventDetailViewModel

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
-using ChatAndEvents.Data.EventsData.Models;
+using Events_GSS.Data.Models;
 
-namespace ChatAndEvents.Data.EventsData.Services.achievementServices;
+namespace Events_GSS.Data.Services.achievementServices;
 
 public class AchievementHttpService : IAchievementService
 {

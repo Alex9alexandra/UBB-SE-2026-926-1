@@ -1,5 +1,5 @@
 ﻿using ChatAndEvents.Data.ChatData.domain;
-using ChatAndEvents.Data.EventsData.Models;
+using Events_GSS.Data.Models;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ChatAndEvents.Data.EventsData.Repositories.discussionRepository;
+namespace Events_GSS.Data.Repositories.discussionRepository;
 
 public interface IDiscussionRepository
 {
@@ -42,6 +42,6 @@ public interface IDiscussionRepository
     // <summary>
     // Used for the @mention lookup when posting messages. Returns all users who have participated in the discussion (posted a message or reaction).
     // </summary>
-    Task<List<ChatAndEvents.Data.EventsData.Models.User>> GetEventParticipantsAsync(int eventId);
+    Task<List<Events_GSS.Data.Models.User>> GetEventParticipantsAsync(int eventId);
 }
 

@@ -1,0 +1,44 @@
+﻿@model ChatAndEvents.Web.Models.MemoryViewModel
+
+@{
+    ViewData["Title"] = "Memories - " + Model.EventName;
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Memories for @Model.EventName</h1>
+        <a href="#" class="btn btn-primary">Add New Memory</a>
+    </div>
+
+    @if (Model.Memories == null || !Model.Memories.Any())
+    {
+        <div class="alert alert-info">
+            No memories have been shared for this event yet. Be the first to share one!
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var memory in Model.Memories)
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        @if (!string.IsNullOrEmpty(memory.PhotoPath))
+                        {
+                            <img src="@memory.PhotoPath" class="card-img-top" alt="Memory photo"
+                                 style="height: 200px; object-fit: cover;">
+                        }
+                        <div class="card-body">
+                            <p class="card-text">@memory.Text</p>
+                        </div>
+                        <div class="card-footer bg-transparent border-top-0">
+                            <small class="text-muted">
+                                By <strong>@memory.Author?.Name</strong> on @memory.CreatedAt.ToShortDateString()
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

@@ -2,9 +2,9 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-namespace ChatAndEvents.Data.EventsData.Repositories.announcementRepository;
+namespace Events_GSS.Data.Repositories.announcementRepository;
 
-using ChatAndEvents.Data.EventsData.Models;
+using Events_GSS.Data.Models;
 
 /// <summary>
 /// Provides data access operations for announcements, including creation, updates,

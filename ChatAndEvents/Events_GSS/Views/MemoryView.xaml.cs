@@ -13,8 +13,8 @@ namespace Events_GSS.Views
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
     using Microsoft.UI.Xaml.Controls.Primitives;
-    using ChatAndEvents.Data.EventsData.Models;
-    using ChatAndEvents.Data.EventsData.ViewModels;
+    using Events_GSS.Data.Models;
+    using Events_GSS.Data.ViewModels;
     using Windows.Storage;
     using Windows.Storage.Pickers;
 

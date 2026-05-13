@@ -4,9 +4,9 @@ using Xunit;
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using ChatAndEvents.Data.EventsData.Models;
-using ChatAndEvents.Data.EventsData.Repositories;
-using ChatAndEvents.Data.EventsData.Services;
+using Events_GSS.Data.Models;
+using Events_GSS.Data.Repositories;
+using Events_GSS.Data.Services;
 
 namespace Events_GSS.Test;
 

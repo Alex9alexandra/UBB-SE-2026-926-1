@@ -1,6 +1,6 @@
-﻿using ChatAndEvents.Data.EventsData.Models;
+﻿using Events_GSS.Data.Models;
 
-namespace ChatAndEvents.Data.EventsData.Services.Interfaces {
+namespace Events_GSS.Data.Services.Interfaces {
 
     public interface IMemoryService
     {

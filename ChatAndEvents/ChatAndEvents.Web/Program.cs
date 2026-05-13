@@ -1,13 +1,20 @@
 //https://localhost:7283-> port for https -> look in properties  for the current web app
 
+
+using System;
 using ChatAndEvents.Data.ChatData.serviceInterfaces.Services;
 using ChatAndEvents.Data.ChatData.services;
-using ChatAndEvents.Data.EventsData.Services.achievementServices;
-using ChatAndEvents.Data.EventsData.Services.announcementServices;
-using ChatAndEvents.Data.EventsData.Services.reputationService;
-using ChatAndEvents.Data.EventsData.Services.userServices;
+using Events_GSS.Data.Services.eventServices;
+using Events_GSS.Data.Services; 
+using Events_GSS.Data.Services.achievementServices;
+using Events_GSS.Data.Services.announcementServices;
+using Events_GSS.Data.Services.Interfaces; 
+using Events_GSS.Data.Services.reputationService;
+using Events_GSS.Data.Services.userServices;
 
+using AuthHttp = ChatAndEvents.Data.ChatData.services.AuthentificationHttpService;
 
+// using RepHttp = Events_GSS.Data.Services.reputationService.ReputationHttpService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,10 +44,21 @@ builder.Services.AddScoped<IAnnouncementService, AnnouncementHttpService>(sp =>
     return new AnnouncementHttpService(factory.CreateClient("API"));
 });
 
-builder.Services.AddScoped<IReputationService, ReputationHttpService>(sp =>
+// Register IReputationService by resolving the concrete type at runtime using an assembly-qualified name
+builder.Services.AddScoped<IReputationService>(sp =>
 {
     var factory = sp.GetRequiredService<IHttpClientFactory>();
-    return new ReputationHttpService(factory.CreateClient("API"));
+    // Specify the assembly that contains the desired implementation. Adjust "ChatModule" if needed.
+    var implType = Type.GetType("Events_GSS.Data.Services.reputationService.ReputationHttpService, ChatModule");
+    if (implType == null)
+    {
+        // fallback: try ChatAndEvents.Data assembly
+        implType = Type.GetType("Events_GSS.Data.Services.reputationService.ReputationHttpService, ChatAndEvents.Data");
+    }
+    if (implType == null)
+        throw new InvalidOperationException("ReputationHttpService type not found in referenced assemblies. Remove duplicate definitions or adjust the assembly-qualified name.");
+
+    return (IReputationService)Activator.CreateInstance(implType, factory.CreateClient("API"));
 });
 
 builder.Services.AddScoped<IAchievementService, AchievementHttpService>(sp =>
@@ -56,17 +74,15 @@ builder.Services.AddScoped<IUserService, UserHttpService>(sp =>
     return new UserHttpService(factory.CreateClient("API"), currentUserContext);
 });
 
-builder.Services.AddScoped<IAuthenticationService, AuthentificationHttpService>(sp =>
+builder.Services.AddScoped<IAuthentificationService, AuthHttp>(sp =>
 {
     var factory = sp.GetRequiredService<IHttpClientFactory>();
-    return new AuthentificationHttpService(factory.CreateClient("API"));
+    return new AuthHttp(factory.CreateClient("API"));
 });
 
-// Add services to the container.
 builder.Services.AddControllersWithViews();
 
 
-//cookie authentification
 builder.Services.AddAuthentication("Cookies")
     .AddCookie("Cookies", options =>
     {
@@ -83,13 +99,18 @@ builder.Services.AddHttpClient("API", client =>
     client.BaseAddress = new Uri("https://localhost:7305/"); 
 });
 
-//register the http services - this is just an example
-//builder.Services.AddScoped<IEventService, EventHttpService>(sp =>
-//{
-//    var factory = sp.GetRequiredService<IHttpClientFactory>();
-//    return new EventHttpService(factory.CreateClient("API"));
-//});
-//repeat ^ for the all services
+builder.Services.AddScoped<IMemoryService, MemoryHttpService>(sp =>
+{
+    var factory = sp.GetRequiredService<IHttpClientFactory>();
+    return new MemoryHttpService(factory.CreateClient("API"));
+});
+
+builder.Services.AddScoped<IEventService, EventHttpService>(sp =>
+{
+    var factory = sp.GetRequiredService<IHttpClientFactory>();
+    return new EventHttpService(factory.CreateClient("API"));
+});
+
 
 var app = builder.Build();
 

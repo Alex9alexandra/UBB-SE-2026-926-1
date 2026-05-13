@@ -1,8 +1,8 @@
-using ChatAndEvents.Data.EventsData.Models;
-using ChatAndEvents.Data.EventsData.Services.announcementServices;
-using ChatAndEvents.Data.EventsData.Services.attendedEventServices;
-using ChatAndEvents.Data.EventsData.Services.reputationService;
-using ChatAndEvents.Data.EventsData.Services.userServices;
+using Events_GSS.Data.Models;
+using Events_GSS.Data.Services.announcementServices;
+using Events_GSS.Data.Services.attendedEventServices;
+using Events_GSS.Data.Services.reputationService;
+using Events_GSS.Data.Services.userServices;
 using Events_GSS.Services;
 using Events_GSS.ViewModels;
 

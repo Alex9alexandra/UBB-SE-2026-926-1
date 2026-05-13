@@ -1,6 +1,6 @@
-using ChatAndEvents.Data.EventsData.Repositories.achievementRepository;
-using ChatAndEvents.Data.EventsData.Services.achievementServices;
-using ChatAndEvents.Data.EventsData.Services.reputationService;
+using Events_GSS.Data.Repositories.achievementRepository;
+using Events_GSS.Data.Services.achievementServices;
+using Events_GSS.Data.Services.reputationService;
 
 using Events_GSS.ViewModels;
 

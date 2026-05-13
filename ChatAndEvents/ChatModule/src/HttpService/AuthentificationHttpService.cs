@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using ChatAndEvents.Data.ChatData.domain;
 using ChatAndEvents.Data.ChatData.services;
 
-namespace ChatAndEvents.Data.ChatData.services
+namespace ChatModule.HttpService
 {
     public class AuthentificationHttpService : IAuthentificationService
     {

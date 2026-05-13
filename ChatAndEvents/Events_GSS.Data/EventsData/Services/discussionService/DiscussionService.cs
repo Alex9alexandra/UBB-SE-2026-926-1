@@ -3,17 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using ChatAndEvents.Data.EventsData.Messaging;
-using ChatAndEvents.Data.EventsData.Models;
-using ChatAndEvents.Data.EventsData.Repositories.discussionRepository;
-using ChatAndEvents.Data.EventsData.Repositories.eventRepository;
-using ChatAndEvents.Data.EventsData.Services.notificationServices;
-using ChatAndEvents.Data.EventsData.Services.reputationService;
+using Events_GSS.Data.Messaging;
+using Events_GSS.Data.Models;
+using Events_GSS.Data.Repositories.discussionRepository;
+using Events_GSS.Data.Repositories.eventRepository;
+using Events_GSS.Data.Services.notificationServices;
+using Events_GSS.Data.Services.reputationService;
 using CommunityToolkit.Mvvm.Messaging;
-using ChatAndEvents.Data.EventsData.Messaging;
-using ChatAndEvents.Data.EventsData.Services.Interfaces;
+using Events_GSS.Data.Messaging;
+using Events_GSS.Data.Services.Interfaces;
 
-namespace ChatAndEvents.Data.EventsData.Services.discussionService;
+namespace Events_GSS.Data.Services.discussionService;
 
 public class DiscussionService : IDiscussionService
 {

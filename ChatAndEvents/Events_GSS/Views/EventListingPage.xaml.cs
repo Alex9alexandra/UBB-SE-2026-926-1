@@ -2,7 +2,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Events_GSS.ViewModels;
-using ChatAndEvents.Data.EventsData.Models;
+using Events_GSS.Data.Models;
 
 namespace Events_GSS.Views;
 

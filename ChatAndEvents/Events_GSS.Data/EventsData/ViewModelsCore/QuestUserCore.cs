@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using ChatAndEvents.Data.EventsData.Models;
-using ChatAndEvents.Data.EventsData.Services.Interfaces;
+using Events_GSS.Data.Models;
+using Events_GSS.Data.Services.Interfaces;
 
-namespace ChatAndEvents.Data.EventsData.ViewModelsCore;
+namespace Events_GSS.Data.ViewModelsCore;
 
 public class QuestUserCore
 {

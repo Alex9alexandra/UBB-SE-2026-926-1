@@ -1,11 +1,11 @@
-﻿namespace ChatAndEvents.Data.EventsData.Repositories.discussionRepository;
+﻿namespace Events_GSS.Data.Repositories.discussionRepository;
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ChatAndEvents.Data.Database;
-using ChatAndEvents.Data.EventsData.Models;
+using Events_GSS.Data.Models;
 using Microsoft.EntityFrameworkCore;
 
 public class DiscussionRepository : IDiscussionRepository

@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Text;
-using ChatAndEvents.Data.EventsData.Models;
-using ChatAndEvents.Data.EventsData.Repositories.achievementRepository;
+using Events_GSS.Data.Models;
+using Events_GSS.Data.Repositories.achievementRepository;
 using Events_GSS.Data.Database;
 using Events_GSS.Data.Services.achievementServices;
 

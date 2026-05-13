@@ -2,9 +2,9 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-namespace ChatAndEvents.Data.EventsData.ViewModelsCore;
+namespace Events_GSS.Data.ViewModelsCore;
 
-using ChatAndEvents.Data.EventsData.Models;
+using Events_GSS.Data.Models;
 
 /// <summary>
 /// Represents the core logic for an announcement item view model, providing properties and methods.

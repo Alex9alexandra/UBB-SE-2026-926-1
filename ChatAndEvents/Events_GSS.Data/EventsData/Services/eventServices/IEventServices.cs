@@ -1,7 +1,7 @@
-﻿namespace ChatAndEvents.Data.EventsData.Services.eventServices;
+﻿namespace Events_GSS.Data.Services.eventServices;
 
 using System;
-using ChatAndEvents.Data.EventsData.Models;
+using Events_GSS.Data.Models;
 
 /// <summary>
 /// Defines the contract for event-related operations.

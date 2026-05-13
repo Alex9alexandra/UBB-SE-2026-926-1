@@ -2,7 +2,7 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-namespace ChatAndEvents.Data.EventsData.Models;
+namespace Events_GSS.Data.Models;
 
 /// <summary>
 /// Represents a reaction from a user on a specific announcement.

@@ -1,12 +1,12 @@
-﻿using ChatAndEvents.Data.EventsData.Messaging;
-using ChatAndEvents.Data.EventsData.Models;
-using ChatAndEvents.Data.EventsData.Repositories;
-using ChatAndEvents.Data.EventsData.Services.reputationService;
+﻿using Events_GSS.Data.Messaging;
+using Events_GSS.Data.Models;
+using Events_GSS.Data.Repositories;
+using Events_GSS.Data.Services.reputationService;
 using CommunityToolkit.Mvvm.Messaging;
-using ChatAndEvents.Data.EventsData.Messaging;
-using ChatAndEvents.Data.EventsData.Models;
+using Events_GSS.Data.Messaging;
+using Events_GSS.Data.Models;
 
-namespace ChatAndEvents.Data.EventsData.Services.attendedEventServices
+namespace Events_GSS.Data.Services.attendedEventServices
 {
     /// <summary>
     /// Service for managing user attended events, including enrollment, archiving, and marking favorites.

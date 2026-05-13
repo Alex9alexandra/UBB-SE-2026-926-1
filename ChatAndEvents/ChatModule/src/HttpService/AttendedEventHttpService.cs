@@ -4,8 +4,8 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Threading.Tasks;
-using ChatAndEvents.Data.EventsData.Models;
-using ChatAndEvents.Data.EventsData.Services.attendedEventServices;
+using Events_GSS.Data.Models;
+using Events_GSS.Data.Services.attendedEventServices;
 
 namespace ChatModule.src.HttpService
 {

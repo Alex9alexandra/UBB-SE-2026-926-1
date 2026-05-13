@@ -4,7 +4,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:viewmodels="using:Events_GSS.ViewModels"
-    xmlns:datavm="using:ChatAndEvents.Data.EventsData.ViewModels">
+    xmlns:datavm="using:Events_GSS.Data.ViewModels">
 
     <Grid>
         <Grid.RowDefinitions>

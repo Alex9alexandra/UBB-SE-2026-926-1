@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace ChatAndEvents.Data.EventsData.Models;
+namespace Events_GSS.Data.Models;
 
 public class CreateEventDto
 {

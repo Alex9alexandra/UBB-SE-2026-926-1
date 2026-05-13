@@ -1,4 +1,4 @@
-﻿using ChatAndEvents.Data.EventsData.Services.attendedEventServices;
+﻿using Events_GSS.Data.Services.attendedEventServices;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ChatAndEvents.API.Server.Controllers.Events;

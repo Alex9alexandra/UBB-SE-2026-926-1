@@ -2,11 +2,11 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-namespace ChatAndEvents.Data.EventsData.Services.announcementServices;
+namespace Events_GSS.Data.Services.announcementServices;
 
-using ChatAndEvents.Data.EventsData.Models;
-using ChatAndEvents.Data.EventsData.Repositories.announcementRepository;
-using ChatAndEvents.Data.EventsData.Repositories.eventRepository;
+using Events_GSS.Data.Models;
+using Events_GSS.Data.Repositories.announcementRepository;
+using Events_GSS.Data.Repositories.eventRepository;
 
 using System.Diagnostics.CodeAnalysis;
 

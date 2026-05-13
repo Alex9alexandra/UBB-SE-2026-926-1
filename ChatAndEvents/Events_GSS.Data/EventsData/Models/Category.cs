@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ChatAndEvents.Data.EventsData.Models
+namespace Events_GSS.Data.Models
 {
     public class Category
     {

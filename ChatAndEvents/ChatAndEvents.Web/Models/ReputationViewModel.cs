@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using ChatAndEvents.Data.EventsData.Models;
+using Events_GSS.Data.Models;
 
 namespace ChatAndEvents.Web.Models;
 

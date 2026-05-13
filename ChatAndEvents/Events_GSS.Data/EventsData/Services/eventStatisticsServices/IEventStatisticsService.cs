@@ -2,9 +2,9 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-namespace ChatAndEvents.Data.EventsData.Services.eventStatisticsServices;
+namespace Events_GSS.Data.Services.eventStatisticsServices;
 
-using ChatAndEvents.Data.EventsData.Models;
+using Events_GSS.Data.Models;
 
 /// <summary>
 /// Defines the contract for the event statistics service, which provides methods to retrieve various statistics and analytics related to events, such as participant overviews, engagement breakdowns, leaderboards, and quest analytics. This interface abstracts the business logic layer for event statistics, allowing for different implementations that can interact with various data sources or storage mechanisms through the underlying repositories. The methods include retrieving participant overviews, engagement breakdowns, leaderboards, and quest analytics for a specified event ID.

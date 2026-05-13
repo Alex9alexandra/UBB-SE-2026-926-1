@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ChatAndEvents.Data.EventsData.Models;
-using ChatAndEvents.Data.EventsData.Services.attendedEventServices;
-using ChatAndEvents.Data.EventsData.Services.eventServices;
-using ChatAndEvents.Data.EventsData.Services.Interfaces;
-using ChatAndEvents.Data.EventsData.Services.userServices;
+using Events_GSS.Data.Models;
+using Events_GSS.Data.Services.attendedEventServices;
+using Events_GSS.Data.Services.eventServices;
+using Events_GSS.Data.Services.Interfaces;
+using Events_GSS.Data.Services.userServices;
 
-namespace ChatAndEvents.Data.EventsData.ViewModelsCore
+namespace Events_GSS.Data.ViewModelsCore
 {
     /// <summary>
     /// Testable core logic extracted from CreateEventViewModel.

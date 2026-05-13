@@ -6,7 +6,7 @@ using ChatAndEvents.Data.ChatData.repositories;
 using ChatAndEvents.Data.ChatData.domain;
 using ChatAndEvents.Data.ChatData.serviceInterfaces.Services;
 using ChatAndEvents.Data.ChatData.repoInterfaces.Repositories;
-using ChatAndEvents.Data.EventsData.Services.notificationServices;
+using Events_GSS.Data.Services.notificationServices;
 
 namespace ChatAndEvents.Data.ChatData.services
 {

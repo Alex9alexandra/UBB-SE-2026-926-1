@@ -3,7 +3,7 @@ namespace ChatAndEvents.Data.Database.Configurations;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using ChatAndEvents.Data.EventsData.Models;
+using Events_GSS.Data.Models;
 
 public class DiscussionConfiguration : IEntityTypeConfiguration<Discussion>
 {

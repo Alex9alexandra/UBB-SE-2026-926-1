@@ -1,6 +1,6 @@
-﻿namespace ChatAndEvents.Data.EventsData.Services.announcementServices;
+﻿namespace Events_GSS.Data.Services.announcementServices;
 
-using ChatAndEvents.Data.EventsData.Models;
+using Events_GSS.Data.Models;
 
 /// <summary>
 /// Provides business logic operations for managing announcements,

@@ -5,10 +5,10 @@
 using ChatAndEvents.Data.Database;
 using Microsoft.EntityFrameworkCore;
 
-namespace ChatAndEvents.Data.EventsData.Repositories.announcementRepository;
+namespace Events_GSS.Data.Repositories.announcementRepository;
 
 using System.Data;
-using ChatAndEvents.Data.EventsData.Models;
+using Events_GSS.Data.Models;
 
 using Microsoft.Data.SqlClient;
 

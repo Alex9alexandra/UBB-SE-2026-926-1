@@ -2,7 +2,7 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-using ChatAndEvents.Data.EventsData.ViewModelsCore;
+using Events_GSS.Data.ViewModelsCore;
 
 namespace Events_GSS.ViewModels;
 
@@ -12,12 +12,12 @@ using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
-using ChatAndEvents.Data.EventsData.Models;
-using ChatAndEvents.Data.EventsData.Services.announcementServices;
+using Events_GSS.Data.Models;
+using Events_GSS.Data.Services.announcementServices;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
-using static ChatAndEvents.Data.EventsData.ViewModelsCore.AnnouncementsViewModelCore;
+using static Events_GSS.Data.ViewModelsCore.AnnouncementsViewModelCore;
 
 public record AnnouncementReactionPayload(AnnouncementItemViewModel announcement, string emoji);
 

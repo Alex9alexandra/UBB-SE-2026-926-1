@@ -4,9 +4,9 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
-using ChatAndEvents.Data.EventsData.Models;
+using Events_GSS.Data.Models;
 
-namespace ChatAndEvents.Data.EventsData.Services.announcementServices;
+namespace Events_GSS.Data.Services.announcementServices;
 
 public class AnnouncementHttpService : IAnnouncementService
 {

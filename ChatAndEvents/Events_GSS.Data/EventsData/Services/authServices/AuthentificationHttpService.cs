@@ -7,7 +7,7 @@ using ChatAndEvents.Data.ChatData.services;
 
 namespace ChatAndEvents.Data.ChatData.services
 {
-    public class AuthentificationHttpService : IAuthenticationService
+    public class AuthentificationHttpService : IAuthentificationService
     {
         private readonly HttpClient _httpClient;
 

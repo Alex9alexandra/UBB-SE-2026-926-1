@@ -1,10 +1,10 @@
 ﻿using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Linq;
-using ChatAndEvents.Data.EventsData.Models;
-using ChatAndEvents.Data.EventsData.Services.Interfaces;
-using ChatAndEvents.Data.EventsData.Services.userServices;
-using ChatAndEvents.Data.EventsData.ViewModelsCore;
+using Events_GSS.Data.Models;
+using Events_GSS.Data.Services.Interfaces;
+using Events_GSS.Data.Services.userServices;
+using Events_GSS.Data.ViewModelsCore;
 
 namespace Events_GSS.ViewModels
 {

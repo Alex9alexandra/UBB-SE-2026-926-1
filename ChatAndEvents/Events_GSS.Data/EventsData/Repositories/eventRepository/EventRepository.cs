@@ -1,7 +1,7 @@
-﻿namespace ChatAndEvents.Data.EventsData.Repositories.eventRepository;
+﻿namespace Events_GSS.Data.Repositories.eventRepository;
 
 using ChatAndEvents.Data.Database;
-using ChatAndEvents.Data.EventsData.Models;
+using Events_GSS.Data.Models;
 using Microsoft.EntityFrameworkCore;
 
 public class EventRepository : IEventRepository

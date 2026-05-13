@@ -2,17 +2,17 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-namespace ChatAndEvents.Data.EventsData.Services.reputationService;
+namespace Events_GSS.Data.Services.reputationService;
 
 using System.Diagnostics;
-using ChatAndEvents.Data.EventsData.Messaging;
-using ChatAndEvents.Data.EventsData.Models;
-using ChatAndEvents.Data.EventsData.Repositories;
-using ChatAndEvents.Data.EventsData.Repositories.eventRepository;
-using ChatAndEvents.Data.EventsData.Repositories.reputationRepository;
-using ChatAndEvents.Data.EventsData.Services.achievementServices;
+using Events_GSS.Data.Messaging;
+using Events_GSS.Data.Models;
+using Events_GSS.Data.Repositories;
+using Events_GSS.Data.Repositories.eventRepository;
+using Events_GSS.Data.Repositories.reputationRepository;
+using Events_GSS.Data.Services.achievementServices;
 using CommunityToolkit.Mvvm.Messaging;
-using ChatAndEvents.Data.EventsData.Repositories.achievementRepository;
+using Events_GSS.Data.Repositories.achievementRepository;
 
 /// <summary>
 /// Implements the <see cref="IReputationService"/> interface, providing methods to manage and retrieve user reputation points, tiers, and related permissions in the system. This class interacts with the reputation repository to perform operations related to user reputation management, allowing for setting and retrieving reputation points and tiers based on user activity and achievements. The service also handles reputation changes triggered by various user actions, ensuring that reputation data is updated accurately and efficiently in response to user interactions within the platform. Additionally, it integrates with the achievement service to check and award achievements based on reputation changes, supporting the gamification features of the application.

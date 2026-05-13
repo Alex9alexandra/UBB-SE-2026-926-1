@@ -1,6 +1,6 @@
-﻿using ChatAndEvents.Data.EventsData.Models;
+﻿using Events_GSS.Data.Models;
 
-namespace ChatAndEvents.Data.EventsData.Services.userServices
+namespace Events_GSS.Data.Services.userServices
 {
     public interface IUserService
     {

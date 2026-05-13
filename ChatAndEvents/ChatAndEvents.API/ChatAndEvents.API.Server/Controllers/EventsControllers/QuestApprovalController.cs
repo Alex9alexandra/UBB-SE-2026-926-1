@@ -1,5 +1,5 @@
-﻿using ChatAndEvents.Data.EventsData.Models;
-using ChatAndEvents.Data.EventsData.Services.Interfaces;
+﻿using Events_GSS.Data.Models;
+using Events_GSS.Data.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ChatAndEvents.API.Server.Controllers.Events;

@@ -1,9 +1,9 @@
 ﻿using ChatAndEvents.Data.ChatData.repositories;
 using ChatAndEvents.Data.Database;
-using ChatAndEvents.Data.EventsData.Models;
-using ChatAndEvents.Data.EventsData.Repositories.reputationRepository;
-using ChatAndEvents.Data.EventsData.Services.attendedEventServices;
-using ChatAndEvents.Data.EventsData.Services.userServices;
+using Events_GSS.Data.Models;
+using Events_GSS.Data.Repositories.reputationRepository;
+using Events_GSS.Data.Services.attendedEventServices;
+using Events_GSS.Data.Services.userServices;
 using ChatAndEvents.Data.ChatData.services;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -36,12 +36,12 @@ public class ChatUserService : IUserService
         currentUserId = userId;
     }
 
-    public async Task<ChatAndEvents.Data.EventsData.Models.User> GetCurrentUser()
+    public async Task<Events_GSS.Data.Models.User> GetCurrentUser()
     {
         var reputationScore = await _reputationRepo.GetReputationScoreAsync(currentUserId);
 
         await using var db = await _dbFactory.CreateDbContextAsync(); 
-        var eventsUser = await db.Set<ChatAndEvents.Data.EventsData.Models.User>()
+        var eventsUser = await db.Set<Events_GSS.Data.Models.User>()
             .FirstOrDefaultAsync(u => u.UserId == currentUserId);
 
         if (eventsUser == null) throw new Exception("User not found");
@@ -52,12 +52,12 @@ public class ChatUserService : IUserService
         return eventsUser;
     }
 
-    public async Task<ChatAndEvents.Data.EventsData.Models.User?> GetUserById(Guid userId)
+    public async Task<Events_GSS.Data.Models.User?> GetUserById(Guid userId)
     {
         var reputationScore = await _reputationRepo.GetReputationScoreAsync(userId);
 
         await using var db = await _dbFactory.CreateDbContextAsync(); 
-        var eventsUser = await db.Set<ChatAndEvents.Data.EventsData.Models.User>()
+        var eventsUser = await db.Set<Events_GSS.Data.Models.User>()
             .FirstOrDefaultAsync(u => u.UserId == userId);
 
         if (eventsUser == null) return null;
@@ -68,8 +68,8 @@ public class ChatUserService : IUserService
         return eventsUser;
     }
 
-    public List<ChatAndEvents.Data.EventsData.Models.User> GetFriends(Guid userId) => new();
-    public List<ChatAndEvents.Data.EventsData.Models.User> SearchFriends(Guid userId, string name) => new();
+    public List<Events_GSS.Data.Models.User> GetFriends(Guid userId) => new();
+    public List<Events_GSS.Data.Models.User> SearchFriends(Guid userId, string name) => new();
 
     public async Task<bool> IsAttending(Event currentEvent)
     {

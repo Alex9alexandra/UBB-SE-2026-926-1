@@ -1,13 +1,13 @@
 ﻿
 
 using System.Reflection;
-using ChatAndEvents.Data.EventsData.Messaging;
-using ChatAndEvents.Data.EventsData.Models;
-using ChatAndEvents.Data.EventsData.Repositories;
-using ChatAndEvents.Data.EventsData.Repositories.eventRepository;
-using ChatAndEvents.Data.EventsData.Repositories.reputationRepository;
-using ChatAndEvents.Data.EventsData.Services.achievementServices;
-using ChatAndEvents.Data.EventsData.Services.reputationService;
+using Events_GSS.Data.Messaging;
+using Events_GSS.Data.Models;
+using Events_GSS.Data.Repositories;
+using Events_GSS.Data.Repositories.eventRepository;
+using Events_GSS.Data.Repositories.reputationRepository;
+using Events_GSS.Data.Services.achievementServices;
+using Events_GSS.Data.Services.reputationService;
 using CommunityToolkit.Mvvm.Messaging;
 
 using Events_GSS.Data.Messaging;

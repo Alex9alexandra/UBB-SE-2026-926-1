@@ -2,10 +2,10 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-namespace ChatAndEvents.Data.EventsData.Services.eventStatisticsServices;
+namespace Events_GSS.Data.Services.eventStatisticsServices;
 
-using ChatAndEvents.Data.EventsData.Models;
-using ChatAndEvents.Data.EventsData.Repositories.eventStatisticsRepository;
+using Events_GSS.Data.Models;
+using Events_GSS.Data.Repositories.eventStatisticsRepository;
 
 /// <summary>
 /// Implements the <see cref="IEventStatisticsService"/> interface, providing methods to retrieve various statistics and analytics related to events, such as participant overviews, engagement breakdowns, leaderboards, and quest analytics. This class interacts with the event statistics repository to fetch the necessary data and perform calculations to provide insights into event performance and participant engagement.

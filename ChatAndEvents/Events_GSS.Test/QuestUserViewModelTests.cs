@@ -1,6 +1,6 @@
-﻿using ChatAndEvents.Data.EventsData.Models;
-using ChatAndEvents.Data.EventsData.Services.Interfaces;
-using ChatAndEvents.Data.EventsData.Services.userServices;
+﻿using Events_GSS.Data.Models;
+using Events_GSS.Data.Services.Interfaces;
+using Events_GSS.Data.Services.userServices;
 using Events_GSS.Data.Models;
 using Events_GSS.Data.ViewModelCore;
 using Events_GSS.ViewModels;

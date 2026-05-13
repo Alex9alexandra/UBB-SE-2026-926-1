@@ -1,6 +1,6 @@
 ﻿using ChatAndEvents.Data.ChatData.domain;
 using ChatAndEvents.Data.Database.Configurations;
-using ChatAndEvents.Data.EventsData.Models;
+using Events_GSS.Data.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace ChatAndEvents.Data.Database;
@@ -67,15 +67,15 @@ public class AppDbContext : DbContext
         modelBuilder.ApplyConfiguration(new AnnouncementReactionConfiguration());
 
 
-        modelBuilder.Entity<ChatAndEvents.Data.EventsData.Models.Category>().HasData(
-        new ChatAndEvents.Data.EventsData.Models.Category { CategoryId = 1, Title = "NATURE" },
-        new ChatAndEvents.Data.EventsData.Models.Category { CategoryId = 2, Title = "FITNESS" },
-        new ChatAndEvents.Data.EventsData.Models.Category { CategoryId = 3, Title = "MUSIC" },
-        new ChatAndEvents.Data.EventsData.Models.Category { CategoryId = 4, Title = "SOCIAL" },
-        new ChatAndEvents.Data.EventsData.Models.Category { CategoryId = 5, Title = "ART" },
-        new ChatAndEvents.Data.EventsData.Models.Category { CategoryId = 6, Title = "PETS" },
-        new ChatAndEvents.Data.EventsData.Models.Category { CategoryId = 7, Title = "TECH" },
-        new ChatAndEvents.Data.EventsData.Models.Category { CategoryId = 8, Title = "FUN" }
+        modelBuilder.Entity<Events_GSS.Data.Models.Category>().HasData(
+        new Events_GSS.Data.Models.Category { CategoryId = 1, Title = "NATURE" },
+        new Events_GSS.Data.Models.Category { CategoryId = 2, Title = "FITNESS" },
+        new Events_GSS.Data.Models.Category { CategoryId = 3, Title = "MUSIC" },
+        new Events_GSS.Data.Models.Category { CategoryId = 4, Title = "SOCIAL" },
+        new Events_GSS.Data.Models.Category { CategoryId = 5, Title = "ART" },
+        new Events_GSS.Data.Models.Category { CategoryId = 6, Title = "PETS" },
+        new Events_GSS.Data.Models.Category { CategoryId = 7, Title = "TECH" },
+        new Events_GSS.Data.Models.Category { CategoryId = 8, Title = "FUN" }
         );
 
         modelBuilder.Entity<Achievement>().HasData(

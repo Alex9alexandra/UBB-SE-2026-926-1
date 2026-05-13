@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ChatAndEvents.Data.EventsData.Messaging;
-using ChatAndEvents.Data.EventsData.Models;
-using ChatAndEvents.Data.EventsData.Services.Interfaces;
-using ChatAndEvents.Data.EventsData.Services.notificationServices;
+using Events_GSS.Data.Messaging;
+using Events_GSS.Data.Models;
+using Events_GSS.Data.Services.Interfaces;
+using Events_GSS.Data.Services.notificationServices;
 using CommunityToolkit.Mvvm.Messaging;
-using ChatAndEvents.Data.EventsData.Messaging;
-using ChatAndEvents.Data.EventsData.Repositories;
+using Events_GSS.Data.Messaging;
+using Events_GSS.Data.Repositories;
 
-namespace ChatAndEvents.Data.EventsData.Services;
+namespace Events_GSS.Data.Services;
 
 public class QuestApprovalService : IQuestApprovalService
 {

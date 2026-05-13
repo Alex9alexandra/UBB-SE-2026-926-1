@@ -1,18 +1,18 @@
 using System.Diagnostics;
 
-using ChatAndEvents.Data.EventsData.Models;
-using ChatAndEvents.Data.EventsData.Repositories;
-using ChatAndEvents.Data.EventsData.Services.Interfaces;
-using ChatAndEvents.Data.EventsData.Services;
+using Events_GSS.Data.Models;
+using Events_GSS.Data.Repositories;
+using Events_GSS.Data.Services.Interfaces;
+using Events_GSS.Data.Services;
 using Events_GSS.ViewModels;
-using ChatAndEvents.Data.EventsData.Services.discussionService;
+using Events_GSS.Data.Services.discussionService;
 using Events_GSS.Views;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using ChatAndEvents.Data.EventsData.Services.announcementServices;
+using Events_GSS.Data.Services.announcementServices;
 
 namespace Events_GSS;
 

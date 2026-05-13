@@ -2,9 +2,9 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-namespace ChatAndEvents.Data.EventsData.Repositories.reputationRepository;
+namespace Events_GSS.Data.Repositories.reputationRepository;
 
-using ChatAndEvents.Data.EventsData.Models;
+using Events_GSS.Data.Models;
 
 /// <summary>
 /// Defines methods for managing and retrieving user reputation points and tiers in the system.

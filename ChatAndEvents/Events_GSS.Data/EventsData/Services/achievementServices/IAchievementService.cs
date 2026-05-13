@@ -2,12 +2,12 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-namespace ChatAndEvents.Data.EventsData.Services.achievementServices;
+namespace Events_GSS.Data.Services.achievementServices;
 
 using System;
 using System.Collections.Generic;
 using System.Text;
-using ChatAndEvents.Data.EventsData.Models;
+using Events_GSS.Data.Models;
 
 /// <summary>
 /// Defines the contract for the achievement service, which provides methods to manage and retrieve user achievements in the system. This interface abstracts the business logic layer for achievements, allowing for different implementations that can interact with various data sources or storage mechanisms. The methods include retrieving a list of achievements for a specific user and checking and awarding achievements based on user actions or milestones.
