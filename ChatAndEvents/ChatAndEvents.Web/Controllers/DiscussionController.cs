@@ -50,24 +50,7 @@ public class DiscussionController : Controller
         return View(vm);
     }
 
-    [HttpPost]
-    public async Task<IActionResult> Mute(int eventId, Guid targetUserId,
-    string duration, double customHours, double customMinutes, bool isAdmin)
-    {
-        var currentUser = await _userService.GetCurrentUser();
-        try
-        {
-            DateTime? muteUntil = DiscussionViewModelCore
-                .CalculateMuteExpiry(duration, customHours, customMinutes, DateTime.UtcNow);
-            await _discussionService.MuteUserAsync(
-                eventId, targetUserId, muteUntil, currentUser.UserId);
-        }
-        catch (Exception ex)
-        {
-            TempData["ErrorMessage"] = ex.Message;
-        }
-        return RedirectToAction(nameof(Index), new { eventId, isAdmin });
-    }
+ 
 
     [HttpPost]
     public async Task<IActionResult> Send(int eventId, string? newMessage, int? replyToId, bool isAdmin)
@@ -131,12 +114,16 @@ public class DiscussionController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> Mute(int eventId, Guid targetUserId, DateTime? muteUntil, bool isAdmin)
+    public async Task<IActionResult> Mute(int eventId, Guid targetUserId,
+  string duration, double customHours, double customMinutes, bool isAdmin)
     {
         var currentUser = await _userService.GetCurrentUser();
         try
         {
-            await _discussionService.MuteUserAsync(eventId, targetUserId, muteUntil, currentUser.UserId);
+            DateTime? muteUntil = DiscussionViewModelCore
+                .CalculateMuteExpiry(duration, customHours, customMinutes, DateTime.UtcNow);
+            await _discussionService.MuteUserAsync(
+                eventId, targetUserId, muteUntil, currentUser.UserId);
         }
         catch (Exception ex)
         {
@@ -144,7 +131,6 @@ public class DiscussionController : Controller
         }
         return RedirectToAction(nameof(Index), new { eventId, isAdmin });
     }
-
     [HttpPost]
     public async Task<IActionResult> Unmute(int eventId, Guid targetUserId, bool isAdmin)
     {
