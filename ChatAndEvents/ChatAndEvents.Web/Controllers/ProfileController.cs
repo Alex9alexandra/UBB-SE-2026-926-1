@@ -33,6 +33,8 @@ public class ProfileController : Controller
     }
 
     [HttpGet]
+    [Route("Profile")]
+    [Route("ProfileView")]
     public async Task<IActionResult> Index(Guid? userId)
     {
         var targetUserId = userId ?? _currentUserContext.UserId;

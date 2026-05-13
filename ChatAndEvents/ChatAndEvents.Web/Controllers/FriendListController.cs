@@ -30,6 +30,8 @@ public class FriendListController : Controller
     }
 
     [HttpGet]
+    [Route("FriendList")]
+    [Route("FriendListView")]
     public async Task<IActionResult> Index()
     {
         var friends = await _friendListService.GetFriendsAsync(_currentUserContext.UserId);

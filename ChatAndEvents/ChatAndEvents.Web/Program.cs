@@ -53,31 +53,31 @@ builder.Services.AddScoped<ISearchService, SearchHttpService>(sp =>
 builder.Services.AddScoped<IFriendListService, FriendListApiClient>(sp =>
 {
     var factory = sp.GetRequiredService<IHttpClientFactory>();
-    return new FriendListApiClient(factory.CreateClient("API"));
+    return new FriendListHttpService(factory.CreateClient("API"));
 });
 
-builder.Services.AddScoped<IFriendRequestService, FriendRequestApiClient>(sp =>
+builder.Services.AddScoped<IFriendRequestService, FriendRequestHttpService>(sp =>
 {
     var factory = sp.GetRequiredService<IHttpClientFactory>();
-    return new FriendRequestApiClient(factory.CreateClient("API"));
+    return new FriendRequestHttpService(factory.CreateClient("API"));
 });
 
-builder.Services.AddScoped<IProfileService, ProfileApiClient>(sp =>
+builder.Services.AddScoped<IProfileService, ProfileHttpService>(sp =>
 {
     var factory = sp.GetRequiredService<IHttpClientFactory>();
-    return new ProfileApiClient(factory.CreateClient("API"));
+    return new ProfileHttpService(factory.CreateClient("API"));
 });
 
-builder.Services.AddScoped<IBlockService, BlockApiClient>(sp =>
+builder.Services.AddScoped<IBlockService, BlockHttpService>(sp =>
 {
     var factory = sp.GetRequiredService<IHttpClientFactory>();
-    return new BlockApiClient(factory.CreateClient("API"));
+    return new BlockHttpService(factory.CreateClient("API"));
 });
 
-builder.Services.AddScoped<IDirectMessageService, DirectMessageApiClient>(sp =>
+builder.Services.AddScoped<IDirectMessageService, DirectMessageHttpService>(sp =>
 {
     var factory = sp.GetRequiredService<IHttpClientFactory>();
-    return new DirectMessageApiClient(factory.CreateClient("API"));
+    return new DirectMessageHttpService(factory.CreateClient("API"));
 });
 
 builder.Services.AddSingleton(new CurrentUserContext(Guid.Parse("11111111-1111-1111-1111-111111111111")));
