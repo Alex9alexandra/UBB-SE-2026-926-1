@@ -6,6 +6,7 @@ using ChatAndEvents.Data.EventsData.Services.achievementServices;
 using ChatAndEvents.Data.EventsData.Services.announcementServices;
 using ChatAndEvents.Data.EventsData.Services.reputationService;
 using ChatAndEvents.Data.EventsData.Services.userServices;
+using ChatAndEvents.Web.Services;
 
 
 
@@ -27,6 +28,36 @@ builder.Services.AddScoped<IReadReceiptService, ReadReceiptHttpService>(sp =>
 {
     var factory = sp.GetRequiredService<IHttpClientFactory>();
     return new ReadReceiptHttpService(factory.CreateClient("API"));
+});
+
+builder.Services.AddScoped<IFriendListService, FriendListApiClient>(sp =>
+{
+    var factory = sp.GetRequiredService<IHttpClientFactory>();
+    return new FriendListApiClient(factory.CreateClient("API"));
+});
+
+builder.Services.AddScoped<IFriendRequestService, FriendRequestApiClient>(sp =>
+{
+    var factory = sp.GetRequiredService<IHttpClientFactory>();
+    return new FriendRequestApiClient(factory.CreateClient("API"));
+});
+
+builder.Services.AddScoped<IProfileService, ProfileApiClient>(sp =>
+{
+    var factory = sp.GetRequiredService<IHttpClientFactory>();
+    return new ProfileApiClient(factory.CreateClient("API"));
+});
+
+builder.Services.AddScoped<IBlockService, BlockApiClient>(sp =>
+{
+    var factory = sp.GetRequiredService<IHttpClientFactory>();
+    return new BlockApiClient(factory.CreateClient("API"));
+});
+
+builder.Services.AddScoped<IDirectMessageService, DirectMessageApiClient>(sp =>
+{
+    var factory = sp.GetRequiredService<IHttpClientFactory>();
+    return new DirectMessageApiClient(factory.CreateClient("API"));
 });
 
 builder.Services.AddSingleton(new CurrentUserContext(Guid.Parse("11111111-1111-1111-1111-111111111111")));
@@ -80,7 +111,8 @@ builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddHttpClient("API", client =>
 {
-    client.BaseAddress = new Uri("https://localhost:7305/"); 
+    var apiBaseAddress = builder.Configuration["Api:BaseAddress"] ?? "https://localhost:7305/";
+    client.BaseAddress = new Uri(apiBaseAddress);
 });
 
 //register the http services - this is just an example
