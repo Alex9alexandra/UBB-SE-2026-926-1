@@ -4,9 +4,12 @@ using ChatAndEvents.Data.ChatData.serviceInterfaces.Services;
 using ChatAndEvents.Data.ChatData.services;
 using ChatAndEvents.Data.EventsData.Services.achievementServices;
 using ChatAndEvents.Data.EventsData.Services.announcementServices;
+using ChatAndEvents.Data.EventsData.Services.attendedEventServices;
+using ChatAndEvents.Data.EventsData.Services.eventServices;
 using ChatAndEvents.Data.EventsData.Services.reputationService;
 using ChatAndEvents.Data.EventsData.Services.userServices;
-
+using ChatAndEvents.Data.EventsData.Services.eventServices;
+using ChatAndEvents.Data.EventsData.Services.attendedEventServices;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -83,13 +86,17 @@ builder.Services.AddHttpClient("API", client =>
     client.BaseAddress = new Uri("https://localhost:7305/"); 
 });
 
-//register the http services - this is just an example
-//builder.Services.AddScoped<IEventService, EventHttpService>(sp =>
-//{
-//    var factory = sp.GetRequiredService<IHttpClientFactory>();
-//    return new EventHttpService(factory.CreateClient("API"));
-//});
-//repeat ^ for the all services
+builder.Services.AddScoped<IEventService, EventHttpService>(sp =>
+{
+    var factory = sp.GetRequiredService<IHttpClientFactory>();
+    return new EventHttpService(factory.CreateClient("API"));
+});
+
+builder.Services.AddScoped<IAttendedEventService, AttendedEventHttpService>(sp =>
+{
+    var factory = sp.GetRequiredService<IHttpClientFactory>();
+    return new AttendedEventHttpService(factory.CreateClient("API"));
+});
 
 var app = builder.Build();
 

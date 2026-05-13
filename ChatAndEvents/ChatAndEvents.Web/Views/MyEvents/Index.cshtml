@@ -1,0 +1,41 @@
+﻿@model ChatAndEvents.Web.Models.MyEventsViewModel
+
+@{
+    ViewData["Title"] = "My Events";
+}
+
+<div class="container mt-4">
+    <h2>My Events</h2>
+
+    @if (Model.ErrorMessage != null)
+    {
+        <div class="alert alert-danger">@Model.ErrorMessage</div>
+    }
+    else if (Model.IsEmpty)
+    {
+        <div class="alert alert-info">You have no events yet.</div>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var ev in Model.Events)
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">@ev.Name</h5>
+                            <p class="card-text text-muted">@ev.Location</p>
+                            <p class="card-text">
+                                <small>@ev.StartDateTime.ToString("dd MMM yyyy") — @ev.EndDateTime.ToString("dd MMM yyyy")</small>
+                            </p>
+                            @if (ev.Category != null)
+                            {
+                                <span class="badge bg-secondary">@ev.Category.Title</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

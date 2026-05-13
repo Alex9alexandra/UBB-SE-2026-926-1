@@ -1,0 +1,55 @@
+﻿@model (List<ChatAndEvents.Data.EventsData.Models.AttendedEvent> Events, string Search, int? CategoryId, string Sort)
+
+<div class="row">
+    @foreach (var ae in Model.Events)
+    {
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 @(ae.IsFavourite ? "border-warning" : "")">
+                <div class="card-body">
+                    <h5 class="card-title">@ae.Event.Name</h5>
+                    <p class="card-text text-muted">@ae.Event.Location</p>
+                    <p class="card-text">
+                        <small>@ae.Event.StartDateTime.ToString("dd MMM yyyy") — @ae.Event.EndDateTime.ToString("dd MMM yyyy")</small>
+                    </p>
+                    @if (ae.Event.Category != null)
+                    {
+                        <span class="badge bg-secondary">@ae.Event.Category.Title</span>
+                    }
+                    @if (ae.IsFavourite)
+                    {
+                        <span class="badge bg-warning text-dark ms-1">Favourite</span>
+                    }
+                </div>
+                <div class="card-footer d-flex gap-2 flex-wrap">
+                    <form method="post" asp-action="SetFavourite">
+                        <input type="hidden" name="eventId" value="@ae.Event.EventId" />
+                        <input type="hidden" name="isFavourite" value="@(ae.IsFavourite ? "false" : "true")" />
+                        <input type="hidden" name="search" value="@Model.Search" />
+                        <input type="hidden" name="categoryId" value="@Model.CategoryId" />
+                        <input type="hidden" name="sort" value="@Model.Sort" />
+                        <button type="submit" class="btn btn-sm @(ae.IsFavourite ? "btn-warning" : "btn-outline-warning")">
+                            @(ae.IsFavourite ? "Unfavourite" : "Favourite")
+                        </button>
+                    </form>
+                    <form method="post" asp-action="SetArchived">
+                        <input type="hidden" name="eventId" value="@ae.Event.EventId" />
+                        <input type="hidden" name="isArchived" value="@(ae.IsArchived ? "false" : "true")" />
+                        <input type="hidden" name="search" value="@Model.Search" />
+                        <input type="hidden" name="categoryId" value="@Model.CategoryId" />
+                        <input type="hidden" name="sort" value="@Model.Sort" />
+                        <button type="submit" class="btn btn-sm @(ae.IsArchived ? "btn-secondary" : "btn-outline-secondary")">
+                            @(ae.IsArchived ? "Unarchive" : "Archive")
+                        </button>
+                    </form>
+                    <form method="post" asp-action="Leave">
+                        <input type="hidden" name="eventId" value="@ae.Event.EventId" />
+                        <input type="hidden" name="search" value="@Model.Search" />
+                        <input type="hidden" name="categoryId" value="@Model.CategoryId" />
+                        <input type="hidden" name="sort" value="@Model.Sort" />
+                        <button type="submit" class="btn btn-sm btn-outline-danger">Leave</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    }
+</div>
