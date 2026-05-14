@@ -1,6 +1,6 @@
 @model ChatAndEvents.Web.Models.ChatViewModel
 
-<div class="chat-container" style="max-width: 800px; margin: auto;">
+<div class="chat-container" style="max-width: 920px; margin: auto;">
     
     <div class="chat-header bg-primary text-white p-3 d-flex justify-content-between align-items-center">
         <h2 class="mb-0">@Model.ConversationTitle</h2>
@@ -41,7 +41,7 @@
         {
             <form asp-controller="Chat" asp-action="SendMessage" method="post" class="d-flex">
                 <input type="hidden" name="conversationId" value="@Model.ConversationId" />
-                <input type="hidden" name="currentUserId" value="AICI_VINE_ID_UL_USERULUI" /> 
+                <input type="hidden" name="currentUserId" value="@Model.CurrentUserId" />
 
                 <input type="text" name="messageInput" class="form-control me-2" placeholder="Type a message..." required />
                 <button type="submit" class="btn btn-success">Send</button>

@@ -36,6 +36,7 @@ namespace ChatAndEvents.Web.Controllers
             var viewModel = new ChatViewModel
             {
                 ConversationId = conversationId,
+                CurrentUserId = currentUserId,
                 ConversationTitle = conversation.Title ?? "Direct Message",
                 Messages = messages,
                 IsInputDisabled = !string.IsNullOrWhiteSpace(cannotSendReason),

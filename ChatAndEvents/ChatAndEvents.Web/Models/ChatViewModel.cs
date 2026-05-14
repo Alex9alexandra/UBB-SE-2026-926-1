@@ -6,6 +6,7 @@ namespace ChatAndEvents.Web.Models
     public class ChatViewModel
     {
         public Guid ConversationId { get; set; }
+        public Guid CurrentUserId { get; set; }
         public string ConversationTitle { get; set; } = string.Empty;
         
         public List<Message> Messages { get; set; } = new List<Message>();
