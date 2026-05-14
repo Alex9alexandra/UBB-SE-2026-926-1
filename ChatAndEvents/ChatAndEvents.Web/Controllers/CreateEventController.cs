@@ -7,9 +7,11 @@ using ChatAndEvents.Data.EventsData.ViewModelsCore;
 using ChatAndEvents.Web.Extensions;
 using ChatAndEvents.Web.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ChatAndEvents.Web.Controllers;
 
+[Authorize]
 public class CreateEventController : Controller
 {
     private const string WizardStateSessionKey = "CreateEventWizardState";
