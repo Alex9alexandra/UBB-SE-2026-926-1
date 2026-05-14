@@ -40,4 +40,26 @@ public class MemoryController : Controller
 
         return View(viewModel);
     }
+
+    [HttpGet]
+    public IActionResult Create(int eventId)
+    {
+        var model = new Memory { EventId = eventId }; 
+        return View(model);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Create(Memory memory)
+    {
+        var currentUser = await _userService.GetCurrentUser();
+        memory.AuthorId = currentUser.UserId;
+        memory.CreatedAt = DateTime.Now;
+
+        var currentEvent = await _eventService.GetEventByIdAsync(memory.EventId);
+        if (currentEvent == null) return NotFound();
+
+        await _memoryService.AddAsync(currentEvent, currentUser, memory.PhotoPath, memory.Text);
+
+        return RedirectToAction("Index", new { eventId = memory.EventId });
+    }
 }
