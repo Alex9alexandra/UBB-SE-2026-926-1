@@ -1,9 +1,10 @@
 using ChatAndEvents.Data.EventsData.Services.eventServices;
 using ChatAndEvents.Web.Models;
 using Microsoft.AspNetCore.Mvc;
-
+using Microsoft.AspNetCore.Authorization;
 namespace ChatAndEvents.Web.Controllers;
 
+[Authorize]
 public class EventListingController : Controller
 {
     private readonly IEventService _eventService;

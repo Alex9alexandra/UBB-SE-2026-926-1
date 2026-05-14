@@ -3,9 +3,11 @@ using ChatAndEvents.Web.Models;
 using ChatAndEvents.Data.ChatData.services;
 using System.Threading.Tasks;
 using System;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ChatAndEvents.Web.Controllers
 {
+    [AllowAnonymous]
     public class AuthController : Controller
     {
         private readonly IAuthenticationService _authService;

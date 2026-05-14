@@ -7,9 +7,10 @@ using ChatAndEvents.Data.ChatData.services;
 using ChatAndEvents.Data.EventsData.Services.userServices;
 using ChatAndEvents.Web.Models;
 using Microsoft.AspNetCore.Mvc;
-
+using Microsoft.AspNetCore.Authorization;
 namespace ChatAndEvents.Web.Controllers;
 
+[Authorize]
 public class ProfileController : Controller
 {
     private readonly IProfileService _profileService;

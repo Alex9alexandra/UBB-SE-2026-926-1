@@ -146,10 +146,10 @@ builder.Services.AddScoped<IAttendedEventService, AttendedEventHttpService>(sp =
     return new AttendedEventHttpService(factory.CreateClient("API"));
 });
 
-builder.Services.AddScoped<IGroupService, GroupHttpService>(sp =>
+builder.Services.AddScoped<IGroupService, ChatAndEvents.Web.Services.GroupHttpService>(sp =>
 {
     var factory = sp.GetRequiredService<IHttpClientFactory>();
-    return new GroupHttpService(factory.CreateClient("API"));
+    return new ChatAndEvents.Web.Services.GroupHttpService(factory.CreateClient("API"));
 });
 
 builder.Services.AddScoped<ISearchService, SearchHttpService>(sp =>

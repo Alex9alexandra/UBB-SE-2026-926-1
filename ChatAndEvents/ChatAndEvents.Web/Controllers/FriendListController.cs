@@ -7,9 +7,10 @@ using ChatAndEvents.Data.ChatData.services;
 using ChatAndEvents.Data.EventsData.Services.userServices;
 using ChatAndEvents.Web.Models;
 using Microsoft.AspNetCore.Mvc;
-
+using Microsoft.AspNetCore.Authorization;
 namespace ChatAndEvents.Web.Controllers;
 
+[Authorize]
 public class FriendListController : Controller
 {
     private readonly IFriendListService _friendListService;

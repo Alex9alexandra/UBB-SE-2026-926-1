@@ -3,9 +3,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using ChatAndEvents.Web.Models;
 using ChatAndEvents.Data.ChatData.services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ChatAndEvents.Web.Controllers
 {
+    [Authorize]
     public class ConversationListController : Controller
     {
         private readonly IConversationListService _conversationListService;
