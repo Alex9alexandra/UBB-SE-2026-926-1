@@ -23,7 +23,10 @@
             <a class="app-nav-link" asp-controller="Announcement" asp-action="Index" asp-route-eventId="1">Announcements</a>
         </nav>
 
-        <a class="app-logout" asp-controller="Auth" asp-action="Login">Logout</a>
+        <form asp-controller="Auth" asp-action="Logout" method="post" style="display:inline">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="app-logout" style="background:none; border:none; cursor:pointer;">Logout</button>
+        </form>
     </aside>
 
     <section class="app-content">

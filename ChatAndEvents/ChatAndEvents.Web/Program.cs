@@ -179,9 +179,9 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddAuthentication("Cookies")
     .AddCookie("Cookies", options =>
     {
-        options.LoginPath = "/Account/Login";
-        options.LogoutPath = "/Account/Logout";
-        options.AccessDeniedPath = "/Account/Login";
+        options.LoginPath = "/Auth/Login";
+        options.LogoutPath = "/Auth/Logout";
+        options.AccessDeniedPath = "/Auth/Login";
     });
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession();
@@ -193,28 +193,30 @@ builder.Services.AddHttpClient("API", client =>
     client.BaseAddress = new Uri(apiBaseAddress);
 });
 
-//register the http services - this is just an example
-//builder.Services.AddScoped<IEventService, EventHttpService>(sp =>
-//{
-//    var factory = sp.GetRequiredService<IHttpClientFactory>();
-//    return new EventHttpService(factory.CreateClient("API"));
-//});
-//repeat ^ for the all services
 
-var app = builder.Build();
+try
+{
+    var app = builder.Build();
 
-app.UseHttpsRedirection();
-app.UseStaticFiles();
-app.UseRouting();
-app.UseSession();
-app.UseAuthentication();
-app.UseAuthorization();
+    app.UseHttpsRedirection();
+    app.UseStaticFiles();
+    app.UseRouting();
+    app.UseSession();
+    app.UseAuthentication();
+    app.UseAuthorization();
 
 
 
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=MainWindow}/{action=Index}/{id?}");
+    app.MapControllerRoute(
+        name: "default",
+        pattern: "{controller=MainWindow}/{action=Index}/{id?}");
 
 
-app.Run();
+    app.Run();
+}catch(Exception ex)
+{
+    Console.WriteLine("STARTUP ERROR: " + ex.Message);
+    Console.WriteLine(ex.StackTrace);
+    Console.ReadLine();
+}
+
