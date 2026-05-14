@@ -2,18 +2,22 @@
 
 using ChatAndEvents.Data.ChatData.serviceInterfaces.Services;
 using ChatAndEvents.Data.ChatData.services;
+using ChatAndEvents.Data.EventsData.Services;
 using ChatAndEvents.Data.EventsData.Services.achievementServices;
 using ChatAndEvents.Data.EventsData.Services.announcementServices;
 using ChatAndEvents.Data.EventsData.Services.attendedEventServices;
 using ChatAndEvents.Data.EventsData.Services.discussionService;
 using ChatAndEvents.Data.EventsData.Services.eventServices;
 using ChatAndEvents.Data.EventsData.Services.eventStatisticsServices;
-using ChatAndEvents.Data.EventsData.Services;
 using ChatAndEvents.Data.EventsData.Services.Interfaces;
-using ChatAndEvents.Data.EventsData.Services.reputationService;
-using ChatAndEvents.Data.EventsData.Services.userServices;
 using ChatAndEvents.Data.EventsData.Services.memoryServices;
+using ChatAndEvents.Data.EventsData.Services.notificationServices;
+using ChatAndEvents.Data.EventsData.Services.reputationService;
+
+using ChatAndEvents.Data.EventsData.Services.userServices;
 using ChatModule.src.HttpService;
+using System.Security.Claims;
+
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -72,6 +76,7 @@ builder.Services.AddScoped<IProfileService, ProfileHttpService>(sp =>
     return new ProfileHttpService(factory.CreateClient("API"));
 });
 
+
 builder.Services.AddScoped<IBlockService, BlockHttpService>(sp =>
 {
     var factory = sp.GetRequiredService<IHttpClientFactory>();
@@ -84,8 +89,27 @@ builder.Services.AddScoped<IDirectMessageService, DirectMessageHttpService>(sp =
     return new DirectMessageHttpService(factory.CreateClient("API"));
 });
 
-builder.Services.AddSingleton(new CurrentUserContext(Guid.Parse("11111111-1111-1111-1111-111111111111")));
+// 1. Tell ASP.NET we want to be able to access the current HTTP Request inside our services
+builder.Services.AddHttpContextAccessor(); 
 
+// 2. Dynamically build the CurrentUserContext per request!
+builder.Services.AddScoped<CurrentUserContext>(sp =>
+{
+    var httpContextAccessor = sp.GetRequiredService<IHttpContextAccessor>();
+    var userPrincipal = httpContextAccessor.HttpContext?.User;
+
+    // Look inside the Cookie for the user's ID
+    var userIdString = userPrincipal?.FindFirstValue(ClaimTypes.NameIdentifier);
+
+    if (!string.IsNullOrEmpty(userIdString) && Guid.TryParse(userIdString, out Guid realUserId))
+    {
+        // We found a logged-in user!
+        return new CurrentUserContext(realUserId);
+    }
+
+    // Fallback for when the user is sitting on the Login page and has no cookie yet
+    return new CurrentUserContext(Guid.Empty);
+});
 builder.Services.AddScoped<IAnnouncementService, AnnouncementHttpService>(sp =>
 {
     var factory = sp.GetRequiredService<IHttpClientFactory>();
@@ -189,7 +213,8 @@ builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddHttpClient("API", client =>
 {
-    var apiBaseAddress = builder.Configuration["Api:BaseAddress"] ?? "https://localhost:7305/";
+    // Changed to the HTTP port we forced the API to use!
+    var apiBaseAddress = builder.Configuration["Api:BaseAddress"] ?? "http://localhost:5572/";
     client.BaseAddress = new Uri(apiBaseAddress);
 });
 
@@ -212,7 +237,7 @@ try
         pattern: "{controller=MainWindow}/{action=Index}/{id?}");
 
 
-    app.Run();
+    app.Run("http://localhost:5076");
 }catch(Exception ex)
 {
     Console.WriteLine("STARTUP ERROR: " + ex.Message);

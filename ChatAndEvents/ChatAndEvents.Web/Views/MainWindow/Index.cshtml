@@ -12,15 +12,33 @@
         </div>
 
         <nav class="app-nav">
-            <div class="app-nav-group">Social</div>
+            <div class="app-nav-group">SOCIAL</div>
+            
             <a class="app-nav-link" asp-controller="ConversationList" asp-action="Index">Conversations</a>
-            <a class="app-nav-link" asp-controller="FriendList" asp-action="Index">Friends</a>
+            
+            <a class="app-nav-link" asp-controller="FriendList" asp-action="Index">
+                Friends 
+                @if(Model.PendingFriendRequestsCount > 0) {
+                    <span style="background:#dc3545; color:white; border-radius:50%; padding:2px 6px; font-size:12px; margin-left:5px;">@Model.PendingFriendRequestsCount</span>
+                }
+            </a>
+
             <a class="app-nav-link" asp-controller="Profile" asp-action="Index" asp-route-userId="@Model.CurrentUserId">Profile</a>
 
-            <div class="app-nav-group">Activities</div>
+            <div class="app-nav-group">ACTIVITIES</div>
+            
             <a class="app-nav-link" asp-controller="EventListing" asp-action="Index">Events</a>
+            
+            <a class="app-nav-link" asp-controller="MyEvents" asp-action="Index">My Events</a>
+            
             <a class="app-nav-link" asp-controller="Reputation" asp-action="Index">Reputation &amp; Quests</a>
-            <a class="app-nav-link" asp-controller="Announcement" asp-action="Index" asp-route-eventId="1">Announcements</a>
+            
+            <a class="app-nav-link" asp-controller="Notification" asp-action="Index">
+                Notifications
+                @if(Model.UnreadNotificationsCount > 0) {
+                    <span style="background:#dc3545; color:white; border-radius:50%; padding:2px 6px; font-size:12px; margin-left:5px;">@Model.UnreadNotificationsCount</span>
+                }
+            </a>
         </nav>
 
         <form asp-controller="Auth" asp-action="Logout" method="post" style="display:inline">
@@ -44,13 +62,13 @@
                 <span>Events</span>
                 <strong>Browse public events</strong>
             </a>
+            <a class="quick-card" asp-controller="MyEvents" asp-action="Index">
+                <span>My Events</span>
+                <strong>Manage your schedule</strong>
+            </a>
             <a class="quick-card" asp-controller="FriendList" asp-action="Index">
                 <span>Friends</span>
                 <strong>Manage social links</strong>
-            </a>
-            <a class="quick-card" asp-controller="Profile" asp-action="Index" asp-route-userId="@Model.CurrentUserId">
-                <span>Profile</span>
-                <strong>View your account</strong>
             </a>
         </div>
     </section>

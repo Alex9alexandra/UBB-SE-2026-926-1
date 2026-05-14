@@ -13,7 +13,21 @@ public class EventListingController : Controller
     {
         _eventService = eventService;
     }
+    [HttpGet]
+    public async Task<IActionResult> Details(int id)
+    {
+        try
+        {
+            var ev = await _eventService.GetEventByIdAsync(id);
+            if (ev == null) return NotFound();
 
+            return View(ev);
+        }
+        catch (Exception ex)
+        {
+            return RedirectToAction("Index", new { errorMessage = ex.Message });
+        }
+    }
     [HttpGet]
     public async Task<IActionResult> Index(string? searchQuery, string? locationFilter)
     {
