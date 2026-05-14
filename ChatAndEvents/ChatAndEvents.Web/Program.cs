@@ -8,6 +8,7 @@ using ChatAndEvents.Data.EventsData.Services.attendedEventServices;
 using ChatAndEvents.Data.EventsData.Services.discussionService;
 using ChatAndEvents.Data.EventsData.Services.eventServices;
 using ChatAndEvents.Data.EventsData.Services.eventStatisticsServices;
+using ChatAndEvents.Data.EventsData.Services;
 using ChatAndEvents.Data.EventsData.Services.Interfaces;
 using ChatAndEvents.Data.EventsData.Services.reputationService;
 using ChatAndEvents.Data.EventsData.Services.userServices;
@@ -146,10 +147,22 @@ builder.Services.AddScoped<IAttendedEventService, AttendedEventHttpService>(sp =
     return new AttendedEventHttpService(factory.CreateClient("API"));
 });
 
-builder.Services.AddScoped<IGroupService, GroupHttpService>(sp =>
+builder.Services.AddScoped<IQuestService, QuestHttpService>(sp =>
 {
     var factory = sp.GetRequiredService<IHttpClientFactory>();
-    return new GroupHttpService(factory.CreateClient("API"));
+    return new QuestHttpService(factory.CreateClient("API"));
+});
+
+builder.Services.AddScoped<IQuestApprovalService, QuestApprovalHttpService>(sp =>
+{
+    var factory = sp.GetRequiredService<IHttpClientFactory>();
+    return new QuestApprovalHttpService(factory.CreateClient("API"));
+});
+
+builder.Services.AddScoped<IGroupService, ChatAndEvents.Web.Services.GroupHttpService>(sp =>
+{
+    var factory = sp.GetRequiredService<IHttpClientFactory>();
+    return new ChatAndEvents.Web.Services.GroupHttpService(factory.CreateClient("API"));
 });
 
 builder.Services.AddScoped<ISearchService, SearchHttpService>(sp =>
