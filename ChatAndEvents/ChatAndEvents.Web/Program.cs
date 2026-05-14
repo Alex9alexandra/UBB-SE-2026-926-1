@@ -4,12 +4,15 @@ using ChatAndEvents.Data.ChatData.serviceInterfaces.Services;
 using ChatAndEvents.Data.ChatData.services;
 using ChatAndEvents.Data.EventsData.Services.achievementServices;
 using ChatAndEvents.Data.EventsData.Services.announcementServices;
+using ChatAndEvents.Data.EventsData.Services.attendedEventServices;
 using ChatAndEvents.Data.EventsData.Services.discussionService;
+using ChatAndEvents.Data.EventsData.Services.eventServices;
+using ChatAndEvents.Data.EventsData.Services.eventStatisticsServices;
 using ChatAndEvents.Data.EventsData.Services.Interfaces;
 using ChatAndEvents.Data.EventsData.Services.reputationService;
 using ChatAndEvents.Data.EventsData.Services.userServices;
 using ChatAndEvents.Data.EventsData.Services.memoryServices;
-using ChatAndEvents.Web.Services;
+using ChatModule.src.HttpService;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -50,7 +53,7 @@ builder.Services.AddScoped<ISearchService, SearchHttpService>(sp =>
     return new SearchHttpService(factory.CreateClient("API"));
 });
 
-builder.Services.AddScoped<IFriendListService, FriendListApiClient>(sp =>
+builder.Services.AddScoped<IFriendListService, FriendListHttpService>(sp =>
 {
     var factory = sp.GetRequiredService<IHttpClientFactory>();
     return new FriendListHttpService(factory.CreateClient("API"));
@@ -125,6 +128,24 @@ builder.Services.AddScoped<IDiscussionService, DiscussionHttpService>(sp =>
     return new DiscussionHttpService(factory.CreateClient("API"));
 });
 
+builder.Services.AddScoped<IEventService, EventHttpService>(sp =>
+{
+    var factory = sp.GetRequiredService<IHttpClientFactory>();
+    return new EventHttpService(factory.CreateClient("API"));
+});
+
+builder.Services.AddScoped<IEventStatisticsService, EventStatisticsHttpService>(sp =>
+{
+    var factory = sp.GetRequiredService<IHttpClientFactory>();
+    return new EventStatisticsHttpService(factory.CreateClient("API"));
+});
+
+builder.Services.AddScoped<IAttendedEventService, AttendedEventHttpService>(sp =>
+{
+    var factory = sp.GetRequiredService<IHttpClientFactory>();
+    return new AttendedEventHttpService(factory.CreateClient("API"));
+});
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
@@ -168,7 +189,7 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=MainWindow}/{action=Index}/{id?}");
 
 
 app.Run();
