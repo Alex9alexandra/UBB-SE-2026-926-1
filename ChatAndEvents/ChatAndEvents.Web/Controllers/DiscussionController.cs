@@ -5,9 +5,10 @@ using ChatAndEvents.Web.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
-
+using Microsoft.AspNetCore.Authorization;
 namespace ChatAndEvents.Web.Controllers;
 
+[Authorize]
 public class DiscussionController : Controller
 {
     private readonly IDiscussionService _discussionService;

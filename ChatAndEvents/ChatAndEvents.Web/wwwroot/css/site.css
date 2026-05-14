@@ -255,6 +255,105 @@ body {
   margin-top: 18px;
 }
 
+.wizard-shell,
+.quest-user-card,
+.submission-card,
+.quest-admin-panel,
+.quest-picker {
+  border: 1px solid #d8dce8;
+  border-radius: 10px;
+  background: #ffffff;
+}
+
+.wizard-steps {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.wizard-step {
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: #e8edf7;
+  color: #4c5f7c;
+  font-weight: 600;
+}
+
+.wizard-step.active {
+  background: #24324a;
+  color: #ffffff;
+}
+
+.banner-preview {
+  padding: 14px;
+  border-radius: 8px;
+  background: #f8fafc;
+  border: 1px dashed #c8d2e3;
+}
+
+.banner-preview-label {
+  margin-bottom: 6px;
+  font-size: 0.85rem;
+  color: #64748b;
+}
+
+.quest-picker,
+.quest-admin-panel {
+  padding: 20px;
+}
+
+.quest-picker-list,
+.selected-quest-list,
+.quest-admin-list,
+.submission-list,
+.quest-user-list {
+  display: grid;
+  gap: 14px;
+}
+
+.quest-picker-item,
+.selected-quest-item,
+.quest-admin-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px;
+  border-radius: 8px;
+  background: #f8fafc;
+  border: 1px solid #dde5f2;
+}
+
+.quest-admin-item.selected {
+  border-color: #86b7fe;
+  background: #eef5ff;
+}
+
+.quest-user-card,
+.submission-card {
+  padding: 18px;
+}
+
+.submit-proof-box {
+  padding: 16px;
+  border-radius: 8px;
+  background: #f8fafc;
+  border: 1px solid #dde5f2;
+}
+
+.submission-image {
+  width: 100%;
+  max-height: 320px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.create-event-page h1,
+.quest-approval-page h1,
+.quest-user-page h1 {
+  margin-bottom: 6px;
+}
+
 @media (max-width: 760px) {
   .app-shell,
   .detail-summary,
@@ -271,5 +370,11 @@ body {
 
   .event-count {
     text-align: left;
+  }
+
+  .quest-picker-item,
+  .selected-quest-item,
+  .quest-admin-item {
+    flex-direction: column;
   }
 }

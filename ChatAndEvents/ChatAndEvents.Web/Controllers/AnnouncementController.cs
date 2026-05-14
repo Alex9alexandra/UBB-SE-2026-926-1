@@ -6,9 +6,11 @@ using ChatAndEvents.Data.EventsData.Services.announcementServices;
 using ChatAndEvents.Data.EventsData.Services.userServices;
 using ChatAndEvents.Web.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ChatAndEvents.Web.Controllers;
 
+[Authorize]
 public class AnnouncementController : Controller
 {
     private readonly IAnnouncementService _announcementService;

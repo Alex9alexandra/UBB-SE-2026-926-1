@@ -1,0 +1,50 @@
+﻿@model ChatAndEvents.Web.Models.MyEventsViewModel
+
+@{
+    ViewData["Title"] = "My Events";
+    Layout = null; // Assuming you want this to take up the full screen or you inject the sidebar elsewhere
+}
+
+<div style="padding: 30px; background-color: #17153B; min-height: 100vh; color: #C8ACD6; font-family: 'Segoe UI', Tahoma, sans-serif;">
+    
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+        <h1 style="color: white; margin: 0;">My Schedule</h1>
+        <a asp-controller="MainWindow" asp-action="Index" style="background: #433D8B; color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px; font-weight: bold;">Back to Dashboard</a>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div style="background: #ff4757; color: white; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+            <strong>Error:</strong> @Model.ErrorMessage
+        </div>
+    }
+
+    @if (Model.Events == null || !Model.Events.Any())
+    {
+        <div style="background: #2E236C; padding: 40px; text-align: center; border-radius: 12px; border: 1px solid #433D8B;">
+            <h3 style="color: white; margin-bottom: 10px;">Your schedule is empty!</h3>
+            <p style="margin-bottom: 20px;">You haven't signed up for any events yet.</p>
+            <a asp-controller="EventListing" asp-action="Index" style="background: #C8ACD6; color: #17153B; padding: 10px 20px; text-decoration: none; border-radius: 6px; font-weight: bold;">Browse Public Events</a>
+        </div>
+    }
+    else
+    {
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;">
+            @foreach (var ev in Model.Events)
+            {
+                <div style="background: #2E236C; border: 1px solid #433D8B; border-radius: 12px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+                    <h3 style="color: white; margin-top: 0; margin-bottom: 10px;">@ev.Name</h3>
+                    <p style="font-size: 14px; margin-bottom: 8px;"><strong>📅 Date:</strong> @ev.StartDateTime.ToString("MMM dd, yyyy")</p>
+                    <p style="font-size: 14px; margin-bottom: 15px;"><strong>📍 Location:</strong> @ev.Location</p>
+                    
+                    <a asp-controller="EventListing" 
+   asp-action="Details" 
+   asp-route-id="@ev.EventId" 
+   style="display: block; text-align: center; background: transparent; border: 1px solid #C8ACD6; color: #C8ACD6; padding: 10px; border-radius: 6px; cursor: pointer; text-decoration: none; transition: 0.2s;">
+    View Details
+</a>
+                </div>
+            }
+        </div>
+    }
+</div>

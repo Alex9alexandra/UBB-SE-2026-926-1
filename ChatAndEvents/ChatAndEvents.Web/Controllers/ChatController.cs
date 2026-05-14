@@ -4,9 +4,10 @@ using Microsoft.AspNetCore.Mvc;
 using ChatAndEvents.Data.ChatData.serviceInterfaces.Services;
 using ChatAndEvents.Data.ChatData.services;
 using ChatAndEvents.Web.Models;
-
+using Microsoft.AspNetCore.Authorization;
 namespace ChatAndEvents.Web.Controllers
 {
+    [Authorize]
     public class ChatController : Controller
     {
         private readonly IMessageService _messageService;

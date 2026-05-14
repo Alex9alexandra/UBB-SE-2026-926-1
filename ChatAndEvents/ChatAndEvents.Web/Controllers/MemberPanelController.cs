@@ -6,9 +6,10 @@ using ChatAndEvents.Data.ChatData.serviceInterfaces.Services;
 using ChatAndEvents.Data.EventsData.Services.userServices;
 using ChatAndEvents.Web.Models;
 using Microsoft.AspNetCore.Mvc;
-
+using Microsoft.AspNetCore.Authorization;
 namespace ChatAndEvents.Web.Controllers;
 
+[Authorize]
 public class MemberPanelController : Controller
 {
     private static readonly TimeSpan DefaultTimeoutDuration = TimeSpan.FromMinutes(10);

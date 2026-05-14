@@ -32,6 +32,11 @@
         <div class="alert alert-danger">@Model.ErrorMessage</div>
     }
 
+    @if (!string.IsNullOrWhiteSpace(Model.SuccessMessage))
+    {
+        <div class="alert alert-success">@Model.SuccessMessage</div>
+    }
+
     <section class="detail-summary">
         <div>
             <h2>About</h2>
@@ -57,5 +62,14 @@
         <li class="nav-item">
             <a class="nav-link" asp-controller="Memory" asp-action="Index" asp-route-eventId="@Model.SelectedEvent.EventId">Memories</a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link" asp-controller="QuestUser" asp-action="Index" asp-route-eventId="@Model.SelectedEvent.EventId">Quests</a>
+        </li>
+        @if (Model.IsAdmin)
+        {
+            <li class="nav-item">
+                <a class="nav-link" asp-controller="QuestApproval" asp-action="Index" asp-route-eventId="@Model.SelectedEvent.EventId">Quest Review</a>
+            </li>
+        }
     </ul>
 </div>

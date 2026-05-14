@@ -3,9 +3,10 @@ using ChatAndEvents.Data.EventsData.Services.eventServices;
 using ChatAndEvents.Data.EventsData.Services.userServices;
 using ChatAndEvents.Web.Models;
 using Microsoft.AspNetCore.Mvc;
-
+using Microsoft.AspNetCore.Authorization;
 namespace ChatAndEvents.Web.Controllers;
 
+[Authorize]
 public class EventDetailController : Controller
 {
     private readonly IEventService _eventService;
@@ -45,6 +46,11 @@ public class EventDetailController : Controller
         if (TempData["EventDetailError"] is string error)
         {
             viewModel.ErrorMessage = error;
+        }
+
+        if (TempData["EventDetailSuccess"] is string success)
+        {
+            viewModel.SuccessMessage = success;
         }
 
         return View(viewModel);

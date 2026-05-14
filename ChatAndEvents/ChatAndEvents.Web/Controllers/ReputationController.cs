@@ -4,9 +4,10 @@ using ChatAndEvents.Data.EventsData.Services.reputationService;
 using ChatAndEvents.Data.EventsData.Services.userServices;
 using ChatAndEvents.Web.Models;
 using Microsoft.AspNetCore.Mvc;
-
+using Microsoft.AspNetCore.Authorization;
 namespace ChatAndEvents.Web.Controllers;
 
+[Authorize]
 public class ReputationController : Controller
 {
     private readonly IUserService _userService;

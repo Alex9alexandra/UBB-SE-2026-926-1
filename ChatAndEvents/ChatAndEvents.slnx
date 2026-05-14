@@ -9,11 +9,12 @@
     <BuildDependency Project="Events_GSS.Data/ChatAndEvents.Data.csproj" />
   </Project>
   <Project Path="ChatAndEvents.Web/ChatAndEvents.Web.csproj">
-    <Build Solution="Debug|*" Project="false" />
+    <Build Solution="Debug|ARM64" Project="false" />
+    <Build Solution="Debug|x86" Project="false" />
   </Project>
   <Project Path="ChatModule.Tests/ChatModule.Tests.csproj">
     <Platform Project="x64" />
-    <Build Solution="Release|x64" Project="false" />
+    <Build Solution="*|x64" Project="false" />
   </Project>
   <Project Path="ChatModule/ChatModule.csproj">
     <Platform Solution="*|ARM64" Project="ARM64" />
@@ -26,7 +27,7 @@
   </Project>
   <Project Path="Events_GSS.Test/Events_GSS.Test.csproj">
     <Platform Solution="*|x64" Project="x64" />
-    <Build Solution="Release|x64" Project="false" />
+    <Build Solution="*|x64" Project="false" />
   </Project>
   <Project Path="Events_GSS/Events_GSS.csproj">
     <Platform Solution="*|ARM64" Project="arm64" />

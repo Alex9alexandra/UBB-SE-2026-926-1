@@ -3,15 +3,19 @@ using ChatAndEvents.Web.Models;
 using ChatAndEvents.Data.ChatData.services;
 using System.Threading.Tasks;
 using System;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
 
 namespace ChatAndEvents.Web.Controllers
 {
+    [AllowAnonymous]
     public class AuthController : Controller
     {
-        private readonly IAuthenticationService _authService;
+        private readonly ChatAndEvents.Data.ChatData.services.IAuthenticationService _authService;
 
         // Serviciul este injectat automat prin Dependency Injection
-        public AuthController(IAuthenticationService authService)
+        public AuthController(ChatAndEvents.Data.ChatData.services.IAuthenticationService authService)
         {
             _authService = authService;
         }
@@ -36,8 +40,15 @@ namespace ChatAndEvents.Web.Controllers
 
                 if (user != null)
                 {
-                    // Aici colegul tău (sau tu mai târziu) va adăuga logica de Cookie / Salvare Sesiune
-                    // Deocamdată, dacă e succes, îl trimitem pe pagina principală (Home)
+                    var claims = new List<Claim>
+                    {
+                        new Claim(ClaimTypes.NameIdentifier,user.Id.ToString()),
+                        new Claim(ClaimTypes.Name, user.Username)
+                    };
+                    var identity = new ClaimsIdentity(claims, "Cookies");
+                    var principal = new ClaimsPrincipal(identity);
+
+                    await HttpContext.SignInAsync("Cookies", principal);
                     return RedirectToAction("Index", "Home");
                 }
 
@@ -112,6 +123,13 @@ namespace ChatAndEvents.Web.Controllers
                 ModelState.AddModelError(string.Empty, ex.Message);
                 return View(model);
             }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync("Cookies");
+            return RedirectToAction("Login");
         }
     }
 }

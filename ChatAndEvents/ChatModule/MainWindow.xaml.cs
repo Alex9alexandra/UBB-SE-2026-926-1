@@ -147,7 +147,7 @@ namespace ChatModule
                 client.BaseAddress = baseAddress;
             });
 
-            services.AddHttpClient<IAnnouncementService, AnnouncementHttpService>(client =>
+            services.AddHttpClient<IAnnouncementService, ChatAndEvents.Data.EventsData.Services.announcementServices.AnnouncementHttpService>(client =>
             {
                 client.BaseAddress = baseAddress;
             });
@@ -157,12 +157,12 @@ namespace ChatModule
                 client.BaseAddress = baseAddress;
             });
 
-            services.AddHttpClient<IAchievementService, AchievementHttpService>(client =>
+            services.AddHttpClient<IAchievementService, ChatAndEvents.Data.EventsData.Services.achievementServices.AchievementHttpService>(client =>
             {
                 client.BaseAddress = baseAddress;
             });
 
-            services.AddHttpClient<IUserService, UserHttpService>(client =>
+            services.AddHttpClient<IUserService, ChatAndEvents.Data.EventsData.Services.userServices.UserHttpService>(client =>
             {
                 client.BaseAddress = baseAddress;
             });
@@ -219,7 +219,7 @@ namespace ChatModule
             services.AddTransient<IReputationRepository, ReputationRepository>();
             services.AddTransient<IAchievementRepository, AchievementRepository>();
             services.AddTransient<IEventStatisticsRepository, EventStatisticsRepository>();
-            services.AddSingleton(new CurrentUserContext(_initialUserId));
+            services.AddSingleton(new ChatAndEvents.Data.EventsData.Services.userServices.CurrentUserContext(_initialUserId));
 
             // --- EVENTS/GSS HTTP SERVICES ---
             services.AddHttpClient<IEventService, EventHttpService>(client =>

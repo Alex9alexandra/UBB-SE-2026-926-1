@@ -112,4 +112,4 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
 app.MapDefaultEndpoints();
-app.Run();
+app.Run("http://localhost:5572");

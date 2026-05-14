@@ -1,9 +1,10 @@
 using ChatAndEvents.Data.EventsData.Services.eventServices;
 using ChatAndEvents.Web.Models;
 using Microsoft.AspNetCore.Mvc;
-
+using Microsoft.AspNetCore.Authorization;
 namespace ChatAndEvents.Web.Controllers;
 
+[Authorize]
 public class EventListingController : Controller
 {
     private readonly IEventService _eventService;
@@ -12,7 +13,21 @@ public class EventListingController : Controller
     {
         _eventService = eventService;
     }
+    [HttpGet]
+    public async Task<IActionResult> Details(int id)
+    {
+        try
+        {
+            var ev = await _eventService.GetEventByIdAsync(id);
+            if (ev == null) return NotFound();
 
+            return View(ev);
+        }
+        catch (Exception ex)
+        {
+            return RedirectToAction("Index", new { errorMessage = ex.Message });
+        }
+    }
     [HttpGet]
     public async Task<IActionResult> Index(string? searchQuery, string? locationFilter)
     {
