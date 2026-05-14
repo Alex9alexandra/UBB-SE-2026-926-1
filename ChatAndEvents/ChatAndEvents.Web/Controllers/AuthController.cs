@@ -8,10 +8,10 @@ namespace ChatAndEvents.Web.Controllers
 {
     public class AuthController : Controller
     {
-        private readonly IAuthentificationService _authService;
+        private readonly IAuthenticationService _authService;
 
         // Serviciul este injectat automat prin Dependency Injection
-        public AuthController(IAuthentificationService authService)
+        public AuthController(IAuthenticationService authService)
         {
             _authService = authService;
         }

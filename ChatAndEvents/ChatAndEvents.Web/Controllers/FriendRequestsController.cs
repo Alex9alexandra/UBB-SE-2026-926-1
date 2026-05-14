@@ -22,6 +22,8 @@ public class FriendRequestsController : Controller
     }
 
     [HttpGet]
+    [Route("FriendRequests")]
+    [Route("FriendRequestsView")]
     public async Task<IActionResult> Index()
     {
         var incomingRequests = await _friendRequestService.GetIncomingRequestsAsync(_currentUserContext.UserId);

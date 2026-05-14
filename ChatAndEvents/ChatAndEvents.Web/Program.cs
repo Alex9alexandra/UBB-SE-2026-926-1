@@ -4,10 +4,15 @@ using ChatAndEvents.Data.ChatData.serviceInterfaces.Services;
 using ChatAndEvents.Data.ChatData.services;
 using ChatAndEvents.Data.EventsData.Services.achievementServices;
 using ChatAndEvents.Data.EventsData.Services.announcementServices;
+using ChatAndEvents.Data.EventsData.Services.attendedEventServices;
+using ChatAndEvents.Data.EventsData.Services.discussionService;
+using ChatAndEvents.Data.EventsData.Services.eventServices;
+using ChatAndEvents.Data.EventsData.Services.eventStatisticsServices;
+using ChatAndEvents.Data.EventsData.Services.Interfaces;
 using ChatAndEvents.Data.EventsData.Services.reputationService;
 using ChatAndEvents.Data.EventsData.Services.userServices;
-using ChatAndEvents.Web.Services;
-
+using ChatAndEvents.Data.EventsData.Services.memoryServices;
+using ChatModule.src.HttpService;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -30,34 +35,52 @@ builder.Services.AddScoped<IReadReceiptService, ReadReceiptHttpService>(sp =>
     return new ReadReceiptHttpService(factory.CreateClient("API"));
 });
 
-builder.Services.AddScoped<IFriendListService, FriendListApiClient>(sp =>
+builder.Services.AddScoped<IMemberPanelService, MemberPanelHttpService>(sp =>
 {
     var factory = sp.GetRequiredService<IHttpClientFactory>();
-    return new FriendListApiClient(factory.CreateClient("API"));
+    return new MemberPanelHttpService(factory.CreateClient("API"));
 });
 
-builder.Services.AddScoped<IFriendRequestService, FriendRequestApiClient>(sp =>
+builder.Services.AddScoped<IModerationService, ModerationHttpService>(sp =>
 {
     var factory = sp.GetRequiredService<IHttpClientFactory>();
-    return new FriendRequestApiClient(factory.CreateClient("API"));
+    return new ModerationHttpService(factory.CreateClient("API"));
 });
 
-builder.Services.AddScoped<IProfileService, ProfileApiClient>(sp =>
+builder.Services.AddScoped<ISearchService, SearchHttpService>(sp =>
 {
     var factory = sp.GetRequiredService<IHttpClientFactory>();
-    return new ProfileApiClient(factory.CreateClient("API"));
+    return new SearchHttpService(factory.CreateClient("API"));
 });
 
-builder.Services.AddScoped<IBlockService, BlockApiClient>(sp =>
+builder.Services.AddScoped<IFriendListService, FriendListHttpService>(sp =>
 {
     var factory = sp.GetRequiredService<IHttpClientFactory>();
-    return new BlockApiClient(factory.CreateClient("API"));
+    return new FriendListHttpService(factory.CreateClient("API"));
 });
 
-builder.Services.AddScoped<IDirectMessageService, DirectMessageApiClient>(sp =>
+builder.Services.AddScoped<IFriendRequestService, FriendRequestHttpService>(sp =>
 {
     var factory = sp.GetRequiredService<IHttpClientFactory>();
-    return new DirectMessageApiClient(factory.CreateClient("API"));
+    return new FriendRequestHttpService(factory.CreateClient("API"));
+});
+
+builder.Services.AddScoped<IProfileService, ProfileHttpService>(sp =>
+{
+    var factory = sp.GetRequiredService<IHttpClientFactory>();
+    return new ProfileHttpService(factory.CreateClient("API"));
+});
+
+builder.Services.AddScoped<IBlockService, BlockHttpService>(sp =>
+{
+    var factory = sp.GetRequiredService<IHttpClientFactory>();
+    return new BlockHttpService(factory.CreateClient("API"));
+});
+
+builder.Services.AddScoped<IDirectMessageService, DirectMessageHttpService>(sp =>
+{
+    var factory = sp.GetRequiredService<IHttpClientFactory>();
+    return new DirectMessageHttpService(factory.CreateClient("API"));
 });
 
 builder.Services.AddSingleton(new CurrentUserContext(Guid.Parse("11111111-1111-1111-1111-111111111111")));
@@ -87,10 +110,40 @@ builder.Services.AddScoped<IUserService, UserHttpService>(sp =>
     return new UserHttpService(factory.CreateClient("API"), currentUserContext);
 });
 
-builder.Services.AddScoped<IAuthenticationService, AuthentificationHttpService>(sp =>
+builder.Services.AddScoped<IAuthenticationService, AuthenticationHttpService>(sp =>
 {
     var factory = sp.GetRequiredService<IHttpClientFactory>();
-    return new AuthentificationHttpService(factory.CreateClient("API"));
+    return new AuthenticationHttpService(factory.CreateClient("API"));
+});
+
+builder.Services.AddScoped<IMemoryService, MemoryHttpService>(sp =>
+{
+    var factory = sp.GetRequiredService<IHttpClientFactory>();
+    return new MemoryHttpService(factory.CreateClient("API"));
+});
+
+builder.Services.AddScoped<IDiscussionService, DiscussionHttpService>(sp =>
+{
+    var factory = sp.GetRequiredService<IHttpClientFactory>();
+    return new DiscussionHttpService(factory.CreateClient("API"));
+});
+
+builder.Services.AddScoped<IEventService, EventHttpService>(sp =>
+{
+    var factory = sp.GetRequiredService<IHttpClientFactory>();
+    return new EventHttpService(factory.CreateClient("API"));
+});
+
+builder.Services.AddScoped<IEventStatisticsService, EventStatisticsHttpService>(sp =>
+{
+    var factory = sp.GetRequiredService<IHttpClientFactory>();
+    return new EventStatisticsHttpService(factory.CreateClient("API"));
+});
+
+builder.Services.AddScoped<IAttendedEventService, AttendedEventHttpService>(sp =>
+{
+    var factory = sp.GetRequiredService<IHttpClientFactory>();
+    return new AttendedEventHttpService(factory.CreateClient("API"));
 });
 
 builder.Services.AddScoped<IGroupService, GroupHttpService>(sp =>
@@ -148,7 +201,7 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=MainWindow}/{action=Index}/{id?}");
 
 
 app.Run();

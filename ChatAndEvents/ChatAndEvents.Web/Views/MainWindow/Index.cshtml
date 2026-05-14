@@ -1,0 +1,54 @@
+@model ChatAndEvents.Web.Models.MainWindowViewModel
+
+@{
+    ViewData["Title"] = "Unified App";
+}
+
+<div class="app-shell">
+    <aside class="app-sidebar">
+        <div class="app-brand">
+            <div class="app-brand-title">Unified App</div>
+            <div class="app-brand-user">@Model.CurrentUsername</div>
+        </div>
+
+        <nav class="app-nav">
+            <div class="app-nav-group">Social</div>
+            <a class="app-nav-link" asp-controller="ConversationList" asp-action="Index">Conversations</a>
+            <a class="app-nav-link" asp-controller="FriendList" asp-action="Index">Friends</a>
+            <a class="app-nav-link" asp-controller="Profile" asp-action="Index" asp-route-userId="@Model.CurrentUserId">Profile</a>
+
+            <div class="app-nav-group">Activities</div>
+            <a class="app-nav-link" asp-controller="EventListing" asp-action="Index">Events</a>
+            <a class="app-nav-link" asp-controller="Reputation" asp-action="Index">Reputation &amp; Quests</a>
+            <a class="app-nav-link" asp-controller="Announcement" asp-action="Index" asp-route-eventId="1">Announcements</a>
+        </nav>
+
+        <a class="app-logout" asp-controller="Auth" asp-action="Login">Logout</a>
+    </aside>
+
+    <section class="app-content">
+        <div class="app-content-header">
+            <h1>Welcome back, @Model.CurrentUsername</h1>
+            <p>Choose a section from the sidebar to open the web version of the chat and events tools.</p>
+        </div>
+
+        <div class="quick-grid">
+            <a class="quick-card" asp-controller="ConversationList" asp-action="Index">
+                <span>Conversations</span>
+                <strong>Open chat list</strong>
+            </a>
+            <a class="quick-card" asp-controller="EventListing" asp-action="Index">
+                <span>Events</span>
+                <strong>Browse public events</strong>
+            </a>
+            <a class="quick-card" asp-controller="FriendList" asp-action="Index">
+                <span>Friends</span>
+                <strong>Manage social links</strong>
+            </a>
+            <a class="quick-card" asp-controller="Profile" asp-action="Index" asp-route-userId="@Model.CurrentUserId">
+                <span>Profile</span>
+                <strong>View your account</strong>
+            </a>
+        </div>
+    </section>
+</div>

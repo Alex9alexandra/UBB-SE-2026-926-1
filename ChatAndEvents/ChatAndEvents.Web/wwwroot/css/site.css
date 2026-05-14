@@ -19,6 +19,7 @@ html {
 
 body {
   margin-bottom: 60px;
+  background: #f6f7fb;
 }
 
 .form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
@@ -28,4 +29,247 @@ body {
 
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
   text-align: start;
+}
+
+.app-shell {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
+  min-height: calc(100vh - 150px);
+  overflow: hidden;
+  border: 1px solid #d8dce8;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.app-sidebar {
+  display: flex;
+  flex-direction: column;
+  background: #24324a;
+  color: #eef3ff;
+}
+
+.app-brand {
+  padding: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.app-brand-title {
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+.app-brand-user {
+  margin-top: 4px;
+  color: #b8c5da;
+  font-size: 0.9rem;
+}
+
+.app-nav {
+  flex: 1;
+  padding: 14px 12px;
+}
+
+.app-nav-group {
+  margin: 14px 8px 8px;
+  color: #9fb0c9;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.app-nav-link,
+.app-logout {
+  display: block;
+  padding: 10px 12px;
+  border-radius: 6px;
+  color: #eef3ff;
+  text-decoration: none;
+}
+
+.app-nav-link:hover,
+.app-logout:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+}
+
+.app-logout {
+  margin: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  text-align: center;
+}
+
+.app-content {
+  padding: 28px;
+}
+
+.app-content-header h1,
+.events-page h1,
+.event-detail h1,
+.statistics-page h1 {
+  font-size: 1.8rem;
+  margin-bottom: 6px;
+}
+
+.quick-grid,
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px;
+  margin-top: 24px;
+}
+
+.quick-card,
+.stat-card,
+.detail-summary,
+.statistics-section {
+  border: 1px solid #d8dce8;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.quick-card {
+  padding: 18px;
+  color: #1e293b;
+  text-decoration: none;
+}
+
+.quick-card span,
+.stat-card span {
+  display: block;
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+.quick-card strong,
+.stat-card strong {
+  display: block;
+  margin-top: 6px;
+  font-size: 1.25rem;
+}
+
+.page-title-row,
+.detail-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.filter-bar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto auto;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.event-list {
+  display: grid;
+  gap: 10px;
+}
+
+.event-list-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 16px;
+  border: 1px solid #d8dce8;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #1e293b;
+  text-decoration: none;
+}
+
+.event-list-item:hover {
+  border-color: #86b7fe;
+  color: #1e293b;
+}
+
+.event-list-item h2,
+.statistics-section h2,
+.detail-summary h2 {
+  font-size: 1.1rem;
+  margin-bottom: 6px;
+}
+
+.event-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+.event-count {
+  min-width: 96px;
+  text-align: right;
+}
+
+.event-count strong {
+  display: block;
+  font-size: 1.5rem;
+}
+
+.event-count span {
+  color: #64748b;
+  font-size: 0.85rem;
+}
+
+.detail-heading {
+  flex: 1;
+}
+
+.detail-heading p {
+  margin: 0;
+  color: #64748b;
+}
+
+.detail-summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: 20px;
+  padding: 18px;
+  margin-bottom: 18px;
+}
+
+.detail-summary dl {
+  margin: 0;
+}
+
+.detail-summary dt {
+  color: #64748b;
+  font-size: 0.85rem;
+}
+
+.detail-summary dd {
+  margin-bottom: 10px;
+}
+
+.stat-card {
+  padding: 16px;
+}
+
+.statistics-section {
+  padding: 18px;
+  margin-top: 18px;
+}
+
+@media (max-width: 760px) {
+  .app-shell,
+  .detail-summary,
+  .filter-bar {
+    grid-template-columns: 1fr;
+  }
+
+  .page-title-row,
+  .detail-header,
+  .event-list-item {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .event-count {
+    text-align: left;
+  }
 }
