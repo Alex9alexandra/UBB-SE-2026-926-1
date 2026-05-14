@@ -1,17 +1,17 @@
 //https://localhost:7283-> port for https -> look in properties  for the current web app
 
 
-using System;
 using ChatAndEvents.Data.ChatData.serviceInterfaces.Services;
 using ChatAndEvents.Data.ChatData.services;
-using Events_GSS.Data.Services.eventServices;
 using Events_GSS.Data.Services; 
 using Events_GSS.Data.Services.achievementServices;
 using Events_GSS.Data.Services.announcementServices;
+using Events_GSS.Data.Services.eventServices;
 using Events_GSS.Data.Services.Interfaces; 
+using Events_GSS.Data.Services.notificationServices;
 using Events_GSS.Data.Services.reputationService;
 using Events_GSS.Data.Services.userServices;
-
+using System;
 using AuthHttp = ChatAndEvents.Data.ChatData.services.AuthentificationHttpService;
 
 // using RepHttp = Events_GSS.Data.Services.reputationService.ReputationHttpService;
@@ -44,15 +44,12 @@ builder.Services.AddScoped<IAnnouncementService, AnnouncementHttpService>(sp =>
     return new AnnouncementHttpService(factory.CreateClient("API"));
 });
 
-// Register IReputationService by resolving the concrete type at runtime using an assembly-qualified name
 builder.Services.AddScoped<IReputationService>(sp =>
 {
     var factory = sp.GetRequiredService<IHttpClientFactory>();
-    // Specify the assembly that contains the desired implementation. Adjust "ChatModule" if needed.
     var implType = Type.GetType("Events_GSS.Data.Services.reputationService.ReputationHttpService, ChatModule");
     if (implType == null)
     {
-        // fallback: try ChatAndEvents.Data assembly
         implType = Type.GetType("Events_GSS.Data.Services.reputationService.ReputationHttpService, ChatAndEvents.Data");
     }
     if (implType == null)
@@ -111,6 +108,19 @@ builder.Services.AddScoped<IEventService, EventHttpService>(sp =>
     return new EventHttpService(factory.CreateClient("API"));
 });
 
+builder.Services.AddScoped<INotificationService>(sp =>
+{
+    var factory = sp.GetRequiredService<IHttpClientFactory>();
+    var implType = Type.GetType("Events_GSS.Data.Services.notificationServices.NotificationHttpService, ChatAndEvents.Data");
+    if (implType == null)
+    {
+        implType = Type.GetType("Events_GSS.Data.Services.notificationServices.NotificationHttpService, ChatModule");
+    }
+    if (implType == null)
+        throw new InvalidOperationException("NotificationHttpService type not found in referenced assemblies. Remove duplicate definitions or adjust the assembly-qualified name.");
+
+    return (INotificationService)Activator.CreateInstance(implType, factory.CreateClient("API"));
+});
 
 var app = builder.Build();
 
