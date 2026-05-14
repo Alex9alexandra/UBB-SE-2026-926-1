@@ -48,6 +48,11 @@ public class EventDetailController : Controller
             viewModel.ErrorMessage = error;
         }
 
+        if (TempData["EventDetailSuccess"] is string success)
+        {
+            viewModel.SuccessMessage = success;
+        }
+
         return View(viewModel);
     }
 
