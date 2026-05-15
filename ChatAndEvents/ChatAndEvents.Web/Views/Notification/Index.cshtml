@@ -1,0 +1,59 @@
+﻿@model ChatAndEvents.Web.Models.NotificationViewModel
+
+@{
+    ViewData["Title"] = "Notifications";
+    Layout = null;
+}
+
+<div style="padding: 30px; background-color: #17153B; min-height: 100vh; color: #C8ACD6; font-family: 'Segoe UI', Tahoma, sans-serif;">
+    
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+        <h1 style="color: white; margin: 0;">Notifications</h1>
+        <a asp-controller="MainWindow" asp-action="Index" style="background: #433D8B; color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px; font-weight: bold;">Back to Dashboard</a>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div style="background: #ff4757; color: white; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+            @Model.ErrorMessage
+        </div>
+    }
+    
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div style="background: #ff4757; color: white; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+    @if (Model.Notifications == null || !Model.Notifications.Any())
+    {
+        <div style="text-align: center; margin-top: 40px; color: #888;">
+            <h3>No notifications yet.</h3>
+        </div>
+    }
+    else
+    {
+        <div style="display: flex; flex-direction: column; gap: 15px;">
+            @foreach (var notif in Model.Notifications)
+            {
+                <div style="background: #2E236C; border: 1px solid #433D8B; border-radius: 8px; padding: 20px; display: flex; justify-content: space-between; align-items: center;">
+                    
+                    <div>
+                        <h4 style="color: white; margin: 0 0 5px 0;">@notif.Title</h4>
+                        <p style="margin: 0 0 10px 0; font-size: 15px;">@notif.Description</p>
+                        <small style="color: #999;">@notif.CreatedAt.ToString("MMM dd, yyyy h:mm tt")</small>
+                    </div>
+
+                    <form asp-controller="Notification" asp-action="Delete" method="post" onsubmit="return confirm('Delete this notification?');">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@notif.Id" />
+                        <button type="submit" style="background: #ff4757; color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: bold;">
+                            Delete
+                        </button>
+                    </form>
+                </div>
+            }
+        </div>
+    }
+</div>
