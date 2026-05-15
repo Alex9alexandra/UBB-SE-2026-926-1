@@ -1,0 +1,71 @@
+
+sequenceDiagram
+    autonumber
+
+    actor User
+    participant DetailView as Event Detail View
+    participant DetailVM as Event Detail ViewModel
+    participant StatsController as Event Statistics Controller
+    participant EventApiClient as Event API Client
+    participant StatsApiClient as Event Statistics API Client
+    participant EventApiController as Events API Controller
+    participant StatsApiController as Event Statistics API Controller
+    participant StatsService as Event Statistics Service
+    participant Database
+
+    User->>DetailView: Click Statistics
+    DetailView->>DetailVM: Request event statistics
+    DetailVM->>StatsController: GET EventStatistics/Index(eventId)
+
+    StatsController->>EventApiClient: GetEventByIdAsync(eventId)
+    EventApiClient->>EventApiController: GET /api/Events/{eventId}
+    EventApiController-->>EventApiClient: Return event data
+    EventApiClient-->>StatsController: selectedEvent
+
+    StatsController->>StatsApiClient: GetParticipantOverviewAsync(eventId)
+    StatsApiClient->>StatsApiController: GET /api/EventStatistics/{eventId}/participants
+    StatsApiController->>StatsService: GetParticipantOverviewAsync(eventId)
+    StatsService->>Database: Load participant overview data
+    Database-->>StatsService: Participant data
+    StatsService-->>StatsApiController: ParticipantOverview
+    StatsApiController-->>StatsApiClient: ParticipantOverview
+    StatsApiClient-->>StatsController: ParticipantOverview
+
+    StatsController->>StatsApiClient: GetEngagementBreakdownAsync(eventId)
+    StatsApiClient->>StatsApiController: GET /api/EventStatistics/{eventId}/engagement
+    StatsApiController->>StatsService: GetEngagementBreakdownAsync(eventId)
+    StatsService->>Database: Load messages, memories and quest submissions
+    Database-->>StatsService: Engagement data
+    StatsService-->>StatsApiController: EngagementBreakdown
+    StatsApiController-->>StatsApiClient: EngagementBreakdown
+    StatsApiClient-->>StatsController: EngagementBreakdown
+
+    StatsController->>StatsApiClient: GetLeaderboardAsync(eventId)
+    StatsApiClient->>StatsApiController: GET /api/EventStatistics/{eventId}/leaderboard
+    StatsApiController->>StatsService: GetLeaderboardAsync(eventId)
+    StatsService->>Database: Load participant scores
+    Database-->>StatsService: Leaderboard data
+    StatsService-->>StatsApiController: Leaderboard
+    StatsApiController-->>StatsApiClient: Leaderboard
+    StatsApiClient-->>StatsController: Leaderboard
+
+    StatsController->>StatsApiClient: GetQuestAnalyticsAsync(eventId)
+    StatsApiClient->>StatsApiController: GET /api/EventStatistics/{eventId}/quests
+    StatsApiController->>StatsService: GetQuestAnalyticsAsync(eventId)
+    StatsService->>Database: Load quest completion counts
+    Database-->>StatsService: Quest analytics data
+    StatsService-->>StatsApiController: QuestAnalytics
+    StatsApiController-->>StatsApiClient: QuestAnalytics
+    StatsApiClient-->>StatsController: QuestAnalytics
+
+    alt Statistics loading failed
+        StatsController->>StatsController: Store error message in ViewModel
+        StatsController-->>DetailVM: Return EventStatisticsViewModel with error
+        DetailVM-->>DetailView: Show statistics page with error
+        DetailView-->>User: Display error message
+    else Statistics loaded successfully
+        StatsController->>StatsController: Build EventStatisticsViewModel
+        StatsController-->>DetailVM: Return EventStatisticsViewModel
+        DetailVM-->>DetailView: Render statistics cards and tables
+        DetailView-->>User: Show participant overview, engagement, leaderboard and quests
+    end
