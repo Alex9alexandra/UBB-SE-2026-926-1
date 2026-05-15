@@ -1,0 +1,41 @@
+sequenceDiagram
+    autonumber
+
+    actor User
+    participant View as Chat View
+    participant VM as Chat ViewModel
+    participant Client as Message API Client
+    participant API as Message API Controller
+    participant Service as Message Service
+    participant DB as Database
+
+    User->>View: Type message and click Send
+    View->>VM: Send message text
+    VM->>Client: SendMessageAsync
+    Client->>API: POST /api/Message
+    API->>Service: SendMessageAsync
+
+    Service->>DB: Check conversation participant
+
+    alt User cannot send
+        DB-->>Service: User is blocked or not participant
+        Service-->>API: Return error reason
+        API-->>Client: Error response
+        Client-->>VM: Send failed
+        VM-->>View: Show error message
+    else User can send
+        DB-->>Service: User can send
+        Service->>DB: Save new message
+        Service->>DB: Load sender details
+        Service->>DB: Load conversation participants
+
+        opt Other participants exist
+            Service->>DB: Create notifications
+        end
+
+        Service-->>API: Message created
+        API-->>Client: Success with message data
+        Client-->>VM: New message
+        VM-->>View: Add message to chat
+        View-->>User: Show sent message
+    end
