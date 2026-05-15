@@ -10,7 +10,7 @@ public class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
     {
         var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
         optionsBuilder.UseSqlServer(
-            "Data Source=.\\SQLEXPRESS;Initial Catalog=ChatAndEventsDB;" +
+            "Server=.;Initial Catalog=ChatAndEventsDB;" +
             "Integrated Security=True;Encrypt=True;TrustServerCertificate=True;");
         return new AppDbContext(optionsBuilder.Options);
     }

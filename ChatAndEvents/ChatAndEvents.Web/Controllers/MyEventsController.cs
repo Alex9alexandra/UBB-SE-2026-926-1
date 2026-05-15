@@ -1,4 +1,6 @@
-﻿using ChatAndEvents.Data.EventsData.Services.userServices;
+﻿using ChatAndEvents.Data.EventsData.Services.attendedEventServices;
+using ChatAndEvents.Data.EventsData.Services.eventServices;
+using ChatAndEvents.Data.EventsData.Services.userServices;
 using ChatAndEvents.Data.EventsData.Services.attendedEventServices;
 using ChatAndEvents.Web.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -11,13 +13,15 @@ namespace ChatAndEvents.Web.Controllers;
 [Authorize]
 public class MyEventsController : Controller
 {
-    private readonly IUserService _userService;
+    private readonly IEventService _eventService;
     private readonly IAttendedEventService _attendedEventService;
+    private readonly CurrentUserContext _currentUserContext;
 
-    public MyEventsController(IUserService userService, IAttendedEventService attendedEventService)
+    public MyEventsController(IEventService eventService, IAttendedEventService attendedEventService, CurrentUserContext currentUserContext)
     {
-        _userService = userService;
+        _eventService = eventService;
         _attendedEventService = attendedEventService;
+        _currentUserContext = currentUserContext;
     }
 
     [HttpGet]
@@ -27,26 +31,29 @@ public class MyEventsController : Controller
 
         try
         {
-            var currentUser = await _userService.GetCurrentUser();
+            var userId = _currentUserContext.UserId;
 
-            // 1. Call the exact method from your interface
-            var attendedEvents = await _attendedEventService.GetAttendedEventsAsync(currentUser.UserId);
+            var adminEvents = await _eventService.GetMyEventsAsync(userId);
+            var attendedEvents = await _attendedEventService.GetAttendedEventsAsync(userId);
+            var joinedEvents = attendedEvents.Select(ae => ae.Event).ToList();
 
-            // 2. Extract the actual 'Event' data out of the 'AttendedEvent' wrapper
-            // (This assumes your AttendedEvent model has a property called 'Event')
-            if (attendedEvents != null)
-            {
-                viewModel.Events = attendedEvents
-                    .Where(ae => ae.Event != null) // Safety check
-                    .Select(ae => ae.Event!)
-                    .ToList();
-            }
+            viewModel.Events = adminEvents
+                .Union(joinedEvents, new EventIdComparer())
+                .OrderBy(e => e.StartDateTime)
+                .ToList();
+        }
         }
         catch (Exception ex)
         {
-            viewModel.ErrorMessage = ex.Message;
+            viewModel.ErrorMessage = $"Failed to load events: {ex.Message}";
         }
 
         return View(viewModel);
+    }
+
+    private class EventIdComparer : IEqualityComparer<ChatAndEvents.Data.EventsData.Models.Event>
+    {
+        public bool Equals(ChatAndEvents.Data.EventsData.Models.Event? x, ChatAndEvents.Data.EventsData.Models.Event? y) => x?.EventId == y?.EventId;
+        public int GetHashCode(ChatAndEvents.Data.EventsData.Models.Event obj) => obj.EventId.GetHashCode();
     }
 }
