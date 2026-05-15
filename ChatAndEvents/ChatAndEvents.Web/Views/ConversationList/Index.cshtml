@@ -2,7 +2,14 @@
 
 <div class="container mt-4">
     <h2>Conversations</h2>
-
+    <div class="d-flex gap-2 mb-3">
+        <a asp-controller="ConversationList" asp-action="CreateDM" class="btn btn-primary">
+            + New DM
+        </a>
+        <a asp-controller="Group" asp-action="Create" class="btn btn-success">
+            + Create Group
+        </a>
+    </div>
     <form asp-action="Index" method="get" class="mb-3 d-flex">
         <input type="hidden" name="activeTab" value="@Model.ActiveTab" />
         <input name="searchQuery" value="@Model.SearchQuery" class="form-control me-2" placeholder="Search conversations..." />

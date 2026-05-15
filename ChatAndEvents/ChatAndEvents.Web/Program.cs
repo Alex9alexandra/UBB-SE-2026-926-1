@@ -244,7 +244,7 @@ try
         pattern: "{controller=MainWindow}/{action=Index}/{id?}");
 
 
-    app.Run("http://localhost:5076");
+    app.Run();
 }catch(Exception ex)
 {
     Console.WriteLine("STARTUP ERROR: " + ex.Message);
