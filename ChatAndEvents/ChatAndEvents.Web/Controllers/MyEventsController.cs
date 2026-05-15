@@ -41,7 +41,7 @@ public class MyEventsController : Controller
                 .Union(joinedEvents, new EventIdComparer())
                 .OrderBy(e => e.StartDateTime)
                 .ToList();
-        }
+        
         }
         catch (Exception ex)
         {

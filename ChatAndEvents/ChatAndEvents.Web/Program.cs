@@ -171,10 +171,10 @@ builder.Services.AddScoped<IEventStatisticsService, EventStatisticsHttpService>(
     return new EventStatisticsHttpService(factory.CreateClient("API"));
 });
 
-builder.Services.AddScoped<IAttendedEventService, AttendedEventHttpService>(sp =>
+builder.Services.AddScoped<IAttendedEventService, ChatAndEvents.Data.EventsData.Services.attendedEventServices.AttendedEventHttpService>(sp =>
 {
     var factory = sp.GetRequiredService<IHttpClientFactory>();
-    return new AttendedEventHttpService(factory.CreateClient("API"));
+    return new ChatAndEvents.Data.EventsData.Services.attendedEventServices.AttendedEventHttpService(factory.CreateClient("API"));
 });
 
 builder.Services.AddScoped<IQuestService, QuestHttpService>(sp =>
