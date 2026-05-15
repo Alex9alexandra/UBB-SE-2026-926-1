@@ -1,0 +1,116 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="Page-1" id="ygqLyuAaCB013S2DA2X3">
+    <mxGraphModel grid="1" page="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="hZcEWgOg98yjt93wSqKJ-2" parent="1" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" value=":Index.cshtml" vertex="1">
+          <mxGeometry height="710" width="100" x="360" y="10" as="geometry" />
+        </mxCell>
+        <mxCell id="hZcEWgOg98yjt93wSqKJ-3" edge="1" parent="1" style="html=1;verticalAlign=bottom;startArrow=oval;startFill=1;endArrow=block;startSize=8;curved=0;rounded=0;" target="hZcEWgOg98yjt93wSqKJ-2" value="POST/AttendedEvents/SatArchived(eventId=1, isArchived=true)">
+          <mxGeometry relative="1" width="60" as="geometry">
+            <mxPoint x="80" y="80" as="sourcePoint" />
+            <mxPoint x="140" y="80" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="hZcEWgOg98yjt93wSqKJ-4" parent="1" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" value=":AttendedEventsController(Web)" vertex="1">
+          <mxGeometry height="710" width="190" x="510" y="10" as="geometry" />
+        </mxCell>
+        <mxCell id="hZcEWgOg98yjt93wSqKJ-5" edge="1" parent="1" style="html=1;verticalAlign=bottom;startArrow=oval;startFill=1;endArrow=block;startSize=8;curved=0;rounded=0;" target="hZcEWgOg98yjt93wSqKJ-4" value="SetArchived(eventId, isArchived,.)">
+          <mxGeometry relative="1" width="60" as="geometry">
+            <mxPoint x="410" y="100" as="sourcePoint" />
+            <mxPoint x="470" y="100" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="hZcEWgOg98yjt93wSqKJ-6" parent="1" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" value=":AttendedEvent HttpService" vertex="1">
+          <mxGeometry height="710" width="130" x="750" y="10" as="geometry" />
+        </mxCell>
+        <mxCell id="hZcEWgOg98yjt93wSqKJ-7" edge="1" parent="1" style="html=1;verticalAlign=bottom;startArrow=oval;startFill=1;endArrow=block;startSize=8;curved=0;rounded=0;" target="hZcEWgOg98yjt93wSqKJ-6" value="SetArchivedAsync(eventId, userId, true)">
+          <mxGeometry relative="1" width="60" as="geometry">
+            <mxPoint x="610" y="140" as="sourcePoint" />
+            <mxPoint x="670" y="140" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="hZcEWgOg98yjt93wSqKJ-8" parent="1" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" value="AttendedEventsController (API)" vertex="1">
+          <mxGeometry height="710" width="160" x="1020" as="geometry" />
+        </mxCell>
+        <mxCell id="hZcEWgOg98yjt93wSqKJ-9" edge="1" parent="1" style="html=1;verticalAlign=bottom;startArrow=oval;startFill=1;endArrow=block;startSize=8;curved=0;rounded=0;" target="hZcEWgOg98yjt93wSqKJ-8" value="PUT api/AttendedEvents/{eventId}(userId}/archive?isArcive=true">
+          <mxGeometry relative="1" width="60" as="geometry">
+            <mxPoint x="820" y="190" as="sourcePoint" />
+            <mxPoint x="880" y="190" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="hZcEWgOg98yjt93wSqKJ-10" parent="1" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" value=":AttendedEvent Service" vertex="1">
+          <mxGeometry height="710" width="160" x="1260" as="geometry" />
+        </mxCell>
+        <mxCell id="hZcEWgOg98yjt93wSqKJ-11" edge="1" parent="1" style="html=1;verticalAlign=bottom;startArrow=oval;startFill=1;endArrow=block;startSize=8;curved=0;rounded=0;" target="hZcEWgOg98yjt93wSqKJ-10" value="SetArchivedAsync(eventId, userId, true)">
+          <mxGeometry relative="1" width="60" as="geometry">
+            <mxPoint x="1100" y="250" as="sourcePoint" />
+            <mxPoint x="1160" y="250" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="hZcEWgOg98yjt93wSqKJ-12" parent="1" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" value=":AttendedEvent Repository" vertex="1">
+          <mxGeometry height="710" width="160" x="1470" as="geometry" />
+        </mxCell>
+        <mxCell id="hZcEWgOg98yjt93wSqKJ-13" edge="1" parent="1" style="html=1;verticalAlign=bottom;startArrow=oval;startFill=1;endArrow=block;startSize=8;curved=0;rounded=0;" target="hZcEWgOg98yjt93wSqKJ-12" value="UpdateIsArchivedAsync(eventId, userId, true)">
+          <mxGeometry relative="1" width="60" as="geometry">
+            <mxPoint x="1340" y="310" as="sourcePoint" />
+            <mxPoint x="1400" y="310" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="hZcEWgOg98yjt93wSqKJ-14" parent="1" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" value=":DB" vertex="1">
+          <mxGeometry height="710" width="80" x="1750" as="geometry" />
+        </mxCell>
+        <mxCell id="hZcEWgOg98yjt93wSqKJ-15" edge="1" parent="1" style="html=1;verticalAlign=bottom;startArrow=oval;startFill=1;endArrow=block;startSize=8;curved=0;rounded=0;" target="hZcEWgOg98yjt93wSqKJ-14" value="FindAsync(eventId, userId)">
+          <mxGeometry relative="1" width="60" as="geometry">
+            <mxPoint x="1550" y="354.58" as="sourcePoint" />
+            <mxPoint x="1610" y="354.58" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="hZcEWgOg98yjt93wSqKJ-17" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;" target="hZcEWgOg98yjt93wSqKJ-12" value="attendedEvent&lt;br&gt;UPDATE IsArchived=1, SaveChangesAsync()">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1790" y="410" as="sourcePoint" />
+            <mxPoint x="1710" y="410" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="hZcEWgOg98yjt93wSqKJ-18" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;" target="hZcEWgOg98yjt93wSqKJ-10" value="void">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1550" y="470" as="sourcePoint" />
+            <mxPoint x="1470" y="470" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="hZcEWgOg98yjt93wSqKJ-19" edge="1" parent="1" source="hZcEWgOg98yjt93wSqKJ-10" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;" value="void">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1310" y="530" as="sourcePoint" />
+            <mxPoint x="1100" y="530" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="hZcEWgOg98yjt93wSqKJ-20" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;" target="hZcEWgOg98yjt93wSqKJ-6" value="NoContent">
+          <mxGeometry relative="1" x="-0.0012" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="1100" y="560" as="sourcePoint" />
+            <mxPoint x="860" y="560" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="hZcEWgOg98yjt93wSqKJ-22" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;" value="void">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="820" y="590" as="sourcePoint" />
+            <mxPoint x="610" y="590" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="hZcEWgOg98yjt93wSqKJ-23" parent="1" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};participant=umlActor;" value="" vertex="1">
+          <mxGeometry height="690" width="20" x="50" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="hZcEWgOg98yjt93wSqKJ-24" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;" target="hZcEWgOg98yjt93wSqKJ-23" value="Redirect Attended Events">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="600" y="650" as="sourcePoint" />
+            <mxPoint x="390" y="650" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="hZcEWgOg98yjt93wSqKJ-25" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Get AttendedEvents(page relaod)" vertex="1">
+          <mxGeometry height="30" width="150" x="60" y="680" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
