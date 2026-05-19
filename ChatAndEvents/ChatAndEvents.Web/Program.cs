@@ -12,7 +12,6 @@ using Events_GSS.Data.Services.reputationService;
 using Events_GSS.Data.Services.userServices;
 using System;
 
-// Namespace-urile pentru servicii aduse de pe server adaptate sau păstrate pentru compatibilitate
 using ChatAndEvents.Data.EventsData.Services.memoryServices;
 using ChatAndEvents.Web.Services;
 

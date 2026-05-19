@@ -4,11 +4,12 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Threading.Tasks;
-using ChatAndEvents.Data.EventsData.Models;
+using Events_GSS.Data.Models;
+using Events_GSS.Data.Services.Interfaces;
 
 namespace ChatAndEvents.Data.EventsData.Services.discussionService;
 
-public class DiscussionHttpService : IDiscussionService
+public class DiscussionHttpService : Events_GSS.Data.Services.discussionService.IDiscussionService
 {
     private readonly HttpClient _httpClient;
 

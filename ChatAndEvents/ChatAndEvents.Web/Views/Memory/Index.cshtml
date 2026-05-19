@@ -5,8 +5,6 @@
 }
 
 <div class="container mt-4">
-    
-    @* Titlul curat din varianta ta locală *@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1>Memories for @Model.EventName</h1>
     </div>
@@ -18,7 +16,6 @@
 
     @if (!Model.ShowGallery)
     {
-        @* ── Toolbar (Remote) ── *@
         <div class="d-flex gap-2 flex-wrap mb-3">
             <a asp-action="Index"
                asp-route-eventId="@Model.EventId"
@@ -43,7 +40,6 @@
                class="btn btn-sm btn-outline-secondary">📷 Gallery</a>
         </div>
 
-        @* ── Add Memory Form (Remote) ── *@
         <div class="card mb-4 shadow-sm">
             <div class="card-body">
                 <form asp-action="Add" method="post">
@@ -59,7 +55,6 @@
             </div>
         </div>
 
-        @* ── Memory List (Grid-ul tău local integrat cu logica Remote) ── *@
         @if (Model.Memories == null || Model.Memories.Count == 0)
         {
             <div class="alert alert-info">
@@ -140,7 +135,6 @@
     }
     else
     {
-        @* ── Gallery (Remote - adus complet pentru că lipsea la tine local) ── *@
         <div class="mb-3 d-flex align-items-center gap-3">
             <h5 class="mb-0">Photo Gallery</h5>
             <a asp-action="Index"

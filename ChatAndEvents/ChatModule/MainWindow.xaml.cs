@@ -332,7 +332,6 @@ namespace ChatModule
             {
                 var loginServices = new ServiceCollection();
 
-                var loginServices = new ServiceCollection();
                 loginServices.AddHttpClient<IAuthenticationService, AuthenticationHttpService>(client =>
                 {
                     client.BaseAddress = baseAddress;

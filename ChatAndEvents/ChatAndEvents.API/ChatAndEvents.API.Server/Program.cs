@@ -4,6 +4,7 @@ using ChatAndEvents.Data.ChatData.repositories;
 using ChatAndEvents.Data.ChatData.serviceInterfaces.Services;
 using ChatAndEvents.Data.ChatData.services;
 using ChatAndEvents.Data.Database;
+using ChatAndEvents.Data.EventsData.Services.memoryServices;
 using Events_GSS.Data.Repositories;
 using Events_GSS.Data.Repositories.achievementRepository;
 using Events_GSS.Data.Repositories.announcementRepository;

@@ -1,17 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-	<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
-	  <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
-	  <RuntimeIdentifier>win-x64</RuntimeIdentifier>
-	  <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
-	  <WindowsPackageType>None</WindowsPackageType>
-	<TargetFramework>net10.0-windows10.0.19041</TargetFramework>
+    <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+    <WindowsPackageType>None</WindowsPackageType>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-	  <NoWarn>$(NoWarn);SA*</NoWarn>
+    <NoWarn>$(NoWarn);SA*</NoWarn>
     <Platforms>AnyCPU;x64</Platforms>
-  <UseWinUI>true</UseWinUI>
+    <UseWinUI>true</UseWinUI>
+    <EnableDefaultContentItems>false</EnableDefaultContentItems>
+	<BlazorSuppressScopedCssWarnings>true</BlazorSuppressScopedCssWarnings>
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,6 +23,10 @@
     <Compile Include="..\ChatModule\src\HttpService\MemberPanelHttpService.cs" Link="ExternalServices\MemberPanelHttpService.cs" />
     <Compile Include="..\ChatModule\src\HttpService\ModerationHttpService.cs" Link="ExternalServices\ModerationHttpService.cs" />
     <Compile Include="..\ChatModule\src\HttpService\SearchHttpService.cs" Link="ExternalServices\SearchHttpService.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="wwwroot\**" Exclude="wwwroot\diagram\DiagramDelNotif.drawio.png" />
   </ItemGroup>
 
 </Project>
