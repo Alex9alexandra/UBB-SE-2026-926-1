@@ -37,14 +37,13 @@ namespace ChatModule
             var services = new ServiceCollection();
             var baseAddress = new Uri("http://172.30.250.53/");
 
-            services.AddHttpClient<ChatAndEvents.Data.ChatData.services.IAuthentificationService, ChatModule.HttpService.AuthentificationHttpService>()
-                .ConfigureHttpClient(client =>
+            services.AddHttpClient<IAuthenticationService, AuthenticationHttpService>(client =>
             {
                 client.BaseAddress = baseAddress;
             });
 
             var provider = services.BuildServiceProvider();
-            var authService = provider.GetRequiredService<IAuthentificationService>();
+            var authService = provider.GetRequiredService<IAuthenticationService>();
 
             _loginWindow = new LoginWindow(authService);
             _loginWindow.LoginSucceeded += OnLoginSucceededAsync;

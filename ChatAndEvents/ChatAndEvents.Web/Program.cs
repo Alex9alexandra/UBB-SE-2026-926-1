@@ -1,20 +1,20 @@
-//https://localhost:7283-> port for https -> look in properties  for the current web app
-
+//https://localhost:7283-> port for https -> look in properties for the current web app
 
 using ChatAndEvents.Data.ChatData.serviceInterfaces.Services;
 using ChatAndEvents.Data.ChatData.services;
-using Events_GSS.Data.Services; 
+using Events_GSS.Data.Services;
 using Events_GSS.Data.Services.achievementServices;
 using Events_GSS.Data.Services.announcementServices;
 using Events_GSS.Data.Services.eventServices;
-using Events_GSS.Data.Services.Interfaces; 
+using Events_GSS.Data.Services.Interfaces;
 using Events_GSS.Data.Services.notificationServices;
 using Events_GSS.Data.Services.reputationService;
 using Events_GSS.Data.Services.userServices;
 using System;
-using AuthHttp = ChatAndEvents.Data.ChatData.services.AuthentificationHttpService;
 
-// using RepHttp = Events_GSS.Data.Services.reputationService.ReputationHttpService;
+// Namespace-urile pentru servicii aduse de pe server adaptate sau păstrate pentru compatibilitate
+using ChatAndEvents.Data.EventsData.Services.memoryServices;
+using ChatAndEvents.Web.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,6 +36,60 @@ builder.Services.AddScoped<IReadReceiptService, ReadReceiptHttpService>(sp =>
     return new ReadReceiptHttpService(factory.CreateClient("API"));
 });
 
+builder.Services.AddScoped<IMemberPanelService, MemberPanelHttpService>(sp =>
+{
+    var factory = sp.GetRequiredService<IHttpClientFactory>();
+    return new MemberPanelHttpService(factory.CreateClient("API"));
+});
+
+builder.Services.AddScoped<IModerationService, ModerationHttpService>(sp =>
+{
+    var factory = sp.GetRequiredService<IHttpClientFactory>();
+    return new ModerationHttpService(factory.CreateClient("API"));
+});
+
+builder.Services.AddScoped<ISearchService, SearchHttpService>(sp =>
+{
+    var factory = sp.GetRequiredService<IHttpClientFactory>();
+    return new SearchHttpService(factory.CreateClient("API"));
+});
+
+builder.Services.AddScoped<IFriendListService, FriendListApiClient>(sp =>
+{
+    var factory = sp.GetRequiredService<IHttpClientFactory>();
+    return new FriendListHttpService(factory.CreateClient("API"));
+});
+
+builder.Services.AddScoped<IFriendRequestService, FriendRequestHttpService>(sp =>
+{
+    var factory = sp.GetRequiredService<IHttpClientFactory>();
+    return new FriendRequestHttpService(factory.CreateClient("API"));
+});
+
+builder.Services.AddScoped<IProfileService, ProfileHttpService>(sp =>
+{
+    var factory = sp.GetRequiredService<IHttpClientFactory>();
+    return new ProfileHttpService(factory.CreateClient("API"));
+});
+
+builder.Services.AddScoped<IBlockService, BlockHttpService>(sp =>
+{
+    var factory = sp.GetRequiredService<IHttpClientFactory>();
+    return new BlockHttpService(factory.CreateClient("API"));
+});
+
+builder.Services.AddScoped<IDirectMessageService, DirectMessageHttpService>(sp =>
+{
+    var factory = sp.GetRequiredService<IHttpClientFactory>();
+    return new DirectMessageHttpService(factory.CreateClient("API"));
+});
+
+builder.Services.AddScoped<IDiscussionService, DiscussionHttpService>(sp =>
+{
+    var factory = sp.GetRequiredService<IHttpClientFactory>();
+    return new DiscussionHttpService(factory.CreateClient("API"));
+});
+
 builder.Services.AddSingleton(new CurrentUserContext(Guid.Parse("11111111-1111-1111-1111-111111111111")));
 
 builder.Services.AddScoped<IAnnouncementService, AnnouncementHttpService>(sp =>
@@ -47,13 +101,11 @@ builder.Services.AddScoped<IAnnouncementService, AnnouncementHttpService>(sp =>
 builder.Services.AddScoped<IReputationService>(sp =>
 {
     var factory = sp.GetRequiredService<IHttpClientFactory>();
-    var implType = Type.GetType("Events_GSS.Data.Services.reputationService.ReputationHttpService, ChatModule");
+    var implType = Type.GetType("Events_GSS.Data.Services.reputationService.ReputationHttpService, ChatModule")
+                   ?? Type.GetType("Events_GSS.Data.Services.reputationService.ReputationHttpService, ChatAndEvents.Data");
+
     if (implType == null)
-    {
-        implType = Type.GetType("Events_GSS.Data.Services.reputationService.ReputationHttpService, ChatAndEvents.Data");
-    }
-    if (implType == null)
-        throw new InvalidOperationException("ReputationHttpService type not found in referenced assemblies. Remove duplicate definitions or adjust the assembly-qualified name.");
+        throw new InvalidOperationException("ReputationHttpService type not found in referenced assemblies.");
 
     return (IReputationService)Activator.CreateInstance(implType, factory.CreateClient("API"));
 });
@@ -71,29 +123,10 @@ builder.Services.AddScoped<IUserService, UserHttpService>(sp =>
     return new UserHttpService(factory.CreateClient("API"), currentUserContext);
 });
 
-builder.Services.AddScoped<IAuthentificationService, AuthHttp>(sp =>
+builder.Services.AddScoped<IAuthenticationService, AuthenticationHttpService>(sp =>
 {
     var factory = sp.GetRequiredService<IHttpClientFactory>();
-    return new AuthHttp(factory.CreateClient("API"));
-});
-
-builder.Services.AddControllersWithViews();
-
-
-builder.Services.AddAuthentication("Cookies")
-    .AddCookie("Cookies", options =>
-    {
-        options.LoginPath = "/Account/Login";
-        options.LogoutPath = "/Account/Logout";
-        options.AccessDeniedPath = "/Account/Login";
-    });
-builder.Services.AddDistributedMemoryCache();
-builder.Services.AddSession();
-builder.Services.AddHttpContextAccessor();
-
-builder.Services.AddHttpClient("API", client =>
-{
-    client.BaseAddress = new Uri("https://localhost:7305/"); 
+    return new AuthenticationHttpService(factory.CreateClient("API"));
 });
 
 builder.Services.AddScoped<IMemoryService, MemoryHttpService>(sp =>
@@ -111,15 +144,33 @@ builder.Services.AddScoped<IEventService, EventHttpService>(sp =>
 builder.Services.AddScoped<INotificationService>(sp =>
 {
     var factory = sp.GetRequiredService<IHttpClientFactory>();
-    var implType = Type.GetType("Events_GSS.Data.Services.notificationServices.NotificationHttpService, ChatAndEvents.Data");
+    var implType = Type.GetType("Events_GSS.Data.Services.notificationServices.NotificationHttpService, ChatAndEvents.Data")
+                   ?? Type.GetType("Events_GSS.Data.Services.notificationServices.NotificationHttpService, ChatModule");
+
     if (implType == null)
-    {
-        implType = Type.GetType("Events_GSS.Data.Services.notificationServices.NotificationHttpService, ChatModule");
-    }
-    if (implType == null)
-        throw new InvalidOperationException("NotificationHttpService type not found in referenced assemblies. Remove duplicate definitions or adjust the assembly-qualified name.");
+        throw new InvalidOperationException("NotificationHttpService type not found in referenced assemblies.");
 
     return (INotificationService)Activator.CreateInstance(implType, factory.CreateClient("API"));
+});
+
+builder.Services.AddControllersWithViews();
+
+builder.Services.AddAuthentication("Cookies")
+    .AddCookie("Cookies", options =>
+    {
+        options.LoginPath = "/Account/Login";
+        options.LogoutPath = "/Account/Logout";
+        options.AccessDeniedPath = "/Account/Login";
+    });
+
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession();
+builder.Services.AddHttpContextAccessor();
+
+builder.Services.AddHttpClient("API", client =>
+{
+    var apiBaseAddress = builder.Configuration["Api:BaseAddress"] ?? "https://localhost:7305/";
+    client.BaseAddress = new Uri(apiBaseAddress);
 });
 
 var app = builder.Build();
@@ -131,11 +182,8 @@ app.UseSession();
 app.UseAuthentication();
 app.UseAuthorization();
 
-
-
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
-
 
 app.Run();

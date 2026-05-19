@@ -332,16 +332,14 @@ namespace ChatModule
             {
                 var loginServices = new ServiceCollection();
 
-                // Configure the typed HTTP client; do not return a value from the lambda.
-                loginServices.AddHttpClient<IAuthentificationService, AuthentificationHttpService>()
-                    .ConfigureHttpClient(client =>
-                    {
-                        client.BaseAddress = baseAddress;
-                    });
-
+                var loginServices = new ServiceCollection();
+                loginServices.AddHttpClient<IAuthenticationService, AuthenticationHttpService>(client =>
+                {
+                    client.BaseAddress = baseAddress;
+                });
                 var loginProvider = loginServices.BuildServiceProvider();
 
-                var loginWindow = new LoginWindow(loginProvider.GetRequiredService<IAuthentificationService>());
+                var loginWindow = new LoginWindow(loginProvider.GetRequiredService<IAuthenticationService>());
                 loginWindow.LoginSucceeded += (newUserId, newUsername) =>
                 {
                     var nextMain = new MainWindow(newUserId, newUsername);

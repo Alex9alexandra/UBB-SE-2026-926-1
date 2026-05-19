@@ -17,12 +17,12 @@ namespace ChatModule.src.views
             InitializeComponent();
         }
 
-        public ForgotPasswordWindow(IAuthentificationService authenticationService)
+        public ForgotPasswordWindow(IAuthenticationService authenticationService)
             : this(new ForgotPasswordViewModel(authenticationService))
         {
         }
 
-        public ForgotPasswordWindow(AuthentificationService authenticationService)
+        public ForgotPasswordWindow(AuthenticationService authenticationService)
             : this(new ForgotPasswordViewModel(authenticationService))
         {
         }

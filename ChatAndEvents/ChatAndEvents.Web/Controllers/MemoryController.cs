@@ -1,4 +1,9 @@
-﻿using ChatAndEvents.Web.Models; 
+﻿using System;
+using System.Threading.Tasks;
+using ChatAndEvents.Data.EventsData.Models;
+using ChatAndEvents.Data.EventsData.Services.Interfaces;
+using ChatAndEvents.Data.EventsData.Services.userServices;
+using ChatAndEvents.Web.Models;
 using Events_GSS.Data.Models;
 using Events_GSS.Data.Services.Interfaces;
 using Events_GSS.Data.Services.eventServices;
@@ -14,52 +19,98 @@ public class MemoryController : Controller
     private readonly IEventService _eventService;
     private readonly IUserService _userService;
 
-    public MemoryController(IMemoryService memoryService, IEventService eventService, IUserService userService)
+    public MemoryController(IMemoryService memoryService, IUserService userService)
     {
         _memoryService = memoryService;
         _eventService = eventService;
         _userService = userService;
     }
 
-    public async Task<IActionResult> Index(int eventId)
+    [HttpGet]
+    public async Task<IActionResult> Index(int eventId, bool showOnlyMine = false,
+        bool sortAscending = false, bool showGallery = false)
     {
         var currentUser = await _userService.GetCurrentUser();
+        var ev = new Event { EventId = eventId };
 
-        var currentEvent = await _eventService.GetEventByIdAsync(eventId);
+        var memories = showOnlyMine
+            ? await _memoryService.FilterByMyMemoriesAsync(ev, currentUser)
+            : await _memoryService.OrderByDateAsync(ev, currentUser, sortAscending);
 
-        if (currentEvent == null) return NotFound();
+        var galleryPhotos = showGallery
+            ? await _memoryService.GetOnlyPhotosAsync(ev)
+            : new System.Collections.Generic.List<string>();
 
-        var memories = await _memoryService.GetByEventAsync(currentEvent, currentUser);
-
-        var viewModel = new MemoryViewModel
+        var vm = new MemoryViewModel
         {
             EventId = eventId,
-            EventName = currentEvent.Name,
-            Memories = memories
+            ShowOnlyMine = showOnlyMine,
+            SortAscending = sortAscending,
+            ShowGallery = showGallery,
+            GalleryPhotos = galleryPhotos,
+            Memories = memories.Select(m => new MemoryItemWebViewModel
+            {
+                Memory = m,
+                CanDelete = _memoryService.CanDelete(m, currentUser),
+                CanLike = _memoryService.CanLike(m, currentUser)
+            }).ToList()
         };
 
-        return View(viewModel);
-    }
+        if (TempData["ErrorMessage"] is string err)
+            vm.ErrorMessage = err;
 
-    [HttpGet]
-    public IActionResult Create(int eventId)
-    {
-        var model = new Memory { EventId = eventId }; 
-        return View(model);
+        return View(vm);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(Memory memory)
+    public async Task<IActionResult> Add(int eventId, string? text, bool showOnlyMine, bool sortAscending)
     {
         var currentUser = await _userService.GetCurrentUser();
-        memory.AuthorId = currentUser.UserId;
-        memory.CreatedAt = DateTime.Now;
+        var ev = new Event { EventId = eventId };
+        try
+        {
+            await _memoryService.AddAsync(ev, currentUser, null, text);
+        }
+        catch (Exception ex)
+        {
+            TempData["ErrorMessage"] = ex.Message;
+        }
+        return RedirectToAction(nameof(Index), new { eventId, showOnlyMine, sortAscending });
+    }
 
-        var currentEvent = await _eventService.GetEventByIdAsync(memory.EventId);
-        if (currentEvent == null) return NotFound();
+    [HttpPost]
+    public async Task<IActionResult> Delete(int memoryId, int eventId, bool showOnlyMine, bool sortAscending)
+    {
+        var currentUser = await _userService.GetCurrentUser();
+        try
+        {
+            await _memoryService.DeleteAsync(new Memory { MemoryId = memoryId }, currentUser);
+        }
+        catch (Exception ex)
+        {
+            TempData["ErrorMessage"] = ex.Message;
+        }
+        return RedirectToAction(nameof(Index), new { eventId, showOnlyMine, sortAscending });
+    }
 
-        await _memoryService.AddAsync(currentEvent, currentUser, memory.PhotoPath, memory.Text);
+    [HttpPost]
+    public async Task<IActionResult> ToggleLike(int memoryId, int eventId, bool showOnlyMine, bool sortAscending)
+    {
+        var currentUser = await _userService.GetCurrentUser();
+        try
+        {
+            await _memoryService.ToggleLikeAsync(new Memory { MemoryId = memoryId }, currentUser);
+        }
+        catch (Exception ex)
+        {
+            TempData["ErrorMessage"] = ex.Message;
+        }
+        return RedirectToAction(nameof(Index), new { eventId, showOnlyMine, sortAscending });
+    }
 
-        return RedirectToAction("Index", new { eventId = memory.EventId });
+    [HttpGet]
+    public async Task<IActionResult> Gallery(int eventId)
+    {
+        return RedirectToAction(nameof(Index), new { eventId, showGallery = true });
     }
 }
