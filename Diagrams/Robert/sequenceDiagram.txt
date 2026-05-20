@@ -1,0 +1,63 @@
+sequenceDiagram
+    autonumber
+
+    actor User
+    participant View as Event Detail View
+    participant WebController as Event Detail Controller
+    participant UserService as User Service
+    participant ApiClient as Attended Event API Client
+    participant ApiController as Attended Events API Controller
+    participant Service as Attended Event Service
+    participant Reputation as Reputation Service
+    participant Repository as Attended Event Repository
+    participant Database
+
+    User->>View: Click Join Event
+    View->>WebController: POST ToggleAttendance(eventId, isEnrolled = false)
+
+    WebController->>UserService: GetCurrentUser()
+    UserService-->>WebController: currentUser
+
+    WebController->>ApiClient: AttendEventAsync(eventId, currentUser.UserId)
+    ApiClient->>ApiController: POST /api/AttendedEvents/{eventId}/{userId}/attend
+    ApiController->>Service: AttendEventAsync(eventId, userId)
+
+    Service->>Reputation: CanAttendEventsAsync(userId)
+
+    alt User reputation is too low
+        Reputation-->>Service: false
+        Service-->>ApiController: throw InvalidOperationException
+        ApiController-->>ApiClient: Error response
+        ApiClient-->>WebController: HTTP error
+        WebController->>WebController: Store TempData["EventDetailError"]
+        WebController-->>View: Redirect to EventDetail
+        View-->>User: Show error message
+    else User can attend
+        Reputation-->>Service: true
+
+        Service->>Repository: GetAsync(eventId, userId)
+        Repository->>Database: Query AttendedEvents by eventId and userId
+        Database-->>Repository: Existing attended event or null
+        Repository-->>Service: attendedEvent
+
+        alt User is already enrolled
+            Service-->>ApiController: Return without duplicate insert
+            ApiController-->>ApiClient: 204 No Content
+            ApiClient-->>WebController: Success
+            WebController-->>View: Redirect to EventDetail
+            View-->>User: Event remains joined
+        else User is not enrolled
+            Service->>Repository: AddAsync(new AttendedEvent)
+            Repository->>Database: Insert attended event
+            Database-->>Repository: Save successful
+            Repository-->>Service: Done
+
+            Service->>Service: Send ReputationMessage(EventAttended)
+            Service-->>ApiController: Success
+            ApiController-->>ApiClient: 204 No Content
+            ApiClient-->>WebController: Success
+
+            WebController-->>View: Redirect to EventDetail
+            View-->>User: Show Leave Event button
+        end
+    end

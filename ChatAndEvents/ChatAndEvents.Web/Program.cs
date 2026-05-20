@@ -14,7 +14,6 @@ using ChatAndEvents.Data.EventsData.Services.memoryServices;
 using ChatAndEvents.Data.EventsData.Services.notificationServices;
 using ChatAndEvents.Data.EventsData.Services.reputationService;
 using ChatAndEvents.Data.EventsData.Services.userServices;
-
 using ChatModule.src.HttpService;
 using System.Security.Claims;
 
