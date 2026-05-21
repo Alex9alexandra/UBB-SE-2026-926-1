@@ -1,0 +1,26 @@
+sequenceDiagram
+    actor A1 as User
+    participant P1 as FriendRequestView
+    participant P2 as FriendRequest Controller
+    participant P3 as Friend Request API Client
+    participant P4 as Friend Request API Controller
+    participant P5 as Friend Request Service
+    participant P6 as Database
+    A1->>P1: Click accept
+    P1->>P2: Send requester id
+    P2->>P3: Accept friend request
+    P3->>P4: POST /api/FriendRequest/accept
+    P4->>P5: AcceptFriendRequest async
+    P5->>P6: Update request status to Accepted
+    P5->>P6: Check id DM conversation exists
+
+    alt No conversation exists
+    P5->>P6: Create DM conversation
+    P5->>P6: Add both users as participants
+    end
+    
+    P5->>P4: Done
+    P4->>P3: Success
+    P3->>P2: Success
+    P2->>P1: Redirect to requests page
+    P1->>A1: Show updated requests
